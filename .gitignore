@@ -1,0 +1,4 @@
+__pycache__/
+.sites-runtime/
+.env
+tools/selection.jpg
