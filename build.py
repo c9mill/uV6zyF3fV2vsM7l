@@ -63,10 +63,10 @@ def asset(url):
     try:
         with Image.open(source) as original:
             im = ImageOps.exif_transpose(original)
-            im.thumbnail((1600,1600))
+            im.thumbnail((1280,1280))
             if im.mode not in ('RGB','RGBA'): im = im.convert('RGBA' if 'transparency' in im.info else 'RGB')
             dest = OUT / 'assets' / (name+'.webp')
-            if not dest.exists(): im.save(dest,'WEBP',quality=82,method=1)
+            if not dest.exists(): im.save(dest,'WEBP',quality=74,method=1)
     except (OSError,ValueError):
         return ''
     result = '/assets/'+dest.name
