@@ -85,3 +85,12 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 @media(max-width:720px){.header-inner,.is-scrolled .header-inner{grid-template-columns:minmax(0,1fr) auto;gap:10px}.site-header .brand{max-width:100%;gap:4px}.site-header .brand img{width:64px;height:58px;flex-basis:64px}.site-header .brand strong{font-size:.77rem;line-height:1.35;text-wrap:pretty}.header-actions{gap:2px}.header-actions>.icon-button{width:36px;height:40px}.editorial-flow{gap:24px}.editorial-section{padding:24px 20px;border-radius:22px}.editorial-section:first-child{padding-inline:4px}.editorial-gallery.photo-grid{grid-template-columns:1fr}.editorial-gallery{gap:16px}.editorial-photo{padding:8px;border-radius:20px}.article-prose .editorial-photo img{height:auto;max-height:620px;border-radius:14px}.article-meta{gap:10px;font-size:.75rem}.article-meta .share-button{margin-left:0}.article-hero{padding:8px;margin-bottom:28px}.is-article .page-heading h1{font-size:2.2rem}.institution-parent{margin-top:6px}}
 @media(prefers-reduced-motion:reduce){body:before,body:after{animation:none;will-change:auto}}
 @media print{body:before,body:after{display:none}.editorial-section,.editorial-photo{box-shadow:none;background:transparent;break-inside:avoid}}
+
+/* The photograph sets each card's proportions instead of a fixed image slot. */
+.news-grid{display:flex;flex-wrap:wrap;align-items:flex-start;gap:26px}
+.news-grid>.news-card{flex:var(--photo-weight,1) 1 var(--photo-basis,280px);min-width:220px;max-width:650px;height:auto;align-self:flex-start;padding:0 0 24px;overflow:hidden}
+.news-card .news-image{display:block;width:100%;height:auto;aspect-ratio:auto;min-height:0;background:transparent;border-radius:24px;margin:0 0 22px}
+.news-card .news-image img{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;object-fit:initial;border-radius:24px;transform:none}
+.news-card .news-meta,.news-card h3,.news-card>.text-link{margin-inline:24px}.news-card>.text-link{margin-top:0;padding-top:8px}.news-card h3{font-size:clamp(1.2rem,1.7vw,1.55rem)}
+@media(max-width:720px){.news-grid{gap:20px}.news-grid>.news-card{flex-basis:calc(50% - 10px);min-width:210px;max-width:100%}.news-card .news-meta,.news-card h3,.news-card>.text-link{margin-inline:20px}}
+@media(max-width:480px){.news-grid>.news-card{flex-basis:100%;min-width:0}.news-card h3{font-size:1.4rem}}
