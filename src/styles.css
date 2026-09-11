@@ -18,4 +18,4 @@
 .site-header .menu-toggle{display:inline-flex!important;position:relative;flex-direction:column;gap:6px}
 .site-header .menu-toggle span{display:block;width:21px;height:2px;background:currentColor;border-radius:4px}
 .language-toggle{font-size:.72rem;font-weight:700;letter-spacing:.04em}
-.goog-te-banner-frame,.skiptranslate iframe{display:none!important}body{top:0!important}.goog-te-gadget{font-size:0!important}.goog-te-gadget select{display:none!important}
+.goog-te-banner-frame,.skiptranslate iframe,.goog-te-balloon-frame,.goog-te-menu-frame,.goog-te-ftab,.goog-tooltip,.goog-te-spinner-pos{display:none!important}body{top:0!important}.goog-te-gadget,.goog-te-gadget-simple,#google_translate_element{display:none!important;font-size:0!important}.goog-te-gadget select,.goog-te-combo{display:none!important}.notranslate{translate:no}
