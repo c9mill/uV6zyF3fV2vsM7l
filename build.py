@@ -113,7 +113,7 @@ def flatten(items):
         if item.get('url'): yield item
         yield from flatten(item.get('children',[]))
 def menu_find(needle): return next((x for x in flatten(MENUS) if needle.lower() in x['label'].lower()),{})
-SCHEDULE = menu_find('РОЗКЛАД ЗАНЯТЬ на І семестр').get('url','/студенту/')
+SCHEDULE = '/розклад/'
 RULES = menu_find('ПРАВИЛА ПРИЙОМУ НА НАВЧАННЯ У 2026').get('url','/вступнику/')
 DATES = menu_find('Строки вступної кампанії').get('url','/вступнику/')
 CAMPUS = photo(47)
@@ -123,7 +123,7 @@ shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
 LOGO = photo(1885)
 
 def header(active=''):
-    nav = [('/про-коледж/','Про коледж'),('/спеціальності/','Спеціальності'),('/студенту/','Студенту'),('/новини/','Новини'),('/контакти/','Контакти')]
+    nav = [('/про-коледж/','Про коледж'),('/спеціальності/','Спеціальності'),('/студенту/','Студенту'),(SCHEDULE,'Розклад'),('/новини/','Новини'),('/контакти/','Контакти')]
     items = ''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{t}</a>' for u,t in nav)
     desktop = items
     student_link = next(x+'</a>' for x in items.split('</a>') if 'href="/студенту/"' in x)
@@ -155,7 +155,7 @@ def shell(title_text,body,path='/',description='',article=False):
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><link rel="icon" href="{LOGO}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}">{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
 def write(path,content):
-    for asset in ['styles.css','experience.css','app.js','experience.js']:
+    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -191,8 +191,10 @@ def home():
     <section class="container"><div class="admission-banner"><div><p class="eyebrow">Твій наступний крок</p><h2>Почнемо твою історію?</h2><p>Ознайомся з правилами вступу або звернися до приймальної комісії.</p></div>{button('/вступнику/','Усе про вступ',True)}</div></section>
     <section class="section container contact-teaser">{section_heading('Завжди на зв’язку','Зустрінемось у коледжі.','/контакти/','Усі контакти')}<div><p>{icon('pin')} м. Житомир, вул. Степана Бандери, 6</p><a href="tel:+380412472847">{icon('phone')} (0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">{icon('mail')} bkzt@ukr.net</a></div></section>'''
 
-for filename in ['styles.css','app.js','experience.css','experience.js']:
+for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js']:
     if (ROOT/'src'/filename).exists(): shutil.copy2(ROOT/'src'/filename,OUT/filename)
+shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
+(OUT/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/schedule'],'exclude':[]}),encoding='utf-8')
 write('/',shell(NAME,home()))
 if '--preview' in sys.argv:
     print('Homepage ready');sys.exit(0)
@@ -407,7 +409,7 @@ for p in PAGES + POSTS:
     if p['id'] in [308,625]: continue
     SEARCH.append({'title':title(p),'url':ROUTES[p['id']],'type':'Новина' if p.get('type')=='post' else 'Розділ','text':clean_text(p['content']['rendered'])[:2200], 'date':date(p),'iso':p['date'][:10],'image':featured(p) if p.get('type')=='post' else ''})
 for d in DOCUMENTS:SEARCH.append({'title':d['title'],'url':d['url'],'type':'Документ','text':d['category']})
-for t,u in [('Спеціальності','/спеціальності/'),('Документи','/документи/'),('Контакти','/контакти/')]:SEARCH.append({'title':t,'url':u,'type':'Розділ','text':FULL_NAME})
+for t,u in [('Спеціальності','/спеціальності/'),('Документи','/документи/'),('Контакти','/контакти/'),('Розклад занять',SCHEDULE)]:SEARCH.append({'title':t,'url':u,'type':'Розділ','text':FULL_NAME})
 
 def news_listing(page=1):
     size=12;total=(len(POSTS)+size-1)//size
@@ -423,7 +425,7 @@ def news_listing(page=1):
 def search_page():
     return page_heading('Пошук','Знайди новину, розділ або потрібний документ.')+f'<div class="container page-content search-page"><form class="filter-bar" id="site-search" action="/пошук/" role="search" autocomplete="off"><div class="search-field">{icon("search")}<label class="sr-only" for="site-query">Що шукаємо?</label><input type="search" id="site-query" name="q" placeholder="Наприклад, розклад або вступ…" autocomplete="off" required></div><label class="select-field"><span class="sr-only">Тип матеріалу</span><select id="search-type" name="type"><option value="">Усі матеріали</option><option>Розділ</option><option>Новина</option><option>Документ</option></select></label><button class="button" type="submit">Знайти</button></form><p id="search-status" class="results-status" aria-live="polite">Введи назву або ключове слово.</p><div id="search-results"></div><noscript><p>Для пошуку ввімкни JavaScript у браузері. Або скористайся розділами нижче.</p></noscript><div class="search-shortcuts"><h2 class="subheading">Часто шукають</h2>{doc_link('Розклад занять',SCHEDULE)}{doc_link('Правила прийому на навчання',RULES)}{doc_link('Документи коледжу','/документи/')}</div></div>'
 
-CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page)}
+CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page),SCHEDULE:('Розклад занять',lambda:(ROOT/'src/schedule.html').read_text(encoding='utf-8'))}
 for path,(name,render) in CUSTOM.items():write(path,shell(name,render(),path))
 for p in PROGRAMS:
     path='/спеціальності/'+p[0]+'/'
