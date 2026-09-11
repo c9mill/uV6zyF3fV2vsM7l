@@ -208,6 +208,11 @@ def doc_link(label,url,category=''):
     url = local_url(url)
     if not url: return ''
     label = clean_text(label).replace('_',' ')
+    # The exported student resource still points to the original Vseosvita page.
+    # Keep that site as the data source, while every visible schedule link opens our UI.
+    if 'РОЗКЛАД ЗАНЯТЬ' in label.upper() and 'school.vseosvita.ua' in url:
+        url = SCHEDULE
+        category = category or 'Розклад у кабінеті коледжу'
     if label.isupper(): label = label.capitalize()
     kind = 'Перейти до розділу'
     if 'drive.google.com' in url: kind = 'Гугл Диск · відкриється в новій вкладці'
