@@ -61,6 +61,25 @@
  }
  document.addEventListener('load',event=>{if(event.target instanceof HTMLImageElement)sizeNewsPhoto(event.target);},true);
  document.querySelectorAll('.news-image img').forEach(sizeNewsPhoto);
+ // Flex rows stretch the cards; only the excerpt grows, never the heading.
+ // Observe the actual free height so text stops on a complete line at any size.
+ const excerptObserver=new ResizeObserver(entries=>{
+  for(const {target,contentRect} of entries){
+   const lineHeight=parseFloat(getComputedStyle(target).lineHeight);
+   target.style.setProperty('--excerpt-lines',Math.max(1,Math.floor((contentRect.height+.25)/lineHeight)));
+  }
+ });
+ document.querySelectorAll('.news-grid').forEach(grid=>{
+  let observed=new Set();
+  function observeExcerpts(){
+   const current=new Set(grid.querySelectorAll('.news-excerpt'));
+   for(const excerpt of observed)if(!current.has(excerpt))excerptObserver.unobserve(excerpt);
+   for(const excerpt of current)if(!observed.has(excerpt))excerptObserver.observe(excerpt);
+   observed=current;
+  }
+  observeExcerpts();
+  new MutationObserver(observeExcerpts).observe(grid,{childList:true});
+ });
  if(hero&&matchMedia('(hover:hover) and (min-width:1001px)').matches){
   let frame;
   hero.addEventListener('pointermove',event=>{
