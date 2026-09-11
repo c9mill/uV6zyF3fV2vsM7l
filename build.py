@@ -138,7 +138,9 @@ THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}docum
 
 def shell(title_text,body,path='/',description='',article=False):
     # Replace this campus photo only in institutional content, never in news.
-    if not article and CAMPUS in body:
+    # Keep the original campus photo and overlay card on the homepage.
+    # The anniversary artwork is used only on the informational subpages.
+    if not article and path != '/' and CAMPUS in body:
         content = BeautifulSoup(body, 'html.parser')
         for img in content.select(f'img[src="{CAMPUS}"]'):
             if img.find_parent(class_='news-card'):
