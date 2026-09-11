@@ -22,7 +22,7 @@ menuButton?.addEventListener('click',()=>{
 mobileNav?.querySelectorAll('a').forEach((a,i)=>{a.style.setProperty('--menu-index',i);a.addEventListener('click',closeMenu);});
 document.addEventListener('keydown',event=>{
  if(event.key!=='Tab'||menuButton?.getAttribute('aria-expanded')!=='true')return;
- const items=[...document.querySelector('.header-inner').querySelectorAll('a,button'),...mobileNav.querySelectorAll('a')].filter(el=>el.getClientRects().length);
+ const items=[...document.querySelector('.header-inner').querySelectorAll('a,button,input'),...mobileNav.querySelectorAll('a')].filter(el=>el.getClientRects().length);
  const first=items[0],last=items.at(-1);
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
