@@ -104,6 +104,7 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 .news-grid{align-items:start}
 .news-grid>.news-card{height:auto}
 .news-grid>.news-card h3{flex:none;display:block;padding-bottom:0}
+@media(min-width:1001px){.site-header{width:min(1320px,calc(100% - 48px));margin:14px auto 0;border-radius:28px;overflow:visible}.site-header .header-inner{padding-inline:28px}.desktop-nav{display:none}.menu-toggle{display:inline-flex}.mobile-nav{position:absolute;left:0;right:0;top:calc(100% + 12px);width:100%;margin:auto;padding:18px 28px;border-radius:24px;box-shadow:var(--shadow);z-index:30}.mobile-nav a{padding:14px 8px;border-radius:12px}.menu-open main,.menu-open .footer{filter:blur(5px);transition:filter .3s ease}.menu-open::after{content:"";position:fixed;inset:0;background:#06142b22;z-index:10;pointer-events:none}}
 @media(max-width:1080px){.news-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:720px){.news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}}
 @media(max-width:480px){.news-grid{grid-template-columns:1fr}.news-grid>.news-card{height:auto}}
