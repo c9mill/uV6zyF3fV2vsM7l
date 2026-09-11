@@ -117,6 +117,9 @@ SCHEDULE = menu_find('РОЗКЛАД ЗАНЯТЬ на І семестр').get('
 RULES = menu_find('ПРАВИЛА ПРИЙОМУ НА НАВЧАННЯ У 2026').get('url','/вступнику/')
 DATES = menu_find('Строки вступної кампанії').get('url','/вступнику/')
 CAMPUS = photo(47)
+ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
+ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
+shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
 LOGO = photo(1885)
 
 def header(active=''):
@@ -134,6 +137,20 @@ def footer():
 THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'})()"
 
 def shell(title_text,body,path='/',description='',article=False):
+    # Replace this campus photo only in institutional content, never in news.
+    if not article and CAMPUS in body:
+        content = BeautifulSoup(body, 'html.parser')
+        for img in content.select(f'img[src="{CAMPUS}"]'):
+            if img.find_parent(class_='news-card'):
+                continue
+            img['src'] = ANNIVERSARY
+            img['width'], img['height'] = 2400, 1350
+            img['alt'] = '80 років Фахового коледжу будівництва, архітектури та дизайну'
+            img['class'] = img.get('class', []) + ['campus-anniversary']
+            parent_link = img.find_parent('a')
+            if parent_link and (parent_link.get('href') == CAMPUS or norm(parent_link.get('href','')) == norm(MANIFEST[47]['original_url'])):
+                parent_link['href'] = ANNIVERSARY
+        body = str(content)
     desc = description or 'Спеціальності, вступ, новини та студентське життя Фахового коледжу будівництва, архітектури та дизайну в Житомирі.'
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><link rel="icon" href="{LOGO}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}">{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []

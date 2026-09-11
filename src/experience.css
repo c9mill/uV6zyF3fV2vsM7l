@@ -144,3 +144,21 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
  .site-header .mobile-nav>a{padding:14px 12px;font-size:1rem;border-radius:14px}
 }
 @media(prefers-reduced-motion:reduce){.site-header .mobile-nav,.site-header .mobile-nav a{transition:none}}
+
+/* The anniversary artwork includes lettering: keep its complete 16:9 frame. */
+img.campus-anniversary{object-fit:contain;object-position:center}
+.hero-visual:has(>.campus-anniversary){display:grid;grid-template-columns:minmax(0,1fr) auto;align-self:center;min-height:0;height:auto;border-radius:28px;background:var(--card);overflow:hidden}
+.hero-visual:has(>.campus-anniversary):after{display:none}
+.hero-visual>.campus-anniversary{position:static;grid-column:1/-1;grid-row:1;width:100%;height:auto;aspect-ratio:16/9;transform:none;border-radius:0}
+.hero-visual:has(>.campus-anniversary) .media-caption{position:static;grid-column:1/-1;grid-row:2;justify-self:start;margin:20px 24px 0;backdrop-filter:none;background:var(--blue-soft);color:var(--accent)}
+.hero-visual:has(>.campus-anniversary) .photo-label{position:static;grid-column:1;grid-row:3;max-width:none;margin:22px 12px 24px 24px;color:var(--ink)}
+.hero-visual:has(>.campus-anniversary) .photo-label>span{font-size:1.4rem}
+.hero-visual:has(>.campus-anniversary) .hero-note{position:relative;inset:auto;grid-column:2;grid-row:3;align-self:center;min-width:0;margin:20px 24px 24px 12px;padding:16px;transform:none;background:var(--blue-soft);color:var(--ink);box-shadow:none;backdrop-filter:none}
+:is(.about-intro,.admission-intro,.location-photo)>img.campus-anniversary{width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:16/9;align-self:center;border-radius:24px}
+.location-photo:has(>.campus-anniversary){min-height:0;align-self:center;border-radius:24px;background:var(--card)}
+.location-photo:has(>.campus-anniversary)>div{position:static;margin:0;padding:20px 24px;background:var(--card);color:var(--ink)}
+@media(max-width:1000px){
+ .hero-visual:has(>.campus-anniversary){grid-template-columns:1fr}
+ .hero-visual:has(>.campus-anniversary) .hero-note{grid-column:1;grid-row:4;margin:0 20px 20px}
+ .hero-visual:has(>.campus-anniversary) .photo-label{margin:20px}
+}
