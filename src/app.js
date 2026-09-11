@@ -5,13 +5,28 @@ const translateScript=document.createElement('script');translateScript.src='http
 if(actions&&!actions.querySelector('.language-toggle')){const languageButton=document.createElement('button');languageButton.className='icon-button language-toggle';languageButton.type='button';languageButton.textContent='EN';languageButton.title='English';languageButton.setAttribute('aria-label','Перемкнути мову');languageButton.addEventListener('click',()=>{const select=document.querySelector('.goog-te-combo');if(!select)return;const english=languageButton.dataset.lang!=='en';select.value=english?'en':'uk';select.dispatchEvent(new Event('change'));languageButton.dataset.lang=english?'en':'uk';languageButton.textContent=english?'УКР':'EN'});actions.insertBefore(languageButton,actions.firstElementChild)}
 const menuButton=document.querySelector('.menu-toggle');
 const mobileNav=document.querySelector('#mobile-nav');
+const headerSearch=document.querySelector('.header-search');
+const headerRow=document.querySelector('.header-inner');
+const compactHeader=matchMedia('(max-width: 720px)');
+function placeHeaderSearch(){
+ if(!headerSearch||!mobileNav||!headerRow)return;
+ if(compactHeader.matches)mobileNav.prepend(headerSearch);
+ else headerRow.insertBefore(headerSearch,actions);
+}
+placeHeaderSearch();
+compactHeader.addEventListener('change',()=>{closeMenu();placeHeaderSearch();});
+const menuBackdrop=document.createElement('button');
+menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.hidden=true;
+menuBackdrop.tabIndex=-1;menuBackdrop.setAttribute('aria-label','Закрити меню');
+document.querySelector('.site-header')?.before(menuBackdrop);
+menuBackdrop.addEventListener('click',()=>{closeMenu();menuButton?.focus();});
 let menuTimer, savedScroll=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function closeMenu(){
  if(!menuButton||menuButton.getAttribute('aria-expanded')!=='true')return;
  clearTimeout(menuTimer);mobileNav.classList.remove('is-open');mobileNav.inert=true;
  menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Відкрити меню');
- document.body.classList.remove('menu-open');document.body.style.position='';document.body.style.top='';document.body.style.width='';
+ document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.hidden=true;
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=false);
  const previous=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,savedScroll);document.documentElement.style.scrollBehavior=previous;
  menuTimer=setTimeout(()=>{mobileNav.hidden=true;},reducedMotion.matches?0:340);
@@ -20,14 +35,14 @@ menuButton?.addEventListener('click',()=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
  clearTimeout(menuTimer);savedScroll=window.scrollY;mobileNav.hidden=false;mobileNav.inert=false;
  menuButton.setAttribute('aria-expanded','true');menuButton.setAttribute('aria-label','Закрити меню');document.body.classList.add('menu-open');
- document.body.style.position='fixed';document.body.style.top=`-${savedScroll}px`;document.body.style.width='100%';
+ document.documentElement.classList.add('menu-locked');menuBackdrop.hidden=false;
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=true);
  requestAnimationFrame(()=>requestAnimationFrame(()=>mobileNav.classList.add('is-open')));
 });
 mobileNav?.querySelectorAll('a').forEach((a,i)=>{a.style.setProperty('--menu-index',i);a.addEventListener('click',closeMenu);});
 document.addEventListener('keydown',event=>{
  if(event.key!=='Tab'||menuButton?.getAttribute('aria-expanded')!=='true')return;
- const items=[...document.querySelector('.header-inner').querySelectorAll('a,button,input'),...mobileNav.querySelectorAll('a')].filter(el=>el.getClientRects().length);
+ const items=[...document.querySelector('.header-inner').querySelectorAll('a,button,input'),...mobileNav.querySelectorAll('a,button,input')].filter(el=>el.getClientRects().length);
  const first=items[0],last=items.at(-1);
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}

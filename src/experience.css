@@ -109,3 +109,27 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 @media(max-width:1080px){.news-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:720px){.news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}}
 @media(max-width:480px){.news-grid{grid-template-columns:1fr}.news-grid>.news-card{height:auto}}
+
+/* Compact floating header, including safe areas in iPhone landscape mode. */
+.menu-locked{overflow:hidden}
+.menu-locked body{overflow:clip}
+.menu-backdrop{position:fixed;inset:0;z-index:19;border:0;background:#06142b24;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);touch-action:none}
+.menu-open::after{display:none}
+.menu-open main,.menu-open .footer{filter:none}
+.skip-link:not(:focus-visible){clip-path:inset(50%);width:1px;height:1px;overflow:hidden;padding:0;white-space:nowrap}
+@media(max-width:720px){
+ .site-header{position:sticky;top:max(8px,env(safe-area-inset-top));z-index:20;width:auto;margin:8px max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left));border-radius:44px;background:var(--glass);box-shadow:var(--card-shadow);overflow:visible}
+ .site-header .header-inner,.site-header.is-scrolled .header-inner{display:flex;width:100%;min-height:80px;margin:0;padding:10px 12px;gap:8px;align-items:center}
+ .site-header .brand{flex:1 1 auto;min-width:0;max-width:none;gap:7px}
+ .site-header .brand img{width:44px;height:44px;flex:0 0 44px}
+ .site-header .brand strong{font-size:.75rem;line-height:1.3;letter-spacing:-.015em;text-wrap:pretty}
+ .site-header .header-actions{flex:0 0 auto;gap:0;margin:0}
+ .site-header .header-actions>.icon-button{display:inline-flex;width:40px;height:44px;flex:0 0 40px}
+ .site-header .header-actions>.button.compact{display:none}
+ .site-header .language-toggle{font-size:.75rem}
+ .site-header .mobile-nav{position:absolute;top:calc(100% + 10px);left:0;right:0;width:100%;margin:0;padding:16px;border-radius:28px;max-height:calc(100dvh - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom));background:var(--card);box-shadow:var(--card-shadow-hover);overflow-y:auto;overscroll-behavior:contain}
+ .site-header .mobile-nav .header-search{width:100%;max-width:none;min-height:48px;margin:0 0 12px;flex-shrink:0}
+ .site-header .mobile-nav .header-search input{width:100%;min-width:0;font-size:16px}
+ .site-header .mobile-nav>a{padding:14px 12px;font-size:1rem;border-radius:14px}
+}
+@media(prefers-reduced-motion:reduce){.site-header .mobile-nav,.site-header .mobile-nav a{transition:none}}

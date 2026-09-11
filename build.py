@@ -138,6 +138,10 @@ def shell(title_text,body,path='/',description='',article=False):
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><link rel="icon" href="{LOGO}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}">{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
 def write(path,content):
+    for asset in ['styles.css','experience.css','app.js','experience.js']:
+        revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
+        content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
+    content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
     relative = unquote(path).strip('/')
     dest = OUT / relative / 'index.html' if relative else OUT / 'index.html'
     dest.parent.mkdir(parents=True,exist_ok=True)
