@@ -126,7 +126,7 @@ def header(active=''):
     student_link = next(x+'</a>' for x in items.split('</a>') if 'href="/студенту/"' in x)
     desktop = desktop.replace(student_link, f'<div class="nav-group">{student_link}<button class="nav-expand" aria-label="Навчальні ресурси" aria-expanded="false" aria-controls="study-menu">{icon("chevron")}</button><div class="nav-dropdown" id="study-menu" inert><span class="eyebrow">Для твоїх планів</span><a href="/вступнику/">Вступнику {icon("arrow")}</a><a href="/бібліотека/">Бібліотека {icon("book")}</a><a href="/документи/">Документи {icon("file")}</a>{link(SCHEDULE,"Розклад занять "+icon("calendar"))}</div></div>')
     return f'''<a class="skip-link" href="#main">Перейти до вмісту</a>
-    <header class="site-header"><div class="container header-inner"><a class="brand" href="/" aria-label="ФКБАД — головна"><img src="{LOGO}" alt="" width="54" height="48"><span><strong>ФКБАД</strong><small>Твори своє майбутнє</small></span></a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="/" aria-label="ВСП Фаховий коледж будівництва, архітектури та дизайну — головна"><img src="{LOGO}" alt="" width="96" height="72"><span><strong>ВСП «Фаховий коледж будівництва, архітектури та дизайну»</strong></span></a>
     <nav class="desktop-nav" aria-label="Головна навігація">{desktop}</nav><form class="header-search" action="/пошук/" method="get" role="search" aria-label="Пошук на сайті" autocomplete="off"><button type="submit" aria-label="Знайти">{icon("search")}</button><input type="search" name="q" aria-label="Пошуковий запит" placeholder="Пошук на сайті" required autocomplete="off"></form><div class="header-actions"><button class="icon-button theme-toggle" type="button" aria-label="Увімкнути темну тему" aria-pressed="false" title="Увімкнути темну тему"><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg></button><a class="button compact" href="/вступнику/">Вступнику {icon('external')}</a><button class="icon-button menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Відкрити меню"><span></span><span></span></button></div></div>
     <nav id="mobile-nav" class="mobile-nav container" aria-label="Мобільна навігація" hidden>{items}<a href="/вступнику/">Вступнику</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></nav></header>'''
 def footer():
@@ -156,7 +156,7 @@ def program_cards():
 def section_heading(eyebrow,heading,url='',label='Дізнатися більше'):
     return f'<div class="section-heading"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2></div>'+ (link(url,label+icon('arrow'),'text-link') if url else '')+'</div>'
 def home():
-    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну</p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">Від першого ескізу до справжніх змін.<br>Знайди свій напрям у будівництві, проєктуванні та дизайні.</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><div class="media-caption" aria-hidden="true">ФКБАД · ЖИТОМИР</div><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус ФКБАД у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
+    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span></p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">Від першого ескізу до справжніх змін.<br>Знайди свій напрям у будівництві, проєктуванні та дизайні.</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><div class="media-caption" aria-hidden="true">ФКБАД · ЖИТОМИР</div><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус ФКБАД у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
     <div class="container quick-links">{link(SCHEDULE,icon('calendar')+'<span><strong>Розклад занять</strong><small>Твій навчальний день</small></span>'+icon('external'))}{link('/вступнику/',icon('cap')+'<span><strong>Вступна кампанія 2026</strong><small>Правила, строки, документи</small></span>'+icon('arrow'))}{link('/документи/',icon('file')+'<span><strong>Документи коледжу</strong><small>Відкрито та зручно</small></span>'+icon('arrow'))}</div>
     <section class="section container">{section_heading('Навчання з перспективою','Знайди свою справу.','/спеціальності/','Усі освітні програми')}{program_cards()}<p class="program-footnote">Спеціальність G19 «Будівництво та цивільна інженерія»</p></section>
     <section class="news-section section"><div class="container">{section_heading('Події та люди','Коледж сьогодні','/новини/','Усі новини')}<div class="news-grid">{''.join(news_card(p) for p in POSTS[:3])}</div></div></section>
@@ -242,6 +242,83 @@ def sanitize(raw, page_title=''):
         wrapper = soup.new_tag('div');wrapper['class']='table-scroll';wrapper['tabindex']='0';wrapper['aria-label']='Таблиця, прокрутіть для перегляду';table.wrap(wrapper)
     # Strip invisible spacing left by the page builder while retaining original prose.
     return re.sub(r'(?:\s*<br\s*/?>){3,}','<br><br>',str(soup))
+
+def editorial_content(content):
+    """Group original prose and adjacent photos without changing their order or words."""
+    soup = BeautifulSoup(content, 'html.parser')
+    original_text = ''.join(soup.stripped_strings)
+    original_images = [i.get('src') for i in soup.select('img')]
+    for node in list(soup.contents):
+        if not getattr(node, 'name', None) and str(node).strip():
+            block = soup.new_tag('p')
+            node.wrap(block)
+    # Existing line breaks are natural paragraph boundaries in legacy posts.
+    for paragraph in list(soup.find_all('p')):
+        if paragraph.find(['img', 'video', 'audio']):
+            continue
+        if not paragraph.find(True) and len(paragraph.get_text()) > 900:
+            sentences = re.split(r'(?<=[.!?…])\s+(?=[А-ЯІЇЄҐA-Z«])', paragraph.get_text())
+            chunk = ''
+            for sentence in sentences:
+                chunk += (' ' if chunk else '') + sentence
+                if len(chunk) >= 420:
+                    block = soup.new_tag('p')
+                    block.string = chunk
+                    paragraph.insert_before(block)
+                    chunk = ''
+            if chunk:
+                block = soup.new_tag('p')
+                block.string = chunk
+                paragraph.insert_before(block)
+            paragraph.decompose()
+            continue
+        if paragraph.find('br'):
+            fragments = re.split(r'(?:\s*<br\s*/?>\s*){2,}', paragraph.decode_contents())
+            if len(fragments) > 1:
+                for fragment in fragments:
+                    block = soup.new_tag('p')
+                    block.extend(list(BeautifulSoup(fragment, 'html.parser').contents))
+                    paragraph.insert_before(block)
+                paragraph.decompose()
+    result = soup.new_tag('div', attrs={'class': 'editorial-flow'})
+    current = None
+    kind = None
+    length = 0
+    lead_used = False
+    for node in list(soup.contents):
+        if not getattr(node, 'name', None):
+            if not str(node).strip():
+                continue
+            paragraph = soup.new_tag('p')
+            paragraph.append(node.extract())
+            node = paragraph
+        media = (node.name in ('img', 'video', 'audio', 'figure') or
+                 (node.find(['img', 'video', 'audio']) and not node.get_text(strip=True)))
+        next_kind = 'media' if media else 'text'
+        heading = node.name in ('h2', 'h3', 'h4', 'h5', 'h6')
+        if current is None or next_kind != kind or (next_kind == 'text' and ((length > 1100 and node.name in ('p', 'ul', 'ol', 'blockquote')) or heading)):
+            current = soup.new_tag('div', attrs={'class': 'editorial-gallery' if media else 'editorial-section'})
+            result.append(current)
+            kind = next_kind
+            length = 0
+        if not media and node.name == 'p' and not lead_used and len(node.get_text(strip=True)) > 80:
+            if len(node.get_text(strip=True)) < 650:
+                node['class'] = 'article-introduction'
+            lead_used = True
+        if media:
+            frame = soup.new_tag('div', attrs={'class': 'editorial-photo'})
+            frame.append(node.extract())
+            current.append(frame)
+        else:
+            current.append(node.extract())
+        length += len(node.get_text())
+    # Fail the build if presentation ever drops or reorders text or photographs.
+    assert re.sub(r'\s+', '', ''.join(result.stripped_strings)) == re.sub(r'\s+', '', original_text)
+    assert [i.get('src') for i in result.select('img')] == original_images
+    for gallery in result.select('.editorial-gallery'):
+        gallery['class'].append('single-photo' if len(gallery.contents) == 1 else 'photo-grid')
+    return str(result)
+
 
 def sidebar(active=''):
     items=[('/вступнику/','Вступнику'),('/студенту/','Студенту'),('/спеціальності/','Спеціальності'),('/документи/','Документи'),('/про-коледж/','Про коледж'),('/контакти/','Контакти')]
@@ -347,7 +424,7 @@ for p in POSTS:
     # Avoid duplicating a featured photograph already present in the article.
     image=f'<img class="article-hero" src="{hero}" alt="{escape(t,quote=True)}" width="1200" height="760">' if hero and hero not in content else ''
     others=[x for x in POSTS if x['id']!=p['id']][:3]
-    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>Життя коледжу</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{content}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
+    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>Життя коледжу</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
 
 # Preserve original important WordPress page paths with static forwarding pages.
