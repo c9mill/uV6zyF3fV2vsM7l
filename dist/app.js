@@ -1,3 +1,5 @@
+const actions=document.querySelector('.header-actions');
+if(actions&&!actions.querySelector('.language-toggle')){const languageButton=document.createElement('button');languageButton.className='icon-button language-toggle';languageButton.type='button';languageButton.textContent='EN';languageButton.title='English';languageButton.setAttribute('aria-label','Перекласти сайт англійською');languageButton.addEventListener('click',()=>{window.location.href=`https://translate.google.com/translate?sl=uk&tl=en&u=${encodeURIComponent(window.location.href)}`});actions.insertBefore(languageButton,actions.firstElementChild)}
 const menuButton=document.querySelector('.menu-toggle');
 const mobileNav=document.querySelector('#mobile-nav');
 let menuTimer, savedScroll=0;
