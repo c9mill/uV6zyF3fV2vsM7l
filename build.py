@@ -18,6 +18,7 @@ POSTS = sorted(read('backend/posts.json'), key=lambda x:x['date'], reverse=True)
 MEDIA = {x['id']:x for x in read('backend/media.json')}
 MANIFEST = read('media_manifest.json')
 MENUS = read('menus.json')[0]['tree']
+NAVIGATION = json.loads((ROOT/'src/navigation.json').read_text(encoding='utf-8'))
 BY_ID = {p['id']:p for p in PAGES + POSTS}
 NAME = 'Фаховий коледж будівництва, архітектури та дизайну'
 FULL_NAME = NAME + ' Поліського національного університету'
@@ -166,6 +167,21 @@ if logo_file and logo_file.is_file():
             logo_image = logo_image.crop(alpha_box).resize((192, 192), Image.Resampling.LANCZOS)
         logo_image.save(OUT / FAVICON.lstrip('/'), 'WEBP', quality=94, method=6)
 
+def full_navigation(items, active=''):
+    overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
+    result = ''
+    for item in items:
+        label = item['label']
+        url = overview.get(label.upper(), item.get('url'))
+        if url == '#': url = None
+        children = item.get('children', [])
+        if children:
+            intro = link(url, 'Огляд розділу') if url else ''
+            result += '<details class="navigation-group"><summary>'+escape(label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active)+'</div></details>'
+        elif url:
+            result += link(url, escape(label), 'navigation-link')
+    return result
+
 def header(active=''):
     nav = [('/про-коледж/','Про коледж'),('/спеціальності/','Спеціальності'),('/студенту/','Студенту'),(SCHEDULE,'Розклад'),('/новини/','Новини'),('/контакти/','Контакти')]
     items = ''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{t}</a>' for u,t in nav)
@@ -176,7 +192,7 @@ def header(active=''):
     return f'''<a class="skip-link" href="#main">Перейти до вмісту</a>
     <header class="site-header"><div class="container header-inner"><a class="brand" href="/" aria-label="{ABBR} — головна"><img src="{LOGO}" alt="" width="96" height="72"><span><strong>{ABBR}</strong></span></a>
     <nav class="desktop-nav" aria-label="Головна навігація">{desktop}</nav>{search}<div class="header-actions"><button class="icon-button theme-toggle" type="button" aria-label="Увімкнути темну тему" aria-pressed="false" title="Увімкнути темну тему"><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg></button><a class="button compact" href="/вступнику/">Вступнику {icon('external')}</a><button class="icon-button menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Відкрити меню"><span></span><span></span></button></div></div>
-    <nav id="mobile-nav" class="mobile-nav container" aria-label="Мобільна навігація" hidden>{search}{items}<a href="/вступнику/">Вступнику</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></nav></header>'''
+    <nav id="mobile-nav" class="mobile-nav container" aria-label="Головна навігація" hidden>{search}<div class="navigation-tree">{full_navigation(NAVIGATION,active)}<div class="navigation-shortcuts"><a href="/спеціальності/">Спеціальності</a><a href="/розклад/">Розклад занять</a><a href="/контакти/">Контакти</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></div></div></nav></header>'''
 def footer():
     return f'''<footer class="footer"><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials"><a href="https://www.facebook.com/FKBAD" target="_blank" rel="noopener noreferrer">Фейсбук ↗</a><a href="https://t.me/FKBAD_PNY" target="_blank" rel="noopener noreferrer">Телеграм ↗</a><a href="https://www.instagram.com/fkbad_" target="_blank" rel="noopener noreferrer">Інстаграм ↗</a></div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>10029, м. Житомир<br>вул. Степана Бандери, 6</p><a href="tel:+380412472847">(0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a></div></div><div class="container footer-signature" aria-hidden="true">Твори майбутнє</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><span>Освіта, що створює майбутнє.</span></div></footer>'''
 THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'})()"

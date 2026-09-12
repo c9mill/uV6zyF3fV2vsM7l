@@ -132,3 +132,20 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .program-deck>.program-card.card-reveal-target,.program-deck>.news-card.card-reveal-target,.card-reveal-target{opacity:0!important;transform:translate3d(0,20px,0) scale(.99)!important;filter:none!important}
  .program-deck>.program-card.card-reveal-visible,.program-deck>.news-card.card-reveal-visible,.card-reveal-visible{opacity:1!important;transform:none!important;animation:card-reveal-in 620ms cubic-bezier(.22,1,.36,1) both!important;filter:none!important}
 }
+
+/* Complete institutional navigation, shared by desktop and touch screens. */
+.site-header .mobile-nav{overflow-y:auto;max-height:calc(100dvh - 140px);overscroll-behavior:contain}
+.navigation-tree{display:flex;flex-direction:column;gap:4px;text-align:left}
+.navigation-tree a,.navigation-tree summary{display:block;padding:12px 14px;color:var(--ink);font-size:.9rem;line-height:1.45;border-radius:12px;overflow-wrap:anywhere;text-decoration:none}
+.navigation-tree summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;font-weight:650}
+.navigation-tree summary::-webkit-details-marker{display:none}
+.navigation-tree summary:after{content:'+';font-size:1.25rem;flex:none;color:var(--accent)}
+.navigation-tree details[open]>summary:after{content:'−'}
+.navigation-tree a:hover,.navigation-tree summary:hover,.navigation-tree details[open]>summary{background:var(--blue-soft)}
+.navigation-tree a:focus-visible,.navigation-tree summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.navigation-children{margin-left:12px;padding:4px 0 8px 8px}
+.navigation-children a,.navigation-children summary{font-size:.85rem}
+.navigation-shortcuts{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px;padding-top:8px}
+@media(max-width:720px){.navigation-tree a,.navigation-tree summary{min-height:44px;padding:12px 10px}.navigation-children{margin-left:6px;padding-left:6px}}
+
+.site-header .mobile-nav .navigation-tree a{opacity:1;transform:none;transition-delay:0ms}
