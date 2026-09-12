@@ -12,3 +12,4 @@
 .schedule-week td:hover{background:color-mix(in srgb,var(--surface) 88%,var(--card));box-shadow:none}
 .schedule-lesson{background:color-mix(in srgb,var(--lesson-color) 13%,var(--surface));box-shadow:none}
 @media(min-width:901px) and (max-width:1240px){.schedule-heading{display:block}.schedule-modes{grid-column:auto;width:min(310px,100%);margin:20px auto 0}}
+.alphabet-index.group-index{min-height:124px;align-self:start}
