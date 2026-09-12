@@ -177,6 +177,21 @@ document.querySelectorAll('.header-search input').forEach(input=>startTypewriter
 startTypewriter(document.querySelector('#site-query'),['Наприклад, розклад…','Знайди новину або документ']);
 startTypewriter(document.querySelector('#news-query'),['Пошук у новинах…','Знайди подію або досягнення']);
 
+// Reveal real headings letter by letter when they enter the viewport.
+function prepareLetterReveal(element){
+ if(!element||element.dataset.letterReveal||!element.textContent.trim())return;
+ const text=element.textContent;element.setAttribute('aria-label',text);
+ const fragment=document.createDocumentFragment();[...text].forEach((character,index)=>{
+  const letter=document.createElement('span');letter.className='reveal-letter';letter.setAttribute('aria-hidden','true');letter.style.setProperty('--letter-index',index);letter.textContent=character===' '?'\u00a0':character;fragment.append(letter);
+ });
+ element.replaceChildren(fragment);
+}
+const letterTargets=[...document.querySelectorAll('.hero-word,.page-heading h1,.section-heading h2')];
+if('IntersectionObserver' in window){
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){const element=entry.target;prepareLetterReveal(element);element.dataset.letterReveal='active';observer.unobserve(element);}}),{threshold:.15});
+ letterTargets.forEach(element=>observer.observe(element));
+}else letterTargets.forEach(prepareLetterReveal);
+
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
  const status=document.querySelector('.share-status');
  try{if(navigator.share){await navigator.share({title:document.title,url:location.href});}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);status.textContent='Посилання скопійовано';}else{status.textContent='Скопіюй посилання з адресного рядка.';}}catch(error){if(error.name!=='AbortError')status.textContent='Скопіюй посилання з адресного рядка.';}
