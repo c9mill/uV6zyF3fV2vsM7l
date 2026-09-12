@@ -142,18 +142,18 @@ if(siteSearch){
 
 const newsForm=document.querySelector('#news-filter');
 if(newsForm){
- const input=document.querySelector('#news-query'),year=document.querySelector('#news-year'),results=document.querySelector('#news-results'),status=document.querySelector('#news-status'),pagination=document.querySelector('#news-pagination');
+ const input=document.querySelector('#news-query'),results=document.querySelector('#news-results'),status=document.querySelector('#news-status'),pagination=document.querySelector('#news-pagination');
  const original={html:results.innerHTML,status:status.textContent};let request=0;
  async function filterNews(){
-  const id=++request,q=input.value.trim(),y=year.value;
-  if(!q&&!y){results.innerHTML=original.html;status.textContent=original.status;pagination.hidden=false;document.querySelector('#news-more')?.remove();return;}
+  const id=++request,q=input.value.trim();
+  if(!q){results.innerHTML=original.html;status.textContent=original.status;pagination.hidden=false;document.querySelector('#news-more')?.remove();return;}
   status.textContent='Шукаємо новини…';
-  try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&(!y||r.iso.startsWith(y))&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова або обери всі роки.';
+  try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
    function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><a class="news-image" href="${escapeHTML(r.url)}">${r.image?`<img src="${escapeHTML(r.image)}" alt="${escapeHTML(r.title)}" width="640" height="430" loading="lazy">`:'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</a><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
- newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});year.addEventListener('change',filterNews);input.addEventListener('input',debounce(filterNews,250));
+ newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',debounce(filterNews,250));
 }
 
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
