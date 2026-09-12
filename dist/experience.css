@@ -246,3 +246,6 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .location-photo.panorama-frame>.map-consent-panel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:15px;padding:clamp(25px,5vw,54px);background:linear-gradient(145deg,color-mix(in srgb,var(--card) 96%,transparent),color-mix(in srgb,var(--blue-soft) 82%,var(--card)));color:var(--ink)}
 .map-consent-panel>.contact-icon{position:static;color:var(--accent)}.map-consent-panel h2{font-size:clamp(1.55rem,3vw,2.25rem)}.map-consent-panel p{max-width:560px;color:var(--muted);line-height:1.65}.map-consent-panel>a{color:var(--accent);font-size:.82rem}
 @media(max-width:720px){.footer-bottom{align-items:flex-start}.legal-links{justify-content:flex-start}.legal-policy{padding:24px 20px;border-radius:22px}.location-photo.panorama-frame>.map-consent-panel{padding:26px 22px}.map-consent-panel .button{font-size:.82rem}}
+@keyframes search-item-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.search-result,.news-card{animation:search-item-in 360ms var(--ease) both}
+@media(prefers-reduced-motion:reduce){.search-result,.news-card{animation:none}}

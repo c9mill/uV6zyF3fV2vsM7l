@@ -141,7 +141,7 @@ if(siteSearch){
    let shown=0;function renderMore(){const batch=found.slice(shown,shown+20);results.insertAdjacentHTML('beforeend',batch.map(r=>`<article class="search-result"><small>${escapeHTML(r.type)}${r.type==='Новина'?' · '+escapeHTML(r.date):''}</small><h2><a href="${escapeHTML(r.url)}"${externalAttrs(r.url)}>${escapeHTML(r.title)}${r.url.startsWith('http')?' ↗':''}</a></h2><p>${escapeHTML((r.text||'').slice(0,220))}${r.text?.length>220?'…':''}</p></article>`).join(''));shown+=batch.length;if(shown<found.length)moreButton(results,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити пошук. Перевір з’єднання та натисни «Знайти» ще раз.';}
  }
- siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});type.addEventListener('change',()=>search());if(input.value)search(false);
+ siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});type.addEventListener('change',()=>search());input.addEventListener('input',()=>search());if(input.value)search(false);
 }
 
 const newsForm=document.querySelector('#news-filter');
@@ -157,8 +157,25 @@ if(newsForm){
    function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><a class="news-image" href="${escapeHTML(r.url)}">${r.image?`<img src="${escapeHTML(r.image)}" alt="${escapeHTML(r.title)}" width="640" height="430" loading="lazy">`:'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</a><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
- newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',debounce(filterNews,250));
+ newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
 }
+
+// Original typewriter treatment for empty search fields: type, pause, then erase.
+function startTypewriter(input,phrases){
+ if(!input||input.value)return;
+ const fallback=input.placeholder;let phrase=0,position=0,deleting=false,stopped=false,timer;
+ const stop=()=>{stopped=true;clearTimeout(timer);input.placeholder=fallback;};
+ const resume=()=>{if(input.value)return;stopped=false;position=0;deleting=false;tick();};
+ input.addEventListener('focus',stop);input.addEventListener('input',stop);input.addEventListener('blur',resume);
+ function tick(){if(stopped||input.value)return;const text=phrases[phrase];position+=deleting?-1:1;input.placeholder=text.slice(0,position);let delay=deleting?38:72;
+  if(!deleting&&position>=text.length){deleting=true;delay=1450;}else if(deleting&&position<=0){deleting=false;phrase=(phrase+1)%phrases.length;delay=280;}
+  timer=setTimeout(tick,delay);
+ }
+ tick();
+}
+document.querySelectorAll('.header-search input').forEach(input=>startTypewriter(input,['Пошук на сайті','Знайди потрібний розділ','Наприклад, розклад…']));
+startTypewriter(document.querySelector('#site-query'),['Наприклад, розклад…','Знайди новину або документ']);
+startTypewriter(document.querySelector('#news-query'),['Пошук у новинах…','Знайди подію або досягнення']);
 
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
  const status=document.querySelector('.share-status');
