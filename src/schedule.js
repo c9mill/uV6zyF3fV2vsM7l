@@ -114,7 +114,7 @@
       else { el('status').textContent = error.message; el('table').innerHTML = '<p class="schedule-empty">Натисніть «Оновити», щоб спробувати знову, або відкрийте джерело нижче.</p>'; }
     } finally { if (current === generation) { el('table').setAttribute('aria-busy', 'false'); el('refresh').disabled = false; } }
   }
-  function openPicker() { if (!window.matchMedia('(max-width: 720px)').matches) return; el('selector').classList.add('is-open'); el('picker-backdrop').hidden = false; document.body.classList.add('schedule-sheet-open'); }
+  function openPicker() { if (!window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches) return; el('selector').classList.add('is-open'); el('picker-backdrop').hidden = false; document.body.classList.add('schedule-sheet-open'); }
   function closePicker() { el('selector').classList.remove('is-open'); el('picker-backdrop').hidden = true; document.body.classList.remove('schedule-sheet-open'); }
   async function boot() {
     el('refresh').disabled = true; el('status').textContent = 'Отримуємо групи й викладачів…';
