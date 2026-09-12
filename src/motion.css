@@ -34,7 +34,7 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 90s ease-in-out infinite alternate;will-change:transform}
  .site-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--canvas)!important}
  .hero-note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- .home-page .hero-copy>*,.home-page .hero-visual,.page-heading h1,.page-lead,.schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table{animation:none!important}
+ .page-heading h1,.page-lead,.schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table{animation:none!important}
  .motion-pending,.motion-enter{opacity:1!important;translate:none!important;animation:none!important;clip-path:none!important}
  .hero-photo{transform:none!important;transition:none!important}
  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}

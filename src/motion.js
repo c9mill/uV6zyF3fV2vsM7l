@@ -184,15 +184,20 @@
     for(const deck of decks){
       if(!deck.visible)continue;
       const {grid,cards,heading}=deck,rect=grid.getBoundingClientRect();
+      const mobile=innerWidth<=720;
       const center=rect.top+rect.height/2;
       const distance=Math.abs(center-innerHeight*.53);
-      const spread=reduced.matches?1:(grid.contains(document.activeElement) ? .95 : Math.max(0,Math.min(.95,(innerHeight*.68-distance)/(innerHeight*.43))));
+      const enter=Math.max(0,Math.min(1,(innerHeight*.96-rect.top)/(innerHeight*.24)));
+      const leave=Math.max(0,Math.min(1,(rect.bottom-innerHeight*.04)/(innerHeight*.24)));
+      const viewportSpread=mobile ? .95*Math.min(enter,leave) : Math.max(0,Math.min(.95,(innerHeight*.68-distance)/(innerHeight*.43)));
+      const spread=reduced.matches?1:(grid.contains(document.activeElement) ? .95 : viewportSpread);
       const fold=1-spread;
       cards.forEach((card,i)=>{
-        const x=(grid.clientWidth/2-card.offsetLeft-card.offsetWidth/2)*fold;
-        const y=(grid.clientHeight/2-card.offsetTop-card.offsetHeight/2+(i-1)*9)*fold;
-        card.style.transform=`translate3d(${x}px,${y}px,0) rotate(${(i-1)*9*fold}deg) scale(${1-fold*.08})`;
-        card.style.zIndex=String(i===1?3:i+1);
+        const x=mobile?(i-(cards.length-1)/2)*4*fold:(grid.clientWidth/2-card.offsetLeft-card.offsetWidth/2)*fold;
+        const y=mobile?((cards[0]?.offsetTop||0)+i*12-card.offsetTop)*fold:(grid.clientHeight/2-card.offsetTop-card.offsetHeight/2+(i-1)*9)*fold;
+        const angle=(i-(cards.length-1)/2)*(mobile?3:9)*fold;
+        card.style.transform=`translate3d(${x}px,${y}px,0) rotate(${angle}deg) scale(${1-fold*.08})`;
+        card.style.zIndex=String(mobile?cards.length-i:(i===1?3:i+1));
       });
       if(heading){
         heading.style.transform=`translate3d(0,${fold*26}px,0) scale(${1-fold*.055})`;
