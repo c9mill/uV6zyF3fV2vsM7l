@@ -13,10 +13,10 @@
   document.body.append(cursor);
 
   function syncScroll(){
-    if(reduced.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
+    if(reduced.matches||!pointer.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
     if(!scroll&&window.Lenis){
       scroll=new Lenis({
-        autoRaf:true, lerp:.085, smoothWheel:true, syncTouch:true, syncTouchLerp:.085,
+        autoRaf:true, lerp:.085, smoothWheel:true, syncTouch:false,
         anchors:{offset:-120},
         prevent:node=>node.matches?.('.mobile-nav,.schedule-picker,textarea,select,[data-lenis-prevent]'),
         virtualScroll:({event,deltaX,deltaY})=>!event.shiftKey&&Math.abs(deltaX)<=Math.abs(deltaY),
@@ -44,7 +44,7 @@
     el.addEventListener('animationend',finish);
   }
   function register(container=document){
-    if(reduced.matches)return;
+    if(reduced.matches||!pointer.matches)return;
     for(const [selector,kind] of families){
       const elements=[...(container.matches?.(selector)?[container]:[]),...container.querySelectorAll(selector)];
       for(const el of elements){
@@ -70,7 +70,7 @@
   function setupMotion(){
     syncScroll();
     root.classList.toggle('motion-enabled',!reduced.matches);
-    if(reduced.matches){showAll();resetPointer();hero?.style.removeProperty('--scroll-drift');return;}
+    if(reduced.matches||!pointer.matches){showAll();resetPointer();hero?.style.removeProperty('--scroll-drift');return;}
     revealObserver?.disconnect();mediaObserver?.disconnect();
     revealObserver=new IntersectionObserver(entries=>{
       for(const entry of entries)if(entry.isIntersecting){reveal(entry.target);revealObserver.unobserve(entry.target);}
@@ -109,7 +109,7 @@
       else{el.dataset.motionParallax='';el.style.setProperty('--media-drift',`${progress*12}px`);}
     }
   }
-  function requestScrollFrame(){if(!scrollFrame)scrollFrame=requestAnimationFrame(updateParallax);}
+  function requestScrollFrame(){if(pointer.matches&&!reduced.matches&&!scrollFrame)scrollFrame=requestAnimationFrame(updateParallax);}
   window.addEventListener('scroll',requestScrollFrame,{passive:true});
   window.addEventListener('resize',requestScrollFrame,{passive:true});
 
@@ -162,7 +162,7 @@
   document.addEventListener('pointerdown',()=>cursor.classList.add('is-pressed'),{passive:true});
   document.addEventListener('pointerup',()=>cursor.classList.remove('is-pressed'),{passive:true});
   window.addEventListener('blur',resetPointer);
-  pointer.addEventListener('change',()=>{resetPointer();requestScrollFrame();});
+  pointer.addEventListener('change',()=>{resetPointer();setupMotion();requestScrollFrame();});
   reduced.addEventListener('change',setupMotion);
   window.addEventListener('beforeprint',()=>{printing=true;showAll();resetPointer();scroll?.stop();});
   window.addEventListener('afterprint',()=>{printing=false;syncScroll();});

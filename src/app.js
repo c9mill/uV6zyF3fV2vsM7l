@@ -7,7 +7,13 @@ if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/uk$/.test(cookie
 }
 const translateRoot=document.createElement('div');translateRoot.id='google_translate_element';translateRoot.hidden=true;document.body.appendChild(translateRoot);
 window.googleTranslateElementInit=()=>new google.translate.TranslateElement({pageLanguage:'uk',includedLanguages:'uk,en',autoDisplay:false},'google_translate_element');
-const translateScript=document.createElement('script');translateScript.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';translateScript.async=true;document.head.appendChild(translateScript);
+let translateScript;
+function loadTranslator(){
+ if(translateScript)return;
+ translateScript=document.createElement('script');translateScript.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';translateScript.async=true;document.head.appendChild(translateScript);
+}
+// Ukrainian pages do not need to download and initialize the translation engine.
+if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/en$/.test(cookie.trim())))loadTranslator();
 if(actions&&!actions.querySelector('.language-toggle')){
   const languageButton=document.createElement('button');
   languageButton.className='icon-button language-toggle notranslate';
@@ -34,6 +40,7 @@ if(actions&&!actions.querySelector('.language-toggle')){
     languageButton.disabled=true;
     try{
       if(english){
+        loadTranslator();
         const select=await waitForControl(()=>document.querySelector('.goog-te-combo option[value="en"]')?.parentElement);
         select.value='en';
         select.dispatchEvent(new Event('change'));

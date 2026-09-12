@@ -4,6 +4,19 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:clip}
 .lenis [data-lenis-prevent]{overscroll-behavior:contain}
 .motion-cursor{display:none}
+/* Touch devices use the browser's native scrolling and a lighter static backdrop. */
+@media(hover:none),(pointer:coarse){
+ html{scroll-behavior:auto}
+ body:before,body:after{animation:none!important;will-change:auto;inset:0;transform:none}
+ .cosmic-dust{animation:none!important;transform:none}
+ .cosmic-nebula{filter:none}
+ .site-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--canvas)!important}
+ .hero-note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .home-page .hero-copy>*,.home-page .hero-visual,.page-heading h1,.page-lead,.schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table{animation:none!important}
+ .motion-pending,.motion-enter{opacity:1!important;translate:none!important;animation:none!important;clip-path:none!important}
+ .hero-photo{transform:none!important;transition:none!important}
+ ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+}
 /* One window transition at every width, anchored to the menu button. */
 .site-header .mobile-nav{opacity:0;transform:translate3d(0,-14px,0) scale(.92);transform-origin:calc(100% - 32px) 0;transition:opacity 300ms ease,transform 520ms cubic-bezier(.22,1,.36,1);pointer-events:none}
 .site-header .mobile-nav.is-open{opacity:1;transform:translate3d(0,0,0) scale(1);pointer-events:auto}
