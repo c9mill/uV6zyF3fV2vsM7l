@@ -157,6 +157,7 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 :is(.about-intro,.admission-intro,.location-photo)>img.campus-anniversary{width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:16/9;align-self:center;border-radius:24px}
 .location-photo:has(>.campus-anniversary){min-height:0;align-self:center;border-radius:24px;background:var(--card)}
 .location-photo:has(>.campus-anniversary)>div{position:static;margin:0;padding:20px 24px;background:var(--card);color:var(--ink)}
+.home-page .hero-visual .hero-note{top:clamp(18px,2vw,28px);right:clamp(18px,2vw,28px);bottom:auto}
 @media(max-width:1000px){
  .hero-visual:has(>.campus-anniversary){grid-template-columns:1fr}
  .hero-visual:has(>.campus-anniversary) .hero-note{grid-column:1;grid-row:4;margin:0 20px 20px}
