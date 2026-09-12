@@ -103,22 +103,28 @@ main .schedule-mobile-lesson{border-radius:12px;transition:background-color 250m
 main .schedule-mobile-lesson:active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
 @media(max-width:720px){main .table-scroll :is(th,td){padding:13px 14px;font-size:.875rem;min-width:120px}}
 @media print{main .table-scroll,main .schedule-table-scroll{overflow:visible;box-shadow:none;background:none}main .table-scroll :is(th,td){background:none;color:#000}}
-.cosmic-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:.38}
+.cosmic-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:.56}
 .location-photo.panorama-frame{min-height:480px;background:var(--card);box-shadow:var(--card-shadow);isolation:isolate}
 .location-photo.panorama-frame>iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:var(--card)}
 .location-photo.panorama-frame>div{z-index:2;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:#142332d9}
 @media(max-width:720px){.location-photo.panorama-frame{min-height:360px}}
 @media(prefers-reduced-motion:reduce){.location-photo.panorama-frame>iframe{scroll-behavior:auto}}
 .cosmic-backdrop>div{position:absolute;inset:-5%;pointer-events:none}
-.cosmic-nebula{background:radial-gradient(ellipse at 72% 28%,#a8c6ef16,transparent 48%),radial-gradient(ellipse at 42% 53%,#80b8c629,transparent 47%),linear-gradient(151deg,transparent 22%,#83aeca09 33%,#c7dbe724 43%,#a6c3d71c 48%,#1539680a 53%,#8caaca15 60%,transparent 75%);filter:blur(18px);animation:cosmic-nebula-breathe 44s ease-in-out infinite alternate}
-.cosmic-dust{background:url('/cosmos.svg') center/cover no-repeat;opacity:.85;animation:cosmic-drift 105s ease-in-out infinite alternate}
+.cosmic-nebula{background:radial-gradient(ellipse at 72% 28%,#c5dcff38,transparent 45%),radial-gradient(ellipse at 42% 53%,#80dce04a,transparent 44%),linear-gradient(151deg,transparent 18%,#83c8e51f 31%,#edf7ff52 43%,#a6dcec38 49%,#24549d20 55%,#9ddae42d 63%,transparent 78%);filter:blur(16px);animation:cosmic-nebula-breathe 26s ease-in-out infinite alternate}
+.cosmic-dust{background:url('/cosmos.svg') center/cover no-repeat;opacity:.9;animation:cosmic-drift 58s ease-in-out infinite alternate}
 .cosmic-glints{background-image:radial-gradient(circle at 18% 65%,#d2e4eea0 0 .55px,transparent 1.8px),radial-gradient(circle at 43% 52%,#e9e1f09c 0 .6px,transparent 2px),radial-gradient(circle at 66% 39%,#c6e6ea99 0 .5px,transparent 1.7px),radial-gradient(circle at 82% 25%,#e3ebfa80 0 .65px,transparent 2px),radial-gradient(circle at 55% 47%,#c4dfeb90 0 .5px,transparent 1.8px),radial-gradient(circle at 32% 59%,#ebf0ef80 0 .45px,transparent 1.6px);opacity:.28;animation:cosmic-shimmer 19s ease-in-out infinite alternate}
 [data-theme="dark"] .cosmic-backdrop{opacity:.9}
-[data-theme="dark"] .cosmic-nebula{background:radial-gradient(ellipse at 76% 18%,#06152e45,transparent 57%),radial-gradient(ellipse at 28% 78%,#09192d30,transparent 56%),linear-gradient(151deg,transparent 22%,#82aec80b 33%,#b8d2e21e 43%,#849eb31c 48%,#04142d24 53%,#7ea8b415 60%,transparent 75%)}
-@keyframes cosmic-drift{from{transform:translate3d(-8px,5px,0);opacity:.75}to{transform:translate3d(14px,-9px,0);opacity:.95}}
-@keyframes cosmic-nebula-breathe{from{transform:translate3d(-1.5%,-1%,0) scale(1.01);opacity:.72}to{transform:translate3d(2%,1.5%,0) scale(1.07);opacity:1}}
+[data-theme="dark"] .cosmic-nebula{background:radial-gradient(ellipse at 76% 18%,#477fd154,transparent 48%),radial-gradient(ellipse at 28% 78%,#24aeb147,transparent 49%),linear-gradient(151deg,transparent 18%,#72c1dd24 31%,#dff4ff4d 43%,#91cde342 49%,#0c34715c 56%,#72cfd23b 64%,transparent 79%)}
+.shooting-star{--flight-x:-58vw;--flight-y:44vh;position:absolute;z-index:2;width:clamp(110px,13vw,210px);height:2px;border-radius:99px;opacity:0;pointer-events:none;background:linear-gradient(90deg,transparent 0%,#9ed8ff55 42%,#eaf8ff 88%,#fff 100%);box-shadow:0 0 7px #bce8ff,0 0 18px #64b8ff99;transform:translate3d(0,0,0) rotate(-34deg);transform-origin:right center;will-change:transform,opacity;animation:star-flight 9s linear infinite}
+.shooting-star:after{content:"";position:absolute;right:-2px;top:50%;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 8px 3px #d9f3ff;transform:translateY(-50%)}
+.star-one{top:10%;left:88%;animation-delay:-1.5s;animation-duration:8.5s}
+.star-two{top:33%;left:104%;--flight-x:-76vw;--flight-y:57vh;animation-delay:-6.2s;animation-duration:12.5s;scale:.72}
+.star-three{top:-4%;left:63%;--flight-x:-44vw;--flight-y:38vh;animation-delay:-9.1s;animation-duration:15s;scale:.48}
+@keyframes cosmic-drift{from{transform:translate3d(-3%,3%,0) scale(1.02);opacity:.72}to{transform:translate3d(4%,-4%,0) scale(1.1);opacity:1}}
+@keyframes cosmic-nebula-breathe{0%{transform:translate3d(-3%,-2%,0) scale(1.02);opacity:.72}55%{opacity:1}100%{transform:translate3d(4%,3%,0) scale(1.12);opacity:.9}}
 @keyframes cosmic-shimmer{0%{opacity:.14;transform:translate3d(-3px,2px,0) scale(.995)}45%{opacity:.42}100%{opacity:.24;transform:translate3d(5px,-4px,0) scale(1.012)}}
-@media(prefers-reduced-motion:reduce){.cosmic-nebula,.cosmic-dust,.cosmic-glints{animation:none!important}}
+@keyframes star-flight{0%,66%{opacity:0;transform:translate3d(0,0,0) rotate(-34deg)}68%{opacity:0}70%{opacity:1}82%{opacity:.95}94%,100%{opacity:0;transform:translate3d(var(--flight-x),var(--flight-y),0) rotate(-34deg)}}
+@media(prefers-reduced-motion:reduce){.cosmic-nebula,.cosmic-dust,.cosmic-glints,.shooting-star{animation:none!important}}
 @media print{.cosmic-backdrop{display:none}}
 body{isolation:isolate;position:relative}
 body:before,body:after{content:"";position:fixed;inset:-18vh -15vw;z-index:-1;pointer-events:none;will-change:transform;background-repeat:no-repeat}
