@@ -236,3 +236,13 @@ img.campus-anniversary{object-fit:contain;object-position:center}
  .hero-visual:has(>.campus-anniversary) .hero-note{grid-column:1;grid-row:4;margin:0 20px 20px}
  .hero-visual:has(>.campus-anniversary) .photo-label{margin:20px}
 }
+.legal-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px 20px}
+.footer .legal-links a{color:#bdc8d5;font-size:.75rem}.footer .legal-links a:hover{color:#fff}
+.legal-page{max-width:980px}.legal-policy{max-width:none;padding:clamp(24px,4vw,48px);border-radius:28px;background:color-mix(in srgb,var(--card) 92%,transparent);box-shadow:var(--card-shadow)}
+.legal-policy h2{margin-top:1.7em}.legal-policy h2:first-of-type{margin-top:1.1em}.legal-policy li{margin-bottom:12px}.legal-policy code{font-size:.88em;overflow-wrap:anywhere}.legal-updated{padding-bottom:20px;border-bottom:1px solid color-mix(in srgb,var(--muted) 18%,transparent)}
+.legal-action-status{min-height:1.5em;margin-top:14px;color:var(--accent)}
+.form-privacy-note{margin-top:16px;font-size:.82rem!important;line-height:1.65}.form-privacy-note a{display:inline!important;font-size:inherit!important;color:var(--accent)}
+.map-consent{display:grid;place-items:center;background:color-mix(in srgb,var(--card) 88%,var(--blue-soft))}
+.location-photo.panorama-frame>.map-consent-panel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:15px;padding:clamp(25px,5vw,54px);background:linear-gradient(145deg,color-mix(in srgb,var(--card) 96%,transparent),color-mix(in srgb,var(--blue-soft) 82%,var(--card)));color:var(--ink)}
+.map-consent-panel>.contact-icon{position:static;color:var(--accent)}.map-consent-panel h2{font-size:clamp(1.55rem,3vw,2.25rem)}.map-consent-panel p{max-width:560px;color:var(--muted);line-height:1.65}.map-consent-panel>a{color:var(--accent);font-size:.82rem}
+@media(max-width:720px){.footer-bottom{align-items:flex-start}.legal-links{justify-content:flex-start}.legal-policy{padding:24px 20px;border-radius:22px}.location-photo.panorama-frame>.map-consent-panel{padding:26px 22px}.map-consent-panel .button{font-size:.82rem}}

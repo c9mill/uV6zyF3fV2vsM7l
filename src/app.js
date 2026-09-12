@@ -114,6 +114,10 @@ const matches=(record,query)=>norm(query).split(' ').filter(Boolean).every(word=
 let indexPromise;
 function getIndex(){return indexPromise??=(fetch('/search-index.json').then(r=>{if(!r.ok)throw Error('load');return r.json();}).catch(e=>{indexPromise=null;throw e;}));}
 function debounce(fn,delay=180){let timer;return(...args)=>{clearTimeout(timer);timer=setTimeout(()=>fn(...args),delay);};}
+// Keep search terms in the URL fragment so they are not included in the page request or server logs.
+document.querySelectorAll('.header-search').forEach(form=>form.addEventListener('submit',event=>{
+ event.preventDefault();const q=form.querySelector('input[name="q"]')?.value.trim();if(q)location.assign('/пошук/#'+new URLSearchParams({q}));
+}));
 
 const documentForm=document.querySelector('#document-filter');
 if(documentForm){
@@ -126,12 +130,12 @@ function moreButton(container,callback){const b=document.createElement('button')
 const siteSearch=document.querySelector('#site-search');
 if(siteSearch){
  const input=document.querySelector('#site-query'),type=document.querySelector('#search-type'),results=document.querySelector('#search-results'),status=document.querySelector('#search-status');
- const params=new URLSearchParams(location.search);input.value=params.get('q')||'';type.value=params.get('type')||'';
+ const params=new URLSearchParams(location.hash.slice(1)||location.search);input.value=params.get('q')||'';type.value=params.get('type')||'';
  let request=0;
  async function search(updateURL=true){
   const id=++request,q=input.value.trim(),kind=type.value;results.replaceChildren();
   if(!q){status.textContent='Введи назву або ключове слово.';return;}
-  if(updateURL){const p=new URLSearchParams({q});if(kind)p.set('type',kind);history.replaceState(null,'','?'+p);}
+  if(updateURL){const p=new URLSearchParams({q});if(kind)p.set('type',kind);history.replaceState(null,'','#'+p);}
   status.textContent='Шукаємо матеріали…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>(!kind||r.type===kind)&&matches(r,q)).sort((a,b)=>Number(norm(b.title).includes(norm(q)))-Number(norm(a.title).includes(norm(q))));status.textContent=found.length?`Знайдено матеріалів: ${found.length}`:'Нічого не знайдено. Спробуй інше слово або зміни тип матеріалу.';
    let shown=0;function renderMore(){const batch=found.slice(shown,shown+20);results.insertAdjacentHTML('beforeend',batch.map(r=>`<article class="search-result"><small>${escapeHTML(r.type)}${r.type==='Новина'?' · '+escapeHTML(r.date):''}</small><h2><a href="${escapeHTML(r.url)}"${externalAttrs(r.url)}>${escapeHTML(r.title)}${r.url.startsWith('http')?' ↗':''}</a></h2><p>${escapeHTML((r.text||'').slice(0,220))}${r.text?.length>220?'…':''}</p></article>`).join(''));shown+=batch.length;if(shown<found.length)moreButton(results,renderMore);}renderMore();
@@ -159,6 +163,20 @@ if(newsForm){
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
  const status=document.querySelector('.share-status');
  try{if(navigator.share){await navigator.share({title:document.title,url:location.href});}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);status.textContent='Посилання скопійовано';}else{status.textContent='Скопіюй посилання з адресного рядка.';}}catch(error){if(error.name!=='AbortError')status.textContent='Скопіюй посилання з адресного рядка.';}
+});
+
+document.querySelector('[data-load-map]')?.addEventListener('click',event=>{
+ const container=event.currentTarget.closest('[data-map-src]');if(!container)return;
+ const frame=document.createElement('iframe');frame.title='Панорама біля ФКБАД у Google Maps';frame.src=container.dataset.mapSrc;frame.loading='lazy';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';
+ container.replaceChildren(frame);
+});
+
+document.querySelector('[data-clear-site-data]')?.addEventListener('click',async event=>{
+ for(const key of ['fkbad-theme','fkbad.schedule.selection.v3','fkbad.schedule.data.v3']){try{localStorage.removeItem(key)}catch{}}
+ try{sessionStorage.clear()}catch{}
+ for(const domain of ['',`; domain=${location.hostname}`,`; domain=.${location.hostname}`])document.cookie=`googtrans=; path=/; max-age=0${domain}`;
+ try{for(const key of await caches.keys())await caches.delete(key)}catch{}
+ const status=document.querySelector('[data-clear-status]');if(status)status.textContent='Локальні налаштування та кеш цього сайту очищено.';event.currentTarget.disabled=true;
 });
 
 // Support old WordPress ID links while serving ordinary static HTML everywhere else.
