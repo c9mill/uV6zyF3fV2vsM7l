@@ -127,4 +127,3 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden && catalog && selected[mode]) load(); });
   boot();
 })();
-
