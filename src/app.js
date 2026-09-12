@@ -123,7 +123,7 @@ const documentForm=document.querySelector('#document-filter');
 if(documentForm){
  const input=document.querySelector('#document-query'),category=document.querySelector('#document-category'),rows=[...document.querySelectorAll('.document-row')];
  function filterDocuments(){let count=0;for(const row of rows){const visible=norm(row.textContent).includes(norm(input.value))&&(!category.value||row.dataset.category===category.value);row.hidden=!visible;if(visible)count++;}document.querySelector('#document-status').textContent=`Знайдено документів: ${count}`;document.querySelector('#document-empty').hidden=count>0;}
- input.addEventListener('input',debounce(filterDocuments));category.addEventListener('change',filterDocuments);documentForm.addEventListener('submit',e=>{e.preventDefault();filterDocuments();});document.querySelector('#reset-documents').addEventListener('click',()=>{documentForm.reset();filterDocuments();input.focus();});
+ input.addEventListener('input',()=>filterDocuments());category.addEventListener('change',filterDocuments);documentForm.addEventListener('submit',e=>{e.preventDefault();filterDocuments();});document.querySelector('#reset-documents').addEventListener('click',()=>{documentForm.reset();filterDocuments();input.focus();});
 }
 
 function moreButton(container,callback){const b=document.createElement('button');b.type='button';b.className='button load-more';b.textContent='Показати ще';b.addEventListener('click',()=>{b.remove();callback();});container.append(b);}
