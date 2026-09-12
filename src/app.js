@@ -181,11 +181,14 @@ startTypewriter(document.querySelector('#news-query'),['Пошук у новин
 function bindTypedInput(input){
  if(!input)return;const host=input.closest('.header-search,.search-field');if(!host)return;
  const echo=document.createElement('span');echo.className='typed-echo';echo.setAttribute('aria-hidden','true');host.append(echo);
- let previous='';
+ let previous='',removeTimer;
  function render(value){
-  if(!value){host.classList.remove('has-typed-text');echo.replaceChildren();previous='';return;}
+  clearTimeout(removeTimer);echo.querySelectorAll('.typed-letter-removing').forEach(letter=>letter.remove());
+  if(!value){host.classList.remove('has-typed-text');const oldLetters=[...echo.children];oldLetters.forEach((letter,index)=>{letter.className='typed-letter typed-letter-removing';letter.style.setProperty('--scatter-x',`${(index%2?-1:1)*(18+Math.random()*28)}px`);letter.style.setProperty('--scatter-y',`${-12-Math.random()*25}px`);letter.style.setProperty('--scatter-r',`${(index%2?-1:1)*(10+Math.random()*25)}deg`);});removeTimer=setTimeout(()=>echo.replaceChildren(),520);previous='';return;}
   host.classList.add('has-typed-text');const chars=[...value],old=[...previous];let start=0;while(start<chars.length&&start<old.length&&chars[start]===old[start])start++;
-  const fragment=document.createDocumentFragment();chars.forEach((char,index)=>{const letter=document.createElement('span');letter.textContent=char===' '?'\u00a0':char;if(index>=start){letter.className='typed-letter typed-letter-new';letter.style.setProperty('--typed-index',index-start);}fragment.append(letter);});echo.replaceChildren(fragment);previous=value;
+  const fragment=document.createDocumentFragment();chars.forEach((char,index)=>{const letter=document.createElement('span');letter.textContent=char===' '?'\u00a0':char;if(index>=start){letter.className='typed-letter typed-letter-new';letter.style.setProperty('--typed-index',index-start);}fragment.append(letter);});
+  if(old.length>chars.length){old.slice(chars.length).forEach((char,index)=>{const letter=document.createElement('span');letter.className='typed-letter typed-letter-removing';letter.textContent=char===' '?'\u00a0':char;letter.style.setProperty('--scatter-x',`${(index%2?-1:1)*(18+Math.random()*28)}px`);letter.style.setProperty('--scatter-y',`${-12-Math.random()*25}px`);letter.style.setProperty('--scatter-r',`${(index%2?-1:1)*(10+Math.random()*25)}deg`);fragment.append(letter);});}
+  echo.replaceChildren(fragment);if(old.length>chars.length)removeTimer=setTimeout(()=>echo.querySelectorAll('.typed-letter-removing').forEach(letter=>letter.remove()),520);previous=value;
  }
  input.addEventListener('input',()=>render(input.value));input.addEventListener('focus',()=>render(input.value));render(input.value);
 }
