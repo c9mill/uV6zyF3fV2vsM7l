@@ -4,6 +4,22 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:clip}
 .lenis [data-lenis-prevent]{overscroll-behavior:contain}
 .motion-cursor{display:none}
+/* One window transition at every width, anchored to the menu button. */
+.site-header .mobile-nav{opacity:0;transform:translate3d(0,-14px,0) scale(.92);transform-origin:calc(100% - 32px) 0;transition:opacity 300ms ease,transform 520ms cubic-bezier(.22,1,.36,1);pointer-events:none}
+.site-header .mobile-nav.is-open{opacity:1;transform:translate3d(0,0,0) scale(1);pointer-events:auto}
+.site-header .mobile-nav>a{opacity:0;transform:translateY(8px);transition:opacity 200ms ease,transform 350ms cubic-bezier(.22,1,.36,1);transition-delay:0ms}
+.site-header .mobile-nav.is-open>a{opacity:1;transform:none;transition-delay:calc(min(var(--menu-index,0),6)*24ms + 55ms)}
+.site-header .menu-toggle span{transition:transform 450ms cubic-bezier(.22,1,.36,1)}
+.site-header .menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
+.site-header .menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
+.menu-backdrop{opacity:0;transition:opacity 420ms ease}.menu-backdrop.is-open{opacity:1}
+.site-header .mobile-nav .header-search{display:flex;position:relative;opacity:1;transform:none;flex:none;min-height:48px;width:100%;max-width:none;margin:0 0 14px}
+@media(min-width:721px){.site-header .mobile-nav .header-search{display:none}}
+@media(max-width:720px){
+  .site-header .header-inner>.header-search{display:none}
+  .site-header .mobile-nav{max-height:calc(100svh - 130px - env(safe-area-inset-top));scroll-padding-top:12px}
+}
+@media(prefers-reduced-motion:reduce){.site-header .mobile-nav,.site-header .mobile-nav>a,.menu-backdrop{transition:none}}
 @media(prefers-reduced-motion:no-preference){
   :root{--motion-ease:cubic-bezier(.19,1,.22,1)}
   .hero-copy>.eyebrow,.hero-copy>.institution,.hero-copy>h1,.hero-copy>.hero-subtitle,.hero-copy>.hero-description,.hero-copy>.button-row{animation:motion-copy 1050ms var(--motion-ease) both}

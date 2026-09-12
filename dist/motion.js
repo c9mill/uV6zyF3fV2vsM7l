@@ -16,9 +16,10 @@
     if(reduced.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
     if(!scroll&&window.Lenis){
       scroll=new Lenis({
-        autoRaf:true, lerp:.085, smoothWheel:true, syncTouch:false,
+        autoRaf:true, lerp:.085, smoothWheel:true, syncTouch:true, syncTouchLerp:.085,
         anchors:{offset:-120},
-        prevent:node=>node.matches?.('.mobile-nav,.schedule-picker,.schedule-week,textarea,select,[data-lenis-prevent]'),
+        prevent:node=>node.matches?.('.mobile-nav,.schedule-picker,textarea,select,[data-lenis-prevent]'),
+        virtualScroll:({event,deltaX,deltaY})=>!event.shiftKey&&Math.abs(deltaX)<=Math.abs(deltaY),
       });
       window.fkbadScroll=scroll;
     }
@@ -166,5 +167,6 @@
   window.addEventListener('beforeprint',()=>{printing=true;showAll();resetPointer();scroll?.stop();});
   window.addEventListener('afterprint',()=>{printing=false;syncScroll();});
   window.addEventListener('pageshow',event=>{if(event.persisted){showAll();scroll?.resize();syncScroll();}});
+  window.addEventListener('load',()=>{scroll?.resize();syncScroll();});
   setupMotion();
 })();

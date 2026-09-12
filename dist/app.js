@@ -60,39 +60,29 @@ if(actions&&!actions.querySelector('.language-toggle')){
 }
 const menuButton=document.querySelector('.menu-toggle');
 const mobileNav=document.querySelector('#mobile-nav');
-const headerSearch=document.querySelector('.header-search');
-const headerRow=document.querySelector('.header-inner');
-const compactHeader=matchMedia('(max-width: 720px)');
-function placeHeaderSearch(){
- if(!headerSearch||!mobileNav||!headerRow)return;
- if(compactHeader.matches)mobileNav.prepend(headerSearch);
- else headerRow.insertBefore(headerSearch,actions);
-}
-placeHeaderSearch();
-compactHeader.addEventListener('change',()=>{closeMenu();placeHeaderSearch();});
 const menuBackdrop=document.createElement('button');
 menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.hidden=true;
 menuBackdrop.tabIndex=-1;menuBackdrop.setAttribute('aria-label','Закрити меню');
 document.querySelector('.site-header')?.before(menuBackdrop);
 menuBackdrop.addEventListener('click',()=>{closeMenu();menuButton?.focus({preventScroll:true});});
-let menuTimer, savedScroll=0;
+let menuTimer, menuFrame, savedScroll=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function closeMenu(){
  if(!menuButton||menuButton.getAttribute('aria-expanded')!=='true')return;
- clearTimeout(menuTimer);mobileNav.classList.remove('is-open');mobileNav.inert=true;
+ clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);mobileNav.classList.remove('is-open');mobileNav.inert=true;
  menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Відкрити меню');
- document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.hidden=true;
+ document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.classList.remove('is-open');menuBackdrop.style.pointerEvents='none';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=false);
  const previous=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,savedScroll);document.documentElement.style.scrollBehavior=previous;
- menuTimer=setTimeout(()=>{mobileNav.hidden=true;},reducedMotion.matches?0:340);
+ menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:520);
 }
 menuButton?.addEventListener('click',()=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
- clearTimeout(menuTimer);savedScroll=window.scrollY;mobileNav.hidden=false;mobileNav.inert=false;
+ clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);savedScroll=window.scrollY;mobileNav.hidden=false;mobileNav.inert=false;
  menuButton.setAttribute('aria-expanded','true');menuButton.setAttribute('aria-label','Закрити меню');document.body.classList.add('menu-open');
- document.documentElement.classList.add('menu-locked');menuBackdrop.hidden=false;
+ document.documentElement.classList.add('menu-locked');menuBackdrop.hidden=false;menuBackdrop.style.pointerEvents='';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=true);
- requestAnimationFrame(()=>requestAnimationFrame(()=>mobileNav.classList.add('is-open')));
+ menuFrame=requestAnimationFrame(()=>{menuFrame=requestAnimationFrame(()=>{mobileNav.classList.add('is-open');menuBackdrop.classList.add('is-open');});});
 });
 mobileNav?.querySelectorAll('a').forEach((a,i)=>{a.style.setProperty('--menu-index',i);a.addEventListener('click',closeMenu);});
 document.addEventListener('keydown',event=>{
@@ -103,7 +93,8 @@ document.addEventListener('keydown',event=>{
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
 });
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menuButton?.getAttribute('aria-expanded')==='true'){closeMenu();menuButton.focus({preventScroll:true});}});
-matchMedia('(min-width: 1001px)').addEventListener('change',closeMenu);
+// Keep the panel and focused search open when the mobile keyboard resizes the viewport.
+window.addEventListener('pagehide',closeMenu);
 
 const norm=text=>(text||'').toLocaleLowerCase('uk').replace(/[’ʼ`]/g,"'").replace(/\s+/g,' ').trim();
 const escapeHTML=text=>String(text||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
