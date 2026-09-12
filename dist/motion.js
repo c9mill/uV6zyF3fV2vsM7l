@@ -170,10 +170,11 @@
   window.addEventListener('pageshow',event=>{if(event.persisted){showAll();scroll?.resize();syncScroll();}});
   window.addEventListener('load',()=>{scroll?.resize();syncScroll();});
   setupMotion();
-  // Three-card fan: only nearby decks are updated, without intercepting touch scroll.
-  const decks=[...document.querySelectorAll('.program-grid')].map(grid=>{
+  // Three-card fan: specialties and home-page news keep a subtle five-percent overlap when open.
+  const decks=[...document.querySelectorAll('.program-grid,.home-page .news-grid')].map(grid=>{
     grid.classList.add('program-deck');
-    return {grid,cards:[...grid.querySelectorAll(':scope>.program-card')],visible:false};
+    const cardSelector=grid.matches('.news-grid')?':scope>.news-card':':scope>.program-card';
+    return {grid,cards:[...grid.querySelectorAll(cardSelector)],visible:false};
   });
   let deckFrame=0;
   function drawDecks(){
@@ -183,7 +184,7 @@
       const {grid,cards}=deck,rect=grid.getBoundingClientRect();
       const center=rect.top+rect.height/2;
       const distance=Math.abs(center-innerHeight*.53);
-      const spread=reduced.matches||grid.contains(document.activeElement)?1:Math.max(0,Math.min(1,(innerHeight*.68-distance)/(innerHeight*.43)));
+      const spread=reduced.matches?1:(grid.contains(document.activeElement) ? .95 : Math.max(0,Math.min(.95,(innerHeight*.68-distance)/(innerHeight*.43))));
       const fold=1-spread;
       cards.forEach((card,i)=>{
         const x=(grid.clientWidth/2-card.offsetLeft-card.offsetWidth/2)*fold;
