@@ -174,14 +174,16 @@
   const decks=[...document.querySelectorAll('.program-grid,.home-page .news-grid')].map(grid=>{
     grid.classList.add('program-deck');
     const cardSelector=grid.matches('.news-grid')?':scope>.news-card':':scope>.program-card';
-    return {grid,cards:[...grid.querySelectorAll(cardSelector)],visible:false};
+    const heading=grid.previousElementSibling?.matches('.section-heading')?grid.previousElementSibling:null;
+    heading?.classList.add('deck-heading');
+    return {grid,cards:[...grid.querySelectorAll(cardSelector)],heading,visible:false};
   });
   let deckFrame=0;
   function drawDecks(){
     deckFrame=0;
     for(const deck of decks){
       if(!deck.visible)continue;
-      const {grid,cards}=deck,rect=grid.getBoundingClientRect();
+      const {grid,cards,heading}=deck,rect=grid.getBoundingClientRect();
       const center=rect.top+rect.height/2;
       const distance=Math.abs(center-innerHeight*.53);
       const spread=reduced.matches?1:(grid.contains(document.activeElement) ? .95 : Math.max(0,Math.min(.95,(innerHeight*.68-distance)/(innerHeight*.43))));
@@ -192,6 +194,10 @@
         card.style.transform=`translate3d(${x}px,${y}px,0) rotate(${(i-1)*9*fold}deg) scale(${1-fold*.08})`;
         card.style.zIndex=String(i===1?3:i+1);
       });
+      if(heading){
+        heading.style.transform=`translate3d(0,${fold*26}px,0) scale(${1-fold*.055})`;
+        heading.style.opacity=String(1-fold*.42);
+      }
     }
   }
   function queueDecks(){if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}

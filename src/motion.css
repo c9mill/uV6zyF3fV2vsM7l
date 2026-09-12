@@ -6,6 +6,7 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .motion-cursor{display:none}
 .program-deck{position:relative;isolation:isolate}
 .program-deck>.program-card,.program-deck>.news-card{position:relative;transform-origin:center;transition:transform 340ms cubic-bezier(.22,.61,.36,1),box-shadow 340ms ease;opacity:1;translate:none;animation:none;will-change:transform}
+.deck-heading{transform-origin:left bottom;transition:transform 340ms cubic-bezier(.22,.61,.36,1),opacity 340ms ease;will-change:transform,opacity}
 .home-stage{transform-origin:center top;transition:opacity 620ms cubic-bezier(.22,.61,.36,1),transform 820ms cubic-bezier(.16,1,.3,1),clip-path 820ms cubic-bezier(.16,1,.3,1)}
 .motion-enabled .home-stage:not(.is-open){opacity:.68;transform:translate3d(0,32px,0) scale(.972);clip-path:inset(0 2.5% 0 2.5% round 28px);will-change:opacity,transform,clip-path}
 .motion-enabled .home-stage.is-open{opacity:1;transform:none;clip-path:inset(0 round 0)}
@@ -23,7 +24,7 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .program-deck .program-bottom{font-size:.72rem;margin:0;padding:0;border:0;min-height:0}
  .program-deck .program-bottom>.icon{width:16px;height:16px}
 }
-@media(prefers-reduced-motion:reduce){.program-deck>.program-card,.program-deck>.news-card{transform:none!important;transition:none}}
+@media(prefers-reduced-motion:reduce){.program-deck>.program-card,.program-deck>.news-card,.deck-heading{transform:none!important;opacity:1!important;transition:none}}
 @media print{.program-deck>.program-card,.program-deck>.news-card{transform:none!important}.program-deck .program-card>p{display:block}}
 /* Touch devices use the browser's native scrolling and a lighter static backdrop. */
 @media(hover:none),(pointer:coarse){
