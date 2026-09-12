@@ -239,3 +239,9 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .navigation-detail a:hover,.navigation-detail summary:hover{background:var(--blue-soft)}
  .navigation-detail .navigation-unavailable{padding:14px}
 }
+
+.navigation-flat{display:flex;flex-direction:column;gap:2px;min-width:0}
+@media(max-width:1000px){
+ .navigation-alphabet button{height:clamp(16px,calc((100dvh - 300px)/var(--letter-count,12)),28px);font-size:.72rem}
+ .site-header .mobile-nav.has-alphabet .navigation-flat a{min-height:44px;padding:10px 8px;line-height:1.4;overflow-wrap:anywhere}
+}
