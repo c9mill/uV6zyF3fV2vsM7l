@@ -109,3 +109,11 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 @media print{.motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}}
 
 
+
+/* Touch fallback: news cards still animate even when the browser exposes no hover state. */
+@media (hover:none) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference){
+ .news-card{animation:motion-rise 900ms var(--motion-delay,0ms) var(--motion-ease) both!important}
+ .news-grid>.news-card:nth-child(2){--motion-delay:70ms}
+ .news-grid>.news-card:nth-child(3){--motion-delay:140ms}
+ .news-grid>.news-card:nth-child(4){--motion-delay:210ms}
+}
