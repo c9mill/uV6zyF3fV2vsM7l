@@ -1,0 +1,56 @@
+/* Motion only: palette, typography, image proportions and card layout stay in experience.css. */
+html.lenis,html.lenis body{height:auto}
+html.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:clip}
+.lenis [data-lenis-prevent]{overscroll-behavior:contain}
+.motion-cursor{display:none}
+@media(prefers-reduced-motion:no-preference){
+  :root{--motion-ease:cubic-bezier(.19,1,.22,1)}
+  .hero-copy>.eyebrow,.hero-copy>.institution,.hero-copy>h1,.hero-copy>.hero-subtitle,.hero-copy>.hero-description,.hero-copy>.button-row{animation:motion-copy 1050ms var(--motion-ease) both}
+  .hero-copy>.institution{animation-delay:45ms}.hero-copy>h1{animation-delay:90ms}.hero-copy>.hero-subtitle{animation-delay:140ms}.hero-copy>.hero-description{animation-delay:185ms}.hero-copy>.button-row{animation-delay:230ms}
+  .hero-visual{animation:motion-hero 1250ms var(--motion-ease) both}
+  .page-heading h1{animation:motion-copy 1000ms var(--motion-ease) both}
+  .page-heading .page-lead{animation:motion-copy 1000ms 90ms var(--motion-ease) both}
+  .schedule-heading,.schedule-sidebar,.schedule-main{animation:motion-copy 1000ms var(--motion-ease) both}
+  .schedule-sidebar{animation-delay:60ms}.schedule-main{animation-delay:120ms}
+  #schedule-table:not([aria-busy="true"]){animation:motion-copy 550ms var(--motion-ease) both}
+  .motion-pending{opacity:0;translate:0 38px}
+  .motion-enter{animation:motion-rise 1000ms var(--motion-delay,0ms) var(--motion-ease) both}
+  .motion-enter[data-motion="heading"]{animation-name:motion-heading;animation-duration:1150ms}
+  .motion-enter[data-motion="media"]{animation-name:motion-media;animation-duration:1200ms}
+  .motion-enter[data-motion="line"]{animation-duration:900ms}
+  .motion-pending:focus-within{opacity:1;translate:none}
+  .motion-magnet{translate:var(--magnet-x,0px) var(--magnet-y,0px);transition:translate 550ms var(--motion-ease),transform 450ms var(--motion-ease),background 250ms,box-shadow 450ms}
+  .button .icon,.text-link .icon,.program-bottom .icon{transition:transform 600ms var(--motion-ease)}
+  .button:active{scale:.975}
+  .hero-photo{transform:translate3d(var(--photo-x,0px),calc(var(--photo-y,0px) + var(--scroll-drift,0px)),0) scale(1.035);transition:transform 850ms var(--motion-ease)}
+  [data-motion-parallax]{translate:0 var(--media-drift,0px);transition:translate 650ms var(--motion-ease)}
+  @keyframes motion-copy{from{opacity:0;translate:0 32px}to{opacity:1;translate:0 0}}
+  @keyframes motion-hero{from{opacity:0;translate:0 28px;scale:.97}to{opacity:1;translate:0 0;scale:1}}
+  @keyframes motion-rise{from{opacity:0;translate:0 38px}to{opacity:1;translate:0 0}}
+  @keyframes motion-heading{from{opacity:0;translate:0 36px;clip-path:inset(0 0 100% 0)}to{opacity:1;translate:0 0;clip-path:inset(-12px)}}
+  @keyframes motion-media{from{opacity:0;translate:0 36px;scale:.975}to{opacity:1;translate:0 0;scale:1}}
+  ::view-transition-old(root){animation:180ms ease-out both dissolve}
+  ::view-transition-new(root){animation:500ms var(--motion-ease) both motion-copy}
+}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .motion-cursor{display:block;position:fixed;left:0;top:0;z-index:100;pointer-events:none;opacity:0;transition:opacity 200ms;contain:layout style}
+  .motion-cursor:before{content:"";position:absolute;width:22px;height:22px;left:-11px;top:-11px;border:1px solid var(--accent);border-radius:50%;opacity:.5;transition:scale 500ms var(--motion-ease),background 300ms,opacity 300ms}
+  .motion-cursor.is-visible{opacity:1}.motion-cursor.is-active:before{scale:1.9;background:color-mix(in srgb,var(--accent) 9%,transparent);opacity:.75}.motion-cursor.is-pressed:before{scale:1.2}
+  .program-card,.news-card,.resource-tile{position:relative;isolation:isolate;transition:transform 600ms var(--motion-ease),box-shadow 600ms var(--motion-ease)}
+  .program-card:before,.news-card:before,.resource-tile:before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;background:radial-gradient(300px circle at var(--light-x,50%) var(--light-y,50%),color-mix(in srgb,var(--accent) 7%,transparent),transparent 75%);opacity:0;transition:opacity 550ms}
+  .motion-hover:before{opacity:1}
+  .resource-tile:hover,.news-card:hover{transform:translateY(-5px)}
+  .program-card:hover{transform:translateY(-6px)}
+}
+@media(max-width:720px) and (prefers-reduced-motion:no-preference){
+  .motion-enter{animation-duration:750ms;animation-delay:0ms}
+  .motion-enter[data-motion="heading"],.motion-enter[data-motion="media"]{animation-duration:850ms}
+  .hero-visual{animation-duration:950ms}
+  .hero-copy>h1{animation-delay:50ms}
+}
+@media(prefers-reduced-motion:reduce){
+  .motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}
+  .motion-magnet,[data-motion-parallax]{translate:none!important}.hero-photo{transform:none!important}
+}
+@media print{.motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}}

@@ -165,10 +165,10 @@ def shell(title_text,body,path='/',description='',article=False):
                 parent_link['href'] = ANNIVERSARY
         body = str(content)
     desc = description or 'Спеціальності, вступ, новини та студентське життя Фахового коледжу будівництва, архітектури та дизайну в Житомирі.'
-    return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}">{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
+    return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}">{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
 def write(path,content):
-    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js']:
+    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -204,8 +204,11 @@ def home():
     <section class="container"><div class="admission-banner"><div><p class="eyebrow">Твій наступний крок</p><h2>Почнемо твою історію?</h2><p>Ознайомся з правилами вступу або звернися до приймальної комісії.</p></div>{button('/вступнику/','Усе про вступ',True)}</div></section>
     <section class="section container contact-teaser">{section_heading('Завжди на зв’язку','Зустрінемось у коледжі.','/контакти/','Усі контакти')}<div><p>{icon('pin')} м. Житомир, вул. Степана Бандери, 6</p><a href="tel:+380412472847">{icon('phone')} (0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">{icon('mail')} bkzt@ukr.net</a></div></section>'''
 
-for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js']:
-    if (ROOT/'src'/filename).exists(): shutil.copy2(ROOT/'src'/filename,OUT/filename)
+for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js']:
+    if (ROOT/'src'/filename).exists():
+        (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(ROOT/'src'/filename,OUT/filename)
+shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 (OUT/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/schedule'],'exclude':[]}),encoding='utf-8')
 write('/',shell(NAME,home()))

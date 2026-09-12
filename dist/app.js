@@ -74,7 +74,7 @@ const menuBackdrop=document.createElement('button');
 menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.hidden=true;
 menuBackdrop.tabIndex=-1;menuBackdrop.setAttribute('aria-label','Закрити меню');
 document.querySelector('.site-header')?.before(menuBackdrop);
-menuBackdrop.addEventListener('click',()=>{closeMenu();menuButton?.focus();});
+menuBackdrop.addEventListener('click',()=>{closeMenu();menuButton?.focus({preventScroll:true});});
 let menuTimer, savedScroll=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function closeMenu(){
@@ -102,7 +102,7 @@ document.addEventListener('keydown',event=>{
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
 });
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menuButton?.getAttribute('aria-expanded')==='true'){closeMenu();menuButton.focus();}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menuButton?.getAttribute('aria-expanded')==='true'){closeMenu();menuButton.focus({preventScroll:true});}});
 matchMedia('(min-width: 1001px)').addEventListener('change',closeMenu);
 
 const norm=text=>(text||'').toLocaleLowerCase('uk').replace(/[’ʼ`]/g,"'").replace(/\s+/g,' ').trim();
