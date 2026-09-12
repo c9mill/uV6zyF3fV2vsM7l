@@ -234,4 +234,19 @@
   }
   syncHomeStages();
   reduced.addEventListener('change',syncHomeStages);
+
+  // Independent card reveal: keeps specialties and news animated on every input device.
+  function setupCardReveal(){
+    const cards=[...document.querySelectorAll('.program-card,.news-card')];
+    if(reduced.matches||!('IntersectionObserver' in window)||!cards.length)return;
+    const observer=new IntersectionObserver(entries=>{
+      for(const entry of entries){
+        if(!entry.isIntersecting)continue;
+        entry.target.classList.add('card-reveal-visible');
+        observer.unobserve(entry.target);
+      }
+    },{threshold:.08,rootMargin:'0px 0px -4% 0px'});
+    cards.forEach(card=>{card.classList.add('card-reveal-target');observer.observe(card)});
+  }
+  setupCardReveal();
 })();

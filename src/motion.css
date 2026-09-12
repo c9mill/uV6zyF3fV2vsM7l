@@ -117,3 +117,11 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .news-grid>.news-card:nth-child(3){--motion-delay:140ms}
  .news-grid>.news-card:nth-child(4){--motion-delay:210ms}
 }
+
+/* Guaranteed card reveal, independent from hover and the desktop deck transforms. */
+@keyframes card-reveal-in{from{opacity:0;transform:translate3d(0,26px,0) scale(.985);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@media(prefers-reduced-motion:no-preference){
+ .program-deck>.program-card.card-reveal-target,.program-deck>.news-card.card-reveal-target,.card-reveal-target{opacity:0!important;transform:translate3d(0,26px,0) scale(.985)!important}
+ .program-deck>.program-card.card-reveal-visible,.program-deck>.news-card.card-reveal-visible,.card-reveal-visible{opacity:1!important;transform:none!important;animation:card-reveal-in 760ms cubic-bezier(.16,1,.3,1) both!important}
+}
+@media(prefers-reduced-motion:reduce){.card-reveal-target,.card-reveal-visible{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}}
