@@ -1,7 +1,18 @@
 const actions=document.querySelector('.header-actions');
 // Make the static site installable as FKBAD without changing page navigation.
 if('serviceWorker' in navigator && window.isSecureContext){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'}).catch(()=>{}),{once:true});
+  const hadController=!!navigator.serviceWorker.controller;
+  let refreshing=false;
+  try{
+    refreshing=sessionStorage.getItem('fkbad-sw-refresh')==='1';
+    if(refreshing)sessionStorage.removeItem('fkbad-sw-refresh');
+  }catch{}
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!hadController||refreshing)return;
+    try{sessionStorage.setItem('fkbad-sw-refresh','1')}catch{}
+    location.reload();
+  });
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{}),{once:true});
 }
 // Discard the old reverse-translation preference before loading the widget.
 if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/uk$/.test(cookie.trim()))){
