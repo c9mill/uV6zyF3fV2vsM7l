@@ -11,10 +11,6 @@
   cursor.setAttribute('aria-hidden','true');
   cursor.setAttribute('translate','no');
   document.body.append(cursor);
-  const opticalRise=document.createElement('div');
-  opticalRise.className='optical-rise';
-  opticalRise.setAttribute('aria-hidden','true');
-  document.body.append(opticalRise);
 
   function syncScroll(){
     if(reduced.matches||!pointer.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
@@ -48,7 +44,7 @@
     el.addEventListener('animationend',finish);
   }
   function register(container=document){
-    if(reduced.matches||!pointer.matches)return;
+    if(reduced.matches)return;
     for(const [selector,kind] of families){
       const elements=[...(container.matches?.(selector)?[container]:[]),...container.querySelectorAll(selector)];
       for(const el of elements){
@@ -74,7 +70,7 @@
   function setupMotion(){
     syncScroll();
     root.classList.toggle('motion-enabled',!reduced.matches);
-    if(reduced.matches||!pointer.matches){showAll();resetPointer();hero?.style.removeProperty('--scroll-drift');return;}
+    if(reduced.matches){showAll();resetPointer();hero?.style.removeProperty('--scroll-drift');return;}
     revealObserver?.disconnect();mediaObserver?.disconnect();
     revealObserver=new IntersectionObserver(entries=>{
       for(const entry of entries)if(entry.isIntersecting){reveal(entry.target);revealObserver.unobserve(entry.target);}

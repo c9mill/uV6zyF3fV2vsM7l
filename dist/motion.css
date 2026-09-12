@@ -30,14 +30,11 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 @media(hover:none),(pointer:coarse){
  html{scroll-behavior:auto}
  .program-deck>.program-card,.program-deck>.news-card,.deck-heading{transform:none!important;opacity:1!important;transition:none!important;will-change:auto}
- .motion-enabled .home-stage{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important;will-change:auto}
  body:before,body:after{animation:none!important;will-change:auto;inset:0;transform:none}
  .cosmic-dust{animation:cosmic-drift 150s ease-in-out infinite alternate!important;will-change:transform;transform:none}
  .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 90s ease-in-out infinite alternate;will-change:transform}
  .site-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--canvas)!important}
  .hero-note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- .schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table{animation:none!important}
- .motion-pending,.motion-enter{opacity:1!important;translate:none!important;animation:none!important;clip-path:none!important}
  .hero-photo{transform:none!important;transition:none!important}
  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
@@ -110,43 +107,3 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 @media print{.motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}}
 
 
-/* Soft morph reveal: text resolves from a quiet blur into a crisp, readable block. */
-@keyframes morph-text-in{
-  0%{opacity:0;filter:blur(12px);transform:translate3d(0,18px,0) scale(.985);letter-spacing:.012em}
-  45%{opacity:.7;filter:blur(4px);transform:translate3d(0,5px,0) scale(.995);letter-spacing:.004em}
-  75%{opacity:.94;filter:blur(1px);transform:translate3d(0,-1px,0) scale(1.002);letter-spacing:0}
-  100%{opacity:1;filter:none;transform:none;letter-spacing:inherit}
-}
-@media(prefers-reduced-motion:no-preference){
-  .page-heading h1,.page-heading .page-lead,.schedule-heading h1,
-  .section-heading h2,.student-feature h2,.subheading,.editorial-section h2,
-  .home-page .hero h1,.home-page .hero-subtitle,
-  .program-card h3,.news-card h3{
-    animation:morph-text-in 900ms cubic-bezier(.16,1,.3,1) both;
-  }
-  .page-heading .page-lead,.home-page .hero-subtitle{animation-delay:90ms}
-  .section-heading h2,.student-feature h2,.subheading,.editorial-section h2{animation-delay:70ms}
-  .program-card h3,.news-card h3{animation-delay:130ms}
-  .motion-enter[data-motion="heading"]{animation-name:morph-text-in;animation-duration:900ms}
-}
-@media(hover:none),(pointer:coarse){
-  .page-heading h1,.page-heading .page-lead,.schedule-heading h1,
-  .section-heading h2,.student-feature h2,.subheading,.editorial-section h2,
-  .home-page .hero h1,.home-page .hero-subtitle,
-  .program-card h3,.news-card h3{animation:morph-text-in 900ms cubic-bezier(.16,1,.3,1) both!important}
-  .page-heading .page-lead,.home-page .hero-subtitle{animation-delay:90ms!important}
-  .section-heading h2,.student-feature h2,.subheading,.editorial-section h2{animation-delay:70ms!important}
-  .program-card h3,.news-card h3{animation-delay:130ms!important}
-}
-@media(prefers-reduced-motion:reduce){
-  .page-heading h1,.page-heading .page-lead,.schedule-heading h1,
-  .section-heading h2,.student-feature h2,.subheading,.editorial-section h2,
-  .home-page .hero h1,.home-page .hero-subtitle,
-  .program-card h3,.news-card h3{animation:none!important;filter:none!important;transform:none!important;opacity:1!important}
-}
-
-/* A small fixed optical rise at the bottom of the viewport. It never captures input. */
-.optical-rise{position:fixed;left:-12vw;right:-12vw;bottom:-20vh;height:39vh;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:screen;transform:perspective(680px) rotateX(58deg) scaleY(1.08);transform-origin:center bottom;background:radial-gradient(ellipse at 50% 100%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 62%),repeating-linear-gradient(104deg,transparent 0 22px,color-mix(in srgb,var(--accent) 7%,transparent) 24px 27px,transparent 30px 64px);filter:blur(10px);animation:optical-rise-drift 22s ease-in-out infinite alternate}
-@keyframes optical-rise-drift{from{translate:-2% 2%;scale:1 .92}to{translate:3% -4%;scale:1.04 1.08}}
-@media(max-width:720px){.optical-rise{height:32vh;bottom:-17vh;opacity:.34;filter:blur(8px);animation-duration:34s}}
-@media(prefers-reduced-motion:reduce){.optical-rise{animation:none;transform:perspective(680px) rotateX(58deg) scaleY(1.04)}}
