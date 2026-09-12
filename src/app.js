@@ -1,4 +1,8 @@
 const actions=document.querySelector('.header-actions');
+// Make the static site installable as FKBAD without changing page navigation.
+if('serviceWorker' in navigator && window.isSecureContext){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'}).catch(()=>{}),{once:true});
+}
 // Discard the old reverse-translation preference before loading the widget.
 if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/uk$/.test(cookie.trim()))){
   for(const domain of ['',`; domain=${location.hostname}`,`; domain=.${location.hostname}`]){
