@@ -59,6 +59,17 @@ html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:var(--canva
 a:any-link,a:any-link *{text-decoration-line:none!important}
 
 /* A quiet, slowly drifting atmospheric background in the college palette. */
+.cosmic-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:.38}
+.cosmic-backdrop>div{position:absolute;inset:-5%;pointer-events:none}
+.cosmic-nebula{background:radial-gradient(ellipse at 72% 28%,#a8c6ef16,transparent 48%),radial-gradient(ellipse at 42% 53%,#80b8c629,transparent 47%),linear-gradient(151deg,transparent 22%,#83aeca09 33%,#c7dbe724 43%,#a6c3d71c 48%,#1539680a 53%,#8caaca15 60%,transparent 75%);filter:blur(18px)}
+.cosmic-dust{background:url('/cosmos.svg') center/cover no-repeat;opacity:.85;animation:cosmic-drift 190s ease-in-out infinite alternate}
+.cosmic-glints{background-image:radial-gradient(circle at 18% 65%,#d2e4eea0 0 .55px,transparent 1.8px),radial-gradient(circle at 43% 52%,#e9e1f09c 0 .6px,transparent 2px),radial-gradient(circle at 66% 39%,#c6e6ea99 0 .5px,transparent 1.7px),radial-gradient(circle at 82% 25%,#e3ebfa80 0 .65px,transparent 2px),radial-gradient(circle at 55% 47%,#c4dfeb90 0 .5px,transparent 1.8px),radial-gradient(circle at 32% 59%,#ebf0ef80 0 .45px,transparent 1.6px);opacity:.28;animation:cosmic-shimmer 32s ease-in-out infinite alternate}
+[data-theme="dark"] .cosmic-backdrop{opacity:.9}
+[data-theme="dark"] .cosmic-nebula{background:radial-gradient(ellipse at 76% 18%,#06152e45,transparent 57%),radial-gradient(ellipse at 28% 78%,#09192d30,transparent 56%),linear-gradient(151deg,transparent 22%,#82aec80b 33%,#b8d2e21e 43%,#849eb31c 48%,#04142d24 53%,#7ea8b415 60%,transparent 75%)}
+@keyframes cosmic-drift{from{transform:translate3d(-8px,5px,0);opacity:.75}to{transform:translate3d(14px,-9px,0);opacity:.95}}
+@keyframes cosmic-shimmer{from{opacity:.15;transform:translate3d(-2px,1px,0)}to{opacity:.38;transform:translate3d(3px,-2px,0)}}
+@media(prefers-reduced-motion:reduce){.cosmic-dust,.cosmic-glints{animation:none}}
+@media print{.cosmic-backdrop{display:none}}
 body{isolation:isolate;position:relative}
 body:before,body:after{content:"";position:fixed;inset:-18vh -15vw;z-index:-1;pointer-events:none;will-change:transform;background-repeat:no-repeat}
 body:before{background:radial-gradient(ellipse at 16% 25%,#25b9b530,transparent 48%),radial-gradient(ellipse at 82% 65%,#548ced30,transparent 52%),radial-gradient(ellipse at 50% 95%,#102b6620,transparent 50%);animation:atmosphere-drift 38s ease-in-out infinite alternate}
