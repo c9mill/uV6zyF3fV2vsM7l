@@ -173,13 +173,15 @@ def full_navigation(items, active=''):
     for item in items:
         label = item['label']
         url = overview.get(label.upper(), item.get('url'))
-        if url == '#': url = None
+        if url in ('#', 'http://2'): url = None
         children = item.get('children', [])
         if children:
             intro = link(url, 'Огляд розділу') if url else ''
             result += '<details class="navigation-group"><summary>'+escape(label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active)+'</div></details>'
         elif url:
             result += link(url, escape(label), 'navigation-link')
+        else:
+            result += '<div class="navigation-unavailable"><span>'+escape(label)+'</span><small>Матеріал поки недоступний на вихідному сайті</small></div>'
     return result
 
 def header(active=''):

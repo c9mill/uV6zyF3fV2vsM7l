@@ -149,3 +149,5 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 @media(max-width:720px){.navigation-tree a,.navigation-tree summary{min-height:44px;padding:12px 10px}.navigation-children{margin-left:6px;padding-left:6px}}
 
 .site-header .mobile-nav .navigation-tree a{opacity:1;transform:none;transition-delay:0ms}
+
+.navigation-unavailable{padding:12px 14px;font-size:.85rem;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}.navigation-unavailable small{display:block;margin-top:4px;font-size:.72rem}
