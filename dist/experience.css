@@ -249,6 +249,3 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 @keyframes search-item-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .search-result,.news-card{animation:search-item-in 360ms var(--ease) both}
 @media(prefers-reduced-motion:reduce){.search-result,.news-card{animation:none}}
-@keyframes letter-write-in{from{opacity:0;transform:translate3d(0,.35em,0) rotate(7deg) scaleX(.55);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
-.reveal-letter{display:inline-block;min-width:.015em;opacity:0;-webkit-text-fill-color:currentColor;animation:letter-write-in 620ms var(--ease) calc(var(--letter-index)*28ms) both;will-change:transform,opacity,filter}
-@media(prefers-reduced-motion:reduce){.reveal-letter{opacity:1;animation:none;transform:none;filter:none}}
