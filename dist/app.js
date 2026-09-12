@@ -180,13 +180,14 @@ startTypewriter(document.querySelector('#news-query'),['Пошук у новин
 // Reveal real headings letter by letter when they enter the viewport.
 function prepareLetterReveal(element){
  if(!element||element.dataset.letterReveal||!element.textContent.trim())return;
- const text=element.textContent;element.setAttribute('aria-label',text);
- const fragment=document.createDocumentFragment();[...text].forEach((character,index)=>{
-  const letter=document.createElement('span');letter.className='reveal-letter';letter.setAttribute('aria-hidden','true');letter.style.setProperty('--letter-index',index);letter.textContent=character===' '?'\u00a0':character;fragment.append(letter);
- });
- element.replaceChildren(fragment);
+ const text=element.textContent;element.setAttribute('aria-label',text);let index=0;
+ const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT),nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(node=>{if(!node.nodeValue.trim())return;const fragment=document.createDocumentFragment();[...node.nodeValue].forEach(character=>{
+  if(/\s/.test(character)){fragment.append(document.createTextNode(character));return;}
+  const letter=document.createElement('span');letter.className='reveal-letter';letter.setAttribute('aria-hidden','true');letter.style.setProperty('--letter-index',index++);letter.textContent=character;fragment.append(letter);
+ });node.parentNode?.replaceChild(fragment,node);});
 }
-const letterTargets=[...document.querySelectorAll('.hero-word,.page-heading h1,.section-heading h2')];
+const letterTargets=[...document.querySelectorAll('.hero-word,.page-heading h1,.section-heading h2,main h2,main h3')].filter((element,index,all)=>all.indexOf(element)===index&&!((element.matches('h1')||element.matches('h2'))&&element.querySelector('.hero-word')));
 if('IntersectionObserver' in window){
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){const element=entry.target;prepareLetterReveal(element);element.dataset.letterReveal='active';observer.unobserve(element);}}),{threshold:.15});
  letterTargets.forEach(element=>observer.observe(element));
