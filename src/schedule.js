@@ -86,17 +86,20 @@
     rail.addEventListener('pointermove', event => { if (rail.hasPointerCapture(event.pointerId)) choose(event); });
     rail.addEventListener('pointerup', event => { if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId); });
   }
-  function lessons(items, splitWeeks, toneStart) {
+  function subjectColor(subject) {
+    const key = String(subject || '').trim().toLocaleLowerCase('uk-UA');
+    return `hsl(${hue(key).toFixed(2)} 72% 58%)`;
+  }
+  function lessons(items, splitWeeks) {
     if (!items.length) return '<span class="schedule-free">Немає занять</span>';
-    return items.map(l => { const colorIndex = toneStart.next++; const lessonColor = `hsl(${((colorIndex * 137.508) % 360).toFixed(2)} 72% 58%)`; return `<div class="schedule-lesson tone-${colorIndex % 7}" style="--lesson-color:${lessonColor}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3>${mode === 'teacher' ? `<span class="schedule-groups">${l.groups.length ? `Група ${l.groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>` : `<span class="schedule-teacher">${dot(l.teacherId)}<span>${escape(l.teacher || 'Викладача не вказано')}</span></span>`}${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}<span class="schedule-room">${l.room ? `Кабінет · ${escape(l.room)}` : 'Кабінет не вказано'}</span></div>`; }).join('');
+    return items.map(l => `<div class="schedule-lesson" style="--lesson-color:${subjectColor(l.subject)}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3>${mode === 'teacher' ? `<span class="schedule-groups">${l.groups.length ? `Група ${l.groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>` : `<span class="schedule-teacher">${dot(l.teacherId)}<span>${escape(l.teacher || 'Викладача не вказано')}</span></span>`}${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}<span class="schedule-room">${l.room ? `Кабінет · ${escape(l.room)}` : 'Кабінет не вказано'}</span></div>`).join('');
   }
   function render(data) {
     el('source').href = data.source;
     el('checked').textContent = `Перевірено ${date(data.checkedAt)}`;
     const periodEnd = new Date(`${data.semester.end}T23:59:59+02:00`);
     el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
-    const colorCursor = {next:0};
-    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks, colorCursor)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   async function load(force = false) {
     if (!catalog) return boot();
