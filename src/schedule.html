@@ -1,8 +1,25 @@
 <section class="container schedule-page" id="schedule-app" aria-label="Розклад занять">
-  <div class="schedule-heading"><div><nav class="breadcrumbs" aria-label="Навігаційний шлях"><a href="/">Головна</a><span>/</span><span aria-current="page">Розклад</span></nav><h1>Розклад занять</h1><p id="schedule-semester">Завантажуємо розклад Всеосвіти…</p></div><div class="schedule-modes" role="group" aria-label="Чий розклад"><button type="button" data-mode="student" aria-pressed="true">Студент</button><button type="button" data-mode="teacher" aria-pressed="false">Викладач</button></div></div>
+  <div class="schedule-heading">
+    <div class="schedule-heading-copy">
+      <nav class="breadcrumbs" aria-label="Навігаційний шлях"><a href="/">Головна</a><span>/</span><span aria-current="page">Розклад</span></nav>
+      <h1>Розклад занять</h1>
+      <p id="schedule-semester">Завантажуємо розклад Всеосвіти…</p>
+    </div>
+    <div class="schedule-modes" role="group" aria-label="Чий розклад"><button type="button" data-mode="student" aria-pressed="true">Студент</button><button type="button" data-mode="teacher" aria-pressed="false">Викладач</button></div>
+  </div>
   <div class="schedule-layout">
-    <aside class="schedule-sidebar"><h2 id="schedule-picker-title">Обери групу</h2><div id="schedule-picker" class="schedule-picker" role="group" aria-labelledby="schedule-picker-title"></div></aside>
-    <div class="schedule-main"><div class="schedule-toolbar"><div><p class="schedule-kicker" id="schedule-kind">Група</p><h2 id="schedule-selected">Твій навчальний тиждень</h2></div><button type="button" class="schedule-refresh" id="schedule-refresh">Оновити ↻</button></div><p id="schedule-status" class="schedule-status" role="status" aria-live="polite">Завантаження…</p><div id="schedule-table" aria-busy="true"></div><div class="schedule-source"><span id="schedule-checked"></span><a id="schedule-source" href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911" target="_blank" rel="noopener noreferrer">Джерело: Всеосвіта ↗</a></div></div>
-  </div><noscript><p>Увімкніть JavaScript для вибору групи або викладача. <a href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911">Відкрити розклад на Всеосвіті ↗</a></p></noscript>
+    <aside class="schedule-sidebar" id="schedule-selector" aria-label="Вибір групи або викладача">
+      <div class="schedule-picker-head"><div><p class="schedule-kicker" id="schedule-kind">Група</p><h2 id="schedule-picker-title">Обери групу</h2></div><button type="button" class="schedule-picker-close" id="schedule-picker-close" aria-label="Закрити вибір">×</button></div>
+      <div id="schedule-picker" class="schedule-picker" role="group" aria-labelledby="schedule-picker-title"></div>
+    </aside>
+    <main class="schedule-main">
+      <div class="schedule-toolbar"><div><p class="schedule-kicker">Обрано</p><h2 id="schedule-selected">Обери групу або викладача</h2></div><div class="schedule-toolbar-actions"><button type="button" class="schedule-change" id="schedule-change">Змінити</button><button type="button" class="schedule-refresh" id="schedule-refresh">Оновити ↻</button></div></div>
+      <p id="schedule-status" class="schedule-status" role="status" aria-live="polite">Завантаження…</p>
+      <div id="schedule-table" aria-busy="true"></div>
+      <div class="schedule-source"><span id="schedule-checked"></span><a id="schedule-source" href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911" target="_blank" rel="noopener noreferrer">Джерело: Всеосвіта ↗</a></div>
+    </main>
+  </div>
+  <div class="schedule-picker-backdrop" id="schedule-picker-backdrop" hidden></div>
+  <noscript><p>Увімкніть JavaScript для вибору групи або викладача. <a href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911">Відкрити розклад на Всеосвіті ↗</a></p></noscript>
 </section>
 <link rel="stylesheet" href="/schedule.css"><script src="/schedule.js" defer></script>
