@@ -11,6 +11,10 @@
   cursor.setAttribute('aria-hidden','true');
   cursor.setAttribute('translate','no');
   document.body.append(cursor);
+  const opticalRise=document.createElement('div');
+  opticalRise.className='optical-rise';
+  opticalRise.setAttribute('aria-hidden','true');
+  document.body.append(opticalRise);
 
   function syncScroll(){
     if(reduced.matches||!pointer.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
