@@ -427,7 +427,53 @@
       {
         "label": "ВІДІЛЕННЯ ПРОЄКТУВАННЯ ТА ДИЗАЙН",
         "url": "#",
-        "children": []
+        "children": [
+          {
+            "label": "Графіки консультацій викладачів ОПП ОБСБД на І-й семестр",
+            "url": "https://drive.google.com/file/d/1Zrtf4tg9iBi2PflslWh8rgeGvIZKYFB8/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "Графіки консультацій викладачів ОПП ПБІ на І-й семестр",
+            "url": "https://drive.google.com/file/d/11F7lurA7N-a17c9t_Y3q3sviQFg683GG/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "Графік_роботи комісіїї з захисту КП_студ ІV курс_2 сем_2025-2026",
+            "url": "https://drive.google.com/file/d/1SbCIE3cdxDK0SwqeQlsKwFT3H_2J2d3C/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД екзаменів ІІ сем_2025-2026_IV курс",
+            "url": "https://drive.google.com/file/d/1D1u6GzRGuPERYFa4kaAzFwIKAYk4YlzT/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЕКЗАМЕНІВ 2-3 КУРСІВ 2 СЕМ_2025-2026н.р.",
+            "url": "https://drive.google.com/file/d/1DD8CKVJRx22uT-oDdH1ETHYDe64zOwHS/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД_роботи комісіїї з захисту КП_студ ІІІ курс_2 сем_відділення ПД",
+            "url": "https://drive.google.com/file/d/1a88aOYBPPM2WVFBM6PyKbrHkNOehb46D/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "ДИПЛОМНЕ ПРОЄКТУВАННЯ на відділенні ПтаД",
+            "url": "https://www.fkbad.com.ua/%d0%b4%d0%b8%d0%bf%d0%bb%d0%be%d0%bc%d0%bd%d0%b5-%d0%bf%d1%80%d0%be%d1%94%d0%ba%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%bd%d0%b0-%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%96/",
+            "children": []
+          },
+          {
+            "label": "КУРСОВЕ ПРОЄКТУВАННЯ_РОЗКЛАД РОБОТИ КОМІСІЇ",
+            "url": "https://drive.google.com/file/d/1xv5-tAD4R38YFJox4HVkS18QGAxs0T3D/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "СПИСКИ РЕЙТИНГУ СТУДЕНТІВ ВІДДІЛЕННЯ ПтаД",
+            "url": "https://www.fkbad.com.ua/elementor-9473/",
+            "children": []
+          }
+        ]
       },
       {
         "label": "МЕТОДИЧНИЙ КАБІНЕТ",
@@ -512,12 +558,12 @@
         "children": [
           {
             "label": "ОПП БЕБС",
-            "url": "#",
+            "url": "https://drive.google.com/file/d/1r6BaN5QpR9cnf94ZDKTM1sDw5xY6sMgj/view?usp=sharing",
             "children": []
           },
           {
             "label": "ОПП ОБСБД",
-            "url": "#",
+            "url": "https://drive.google.com/file/d/1ECEqxJrl01rrjPdz9X69FlWqZYe3-QuJ/view?usp=sharing",
             "children": []
           }
         ]

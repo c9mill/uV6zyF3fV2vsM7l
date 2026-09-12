@@ -128,8 +128,30 @@ if(navigationTree){
  navigationTree.id='navigation-sections';navigationTree.before(toolbar,shell);shell.append(navigationTree,rail,bubble);mobileNav.classList.add('has-alphabet');
  const catalog=document.createElement('div');catalog.className='navigation-catalog';catalog.append(...entries);navigationTree.append(catalog);
  const desktopMenu=matchMedia('(min-width:1001px)');
- const expandDirectory=()=>{for(const group of catalog.querySelectorAll('details'))group.open=desktopMenu.matches;};
- expandDirectory();desktopMenu.addEventListener('change',expandDirectory);
+ const pane=document.createElement('section');pane.className='navigation-detail';pane.id='navigation-detail';pane.setAttribute('aria-label','Підрозділи обраної категорії');
+ const sidebar=document.createElement('div');sidebar.className='navigation-master';shell.prepend(sidebar);sidebar.append(navigationTree,rail,bubble);shell.append(pane);
+ let activeGroup=null,movedChildren=null;
+ const restore=()=>{if(activeGroup&&movedChildren)activeGroup.append(movedChildren);activeGroup=null;movedChildren=null;};
+ const resetDirectory=()=>{
+  restore();for(const group of catalog.querySelectorAll('details')){group.open=false;group.removeAttribute('data-selected');group.querySelector(':scope > summary')?.removeAttribute('aria-expanded');}
+  pane.replaceChildren();const hint=document.createElement('p');hint.className='navigation-detail-hint';hint.textContent='Обери розділ ліворуч, щоб переглянути його підкатегорії';pane.append(hint);
+ };
+ const openGroup=group=>{
+  if(!desktopMenu.matches){group.open=true;return;}
+  restore();
+  const lineage=[];for(let node=group;node&&node!==catalog;node=node.parentElement)if(node.tagName==='DETAILS')lineage.unshift(node);
+  for(const other of catalog.querySelectorAll('details')){other.open=false;other.removeAttribute('data-selected');other.querySelector(':scope > summary')?.setAttribute('aria-expanded','false');}
+  group.dataset.selected='true';group.querySelector(':scope > summary').setAttribute('aria-expanded','true');
+  pane.replaceChildren();
+  const trail=document.createElement('div');trail.className='navigation-detail-trail';
+  for(const parent of lineage.slice(0,-1)){const back=document.createElement('button');back.type='button';back.textContent=label(parent);back.addEventListener('click',()=>openGroup(parent));trail.append(back);}
+  const title=document.createElement('h2');title.textContent=label(group);title.tabIndex=-1;
+  pane.append(trail,title);activeGroup=group;movedChildren=group.querySelector(':scope > .navigation-children');if(movedChildren)pane.append(movedChildren);
+  pane.scrollTop=0;
+ };
+ mobileNav.addEventListener('click',event=>{const summary=event.target.closest('summary');if(!summary||!desktopMenu.matches)return;event.preventDefault();openGroup(summary.parentElement);});
+ mobileNav.openDirectoryGroup=openGroup;mobileNav.resetDirectory=resetDirectory;
+ resetDirectory();desktopMenu.addEventListener('change',resetDirectory);
 
 }
 const menuBackdrop=document.createElement('button');
@@ -150,7 +172,7 @@ function closeMenu(){
 }
 menuButton?.addEventListener('click',()=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
- clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);savedScroll=window.scrollY;mobileNav.hidden=false;mobileNav.inert=false;
+ clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);savedScroll=window.scrollY;mobileNav.resetDirectory?.();mobileNav.hidden=false;mobileNav.inert=false;
  menuButton.setAttribute('aria-expanded','true');menuButton.setAttribute('aria-label','Закрити меню');document.body.classList.add('menu-open');
  document.documentElement.classList.add('menu-locked');menuBackdrop.hidden=false;menuBackdrop.style.pointerEvents='';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=true);
@@ -214,8 +236,9 @@ function openMenuSearchTarget(){
  const target=document.getElementById(location.hash.slice(1));if(!target||!mobileNav?.contains(target))return;
  if(menuButton.getAttribute('aria-expanded')!=='true')menuButton.click();
  mobileNav.querySelector('[data-letter="*"]')?.click();
- let ancestor=target;while(ancestor&&ancestor!==mobileNav){if(ancestor.tagName==='DETAILS')ancestor.open=true;ancestor=ancestor.parentElement;}
- setTimeout(()=>{target.scrollIntoView({block:'nearest'});const focus=target.querySelector('summary,a')||target;if(!focus.matches('summary,a'))focus.tabIndex=-1;focus.focus({preventScroll:true});},550);
+ if(matchMedia('(min-width:1001px)').matches){const group=target.matches('details')?target:target.closest('details');if(group)mobileNav.openDirectoryGroup?.(group);}
+ else{let ancestor=target;while(ancestor&&ancestor!==mobileNav){if(ancestor.tagName==='DETAILS')ancestor.open=true;ancestor=ancestor.parentElement;}}
+ setTimeout(()=>{const visible=target.getClientRects().length?target:mobileNav.querySelector('.navigation-detail h2');visible?.scrollIntoView({block:'nearest'});const focus=visible?.querySelector('summary,a')||visible;if(focus){if(!focus.matches('summary,a'))focus.tabIndex=-1;focus.focus({preventScroll:true});}},550);
 }
 window.addEventListener('hashchange',openMenuSearchTarget);
 openMenuSearchTarget();

@@ -122,7 +122,7 @@ def local_url(u):
     parsed = urlparse(u)
     if parsed.scheme not in ('','http','https','mailto','tel'): return ''
     if parsed.netloc in ('2','localhost'): return ''
-    if parsed.hostname and parsed.hostname.endswith('fkbad.com.ua'):
+    if parsed.hostname in ('fkbad.com.ua', 'www.fkbad.com.ua'):
         path = unquote(parsed.path).rstrip('/') or '/'
         if path in URLS: return URLS[path]+('#'+parsed.fragment if parsed.fragment else '')
         media = asset(u)
@@ -175,7 +175,7 @@ def navigation_label(label):
     return text[:1].upper() + text[1:]
 
 def full_navigation(items, active='', prefix=''):
-    overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
+    overview = {'ОСВІТНІЙ ПРОЦЕС':'https://learn.fkbad.com.ua/','ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
     result = ''
     for index, item in enumerate(items):
         node_id = prefix + str(index)
@@ -185,7 +185,7 @@ def full_navigation(items, active='', prefix=''):
         if url in ('#', 'http://2'): url = None
         children = item.get('children', [])
         if children:
-            intro = link(url, 'Огляд розділу') if url else ''
+            intro = link(url, 'Освітній портал' if label.upper() == 'ОСВІТНІЙ ПРОЦЕС' else 'Огляд розділу') if url else ''
             result += '<details id="menu-'+node_id+'" class="navigation-group"><summary>'+escape(display_label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active, node_id+'-')+'</div></details>'
         elif url:
             result += link(url, escape(display_label), 'navigation-link')
@@ -606,7 +606,7 @@ not_found=page_heading('Сторінку не знайдено','Можливо,
 write('/404.html',shell('Сторінку не знайдено',not_found,'/404.html'),standalone=True)
 # Include the actual menu labels, including groups with no standalone page.
 def index_navigation(items, parents=(), prefix=''):
-    overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
+    overview = {'ОСВІТНІЙ ПРОЦЕС':'https://learn.fkbad.com.ua/','ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
     for index, item in enumerate(items):
         node_id = prefix + str(index)
         label = navigation_label(item['label'])
