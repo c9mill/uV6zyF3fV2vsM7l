@@ -4,6 +4,24 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:clip}
 .lenis [data-lenis-prevent]{overscroll-behavior:contain}
 .motion-cursor{display:none}
+.program-grid.program-deck{position:relative;isolation:isolate}
+.program-deck>.program-card{position:relative;transform-origin:center;transition:transform 180ms linear,box-shadow 300ms;opacity:1;translate:none;animation:none}
+@media(max-width:720px){
+ .program-grid.program-deck{grid-template-columns:1fr;gap:10px}
+ .program-deck>.program-card{min-height:0;padding:14px 16px 12px;border-radius:18px}
+ .program-deck .program-top{margin:0;min-height:22px}
+ .program-deck .program-label{font-size:.7rem;padding:3px 8px}
+ .program-deck .program-top>.icon{width:16px;height:16px}
+ .program-deck .program-art{position:absolute;top:17px;right:44px;width:auto;height:auto;min-height:0;margin:0;padding:0}
+ .program-deck .program-art>.icon{display:none}
+ .program-deck .program-code{font-size:.75rem;line-height:1;opacity:.7}
+ .program-deck .program-card>.eyebrow,.program-deck .program-card>p{display:none}
+ .program-deck .program-card h3{font-size:clamp(1rem,4.2vw,1.25rem);line-height:1.2;margin:8px 0 10px;letter-spacing:-.025em}
+ .program-deck .program-bottom{font-size:.72rem;margin:0;padding:0;border:0;min-height:0}
+ .program-deck .program-bottom>.icon{width:16px;height:16px}
+}
+@media(prefers-reduced-motion:reduce){.program-deck>.program-card{transform:none!important;transition:none}}
+@media print{.program-deck>.program-card{transform:none!important}.program-deck .program-card>p{display:block}}
 /* Touch devices use the browser's native scrolling and a lighter static backdrop. */
 @media(hover:none),(pointer:coarse){
  html{scroll-behavior:auto}

@@ -48,7 +48,7 @@
     for(const [selector,kind] of families){
       const elements=[...(container.matches?.(selector)?[container]:[]),...container.querySelectorAll(selector)];
       for(const el of elements){
-        if(seen.has(el)||el.closest('[hidden]'))continue;
+        if(seen.has(el)||el.closest('[hidden]')||el.matches('.program-grid>.program-card'))continue;
         seen.add(el);
         el.dataset.motion=kind;
         // Never hold the first screen, hash target, or keyboard focus out of view.
@@ -169,4 +169,41 @@
   window.addEventListener('pageshow',event=>{if(event.persisted){showAll();scroll?.resize();syncScroll();}});
   window.addEventListener('load',()=>{scroll?.resize();syncScroll();});
   setupMotion();
+  // Three-card fan: only nearby decks are updated, without intercepting touch scroll.
+  const decks=[...document.querySelectorAll('.program-grid')].map(grid=>{
+    grid.classList.add('program-deck');
+    return {grid,cards:[...grid.querySelectorAll(':scope>.program-card')],visible:false};
+  });
+  let deckFrame=0;
+  function drawDecks(){
+    deckFrame=0;
+    for(const deck of decks){
+      if(!deck.visible)continue;
+      const {grid,cards}=deck,rect=grid.getBoundingClientRect();
+      const center=rect.top+rect.height/2;
+      const distance=Math.abs(center-innerHeight*.53);
+      const spread=reduced.matches||grid.contains(document.activeElement)?1:Math.max(0,Math.min(1,(innerHeight*.68-distance)/(innerHeight*.43)));
+      const fold=1-spread;
+      cards.forEach((card,i)=>{
+        const x=(grid.clientWidth/2-card.offsetLeft-card.offsetWidth/2)*fold;
+        const y=(grid.clientHeight/2-card.offsetTop-card.offsetHeight/2+(i-1)*9)*fold;
+        card.style.transform=`translate3d(${x}px,${y}px,0) rotate(${(i-1)*9*fold}deg) scale(${1-fold*.08})`;
+        card.style.zIndex=String(i===1?3:i+1);
+      });
+    }
+  }
+  function queueDecks(){if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}
+  const deckObserver=new IntersectionObserver(entries=>{
+    for(const entry of entries){const deck=decks.find(d=>d.grid===entry.target);deck.visible=entry.isIntersecting;}
+    queueDecks();
+  },{rootMargin:'180px'});
+  decks.forEach(({grid})=>{
+    deckObserver.observe(grid);
+    grid.addEventListener('focusin',queueDecks);
+    grid.addEventListener('focusout',()=>requestAnimationFrame(queueDecks));
+  });
+  window.addEventListener('scroll',queueDecks,{passive:true});
+  window.addEventListener('resize',queueDecks,{passive:true});
+  window.addEventListener('pageshow',queueDecks);
+  reduced.addEventListener('change',queueDecks);
 })();
