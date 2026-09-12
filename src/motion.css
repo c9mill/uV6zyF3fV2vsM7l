@@ -4,7 +4,7 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:clip}
 .lenis [data-lenis-prevent]{overscroll-behavior:contain}
 .motion-cursor{display:none}
-.program-grid.program-deck{position:relative;isolation:isolate}
+.program-deck{position:relative;isolation:isolate}
 .program-deck>.program-card,.program-deck>.news-card{position:relative;transform-origin:center;transition:transform 180ms linear,box-shadow 300ms;opacity:1;translate:none;animation:none}
 @media(max-width:720px){
  .program-grid.program-deck{grid-template-columns:1fr;gap:10px}
