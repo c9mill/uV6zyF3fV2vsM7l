@@ -177,6 +177,20 @@ document.querySelectorAll('.header-search input').forEach(input=>startTypewriter
 startTypewriter(document.querySelector('#site-query'),['Наприклад, розклад…','Знайди новину або документ']);
 startTypewriter(document.querySelector('#news-query'),['Пошук у новинах…','Знайди подію або досягнення']);
 
+// Animate the characters the visitor actually types, while keeping the native input for editing and accessibility.
+function bindTypedInput(input){
+ if(!input)return;const host=input.closest('.header-search,.search-field');if(!host)return;
+ const echo=document.createElement('span');echo.className='typed-echo';echo.setAttribute('aria-hidden','true');host.append(echo);
+ let previous='';
+ function render(value){
+  if(!value){host.classList.remove('has-typed-text');echo.replaceChildren();previous='';return;}
+  host.classList.add('has-typed-text');const chars=[...value],old=[...previous];let start=0;while(start<chars.length&&start<old.length&&chars[start]===old[start])start++;
+  const fragment=document.createDocumentFragment();chars.forEach((char,index)=>{const letter=document.createElement('span');letter.textContent=char===' '?'\u00a0':char;if(index>=start){letter.className='typed-letter typed-letter-new';letter.style.setProperty('--typed-index',index-start);}fragment.append(letter);});echo.replaceChildren(fragment);previous=value;
+ }
+ input.addEventListener('input',()=>render(input.value));input.addEventListener('focus',()=>render(input.value));render(input.value);
+}
+document.querySelectorAll('.header-search input,.search-field input').forEach(bindTypedInput);
+
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
  const status=document.querySelector('.share-status');
  try{if(navigator.share){await navigator.share({title:document.title,url:location.href});}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);status.textContent='Посилання скопійовано';}else{status.textContent='Скопіюй посилання з адресного рядка.';}}catch(error){if(error.name!=='AbortError')status.textContent='Скопіюй посилання з адресного рядка.';}

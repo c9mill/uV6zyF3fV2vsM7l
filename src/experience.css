@@ -249,3 +249,11 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 @keyframes search-item-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .search-result,.news-card{animation:search-item-in 360ms var(--ease) both}
 @media(prefers-reduced-motion:reduce){.search-result,.news-card{animation:none}}
+@keyframes typed-letter-in{from{opacity:0;transform:translateY(.35em) scale(.7);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+.header-search,.search-field{position:relative}
+.typed-echo{position:absolute;pointer-events:none;white-space:pre;overflow:hidden;color:var(--ink);font:inherit;font-size:1rem;line-height:1.2}
+.header-search .typed-echo{left:58px;right:52px;top:50%;transform:translateY(-50%)}
+.search-field .typed-echo{left:51px;right:15px;top:50%;transform:translateY(-50%)}
+.has-typed-text>input{color:transparent!important;-webkit-text-fill-color:transparent;caret-color:var(--ink)}
+.typed-letter-new{display:inline-block;animation:typed-letter-in 360ms var(--ease) calc(var(--typed-index)*24ms) both;will-change:transform,opacity,filter}
+@media(prefers-reduced-motion:reduce){.typed-letter-new{animation:none}}
