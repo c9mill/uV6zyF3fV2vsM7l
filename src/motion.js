@@ -208,4 +208,18 @@
   window.addEventListener('resize',queueDecks,{passive:true});
   window.addEventListener('pageshow',queueDecks);
   reduced.addEventListener('change',queueDecks);
+
+  // The main page unfolds section by section as each block reaches the viewport.
+  const homeStages=[...document.querySelectorAll('.home-page .quick-links,.home-page main>.section.container,.home-page .news-section>.container,.home-page .future-invitation,.home-page .footer>.container')];
+  let stageObserver;
+  function syncHomeStages(){
+    stageObserver?.disconnect();
+    if(reduced.matches){homeStages.forEach(stage=>stage.classList.add('is-open'));return;}
+    stageObserver=new IntersectionObserver(entries=>{
+      for(const entry of entries)entry.target.classList.toggle('is-open',entry.isIntersecting);
+    },{threshold:.05,rootMargin:'-5% 0px -5% 0px'});
+    homeStages.forEach(stage=>{stage.classList.add('home-stage');stageObserver.observe(stage);});
+  }
+  syncHomeStages();
+  reduced.addEventListener('change',syncHomeStages);
 })();
