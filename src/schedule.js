@@ -36,6 +36,10 @@
   function groupItems() {
     return catalog.student.filter(item => studentCategory === 'all' || groupCategory(item.name) === studentCategory);
   }
+  function teacherLetters() {
+    const present = new Set(catalog.teacher.map(item => item.name.trim().charAt(0).toLocaleUpperCase('uk-UA')));
+    return LETTERS.filter(letter => present.has(letter));
+  }
   function teacherItems() {
     return catalog.teacher.filter(item => teacherLetter === 'all' || item.name.trim().charAt(0).toLocaleUpperCase('uk-UA') === teacherLetter);
   }
@@ -49,15 +53,19 @@
       const categories = ['all','architects','projects','builders','designers','reduced'];
       panel.innerHTML = `<div class="group-categories" role="tablist" aria-label="Категорія групи">${categories.map(id => `<button type="button" class="group-category" data-category="${id}" aria-selected="${id === studentCategory}">${id === 'all' ? 'Усі групи' : categoryNames[id]}</button>`).join('')}</div><div class="group-list">${groupItems().map(item => `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" aria-pressed="${item.id === selected.student}"><span class="group-code">${escape(item.name)}</span><span class="group-full-name">Група ${escape(item.name)}</span></button>`).join('') || '<p class="schedule-picker-empty">У цій категорії груп поки немає</p>'}</div>`;
     } else {
-      panel.innerHTML = `<div class="teacher-picker"><div class="teacher-list">${teacherItems().map(item => `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" data-letter="${escape(item.name.trim().charAt(0).toLocaleUpperCase('uk-UA'))}" aria-pressed="${item.id === selected.teacher}">${dot(item.id)}<span>${escape(item.name)}</span></button>`).join('') || '<p class="schedule-picker-empty">На цю літеру викладачів немає</p>'}</div><div class="alphabet-index" role="listbox" aria-label="Алфавіт викладачів">${LETTERS.map(letter => `<button type="button" data-letter-select="${letter}" aria-label="Літера ${letter}" aria-selected="${teacherLetter === letter}">${letter}</button>`).join('')}</div></div>`;
+      const availableLetters = teacherLetters();
+      if (teacherLetter !== 'all' && !availableLetters.includes(teacherLetter)) teacherLetter = 'all';
+      panel.innerHTML = `<div class="teacher-picker"><div class="teacher-list">${teacherItems().map(item => `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" data-letter="${escape(item.name.trim().charAt(0).toLocaleUpperCase('uk-UA'))}" aria-pressed="${item.id === selected.teacher}">${dot(item.id)}<span>${escape(item.name)}</span></button>`).join('') || '<p class="schedule-picker-empty">На цю літеру викладачів немає</p>'}</div><div class="alphabet-index" role="listbox" aria-label="Алфавіт викладачів">${availableLetters.map(letter => `<button type="button" data-letter-select="${letter}" aria-label="Літера ${letter}" aria-selected="${teacherLetter === letter}">${letter}</button>`).join('')}</div></div>`;
       bindAlphabet();
     }
   }
   function applyTeacherLetter(letter) {
-    teacherLetter = letter;
+    const letters = teacherLetters();
+    teacherLetter = letter === 'all' || letters.includes(letter) ? letter : 'all';
+    const active = teacherLetter;
     const panel = el('picker');
-    panel.querySelectorAll('[data-letter-select]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.letterSelect === letter)));
-    panel.querySelectorAll('.teacher-list .schedule-choice').forEach(button => { const visible = letter === 'all' || button.dataset.letter === letter; button.hidden = !visible; });
+    panel.querySelectorAll('[data-letter-select]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.letterSelect === active)));
+    panel.querySelectorAll('.teacher-list .schedule-choice').forEach(button => { const visible = active === 'all' || button.dataset.letter === active; button.hidden = !visible; });
     const visible = panel.querySelectorAll('.teacher-list .schedule-choice:not([hidden])').length;
     let empty = panel.querySelector('.schedule-picker-empty');
     if (!visible && !empty) { empty = document.createElement('p'); empty.className = 'schedule-picker-empty'; empty.textContent = 'На цю літеру викладачів немає'; panel.querySelector('.teacher-list').append(empty); }
@@ -67,21 +75,22 @@
   function bindAlphabet() {
     const rail = el('picker').querySelector('.alphabet-index');
     if (!rail) return;
-    const choose = event => { const rect = rail.getBoundingClientRect(); const ratio = Math.max(0, Math.min(0.999, (event.clientY - rect.top) / rect.height)); applyTeacherLetter(LETTERS[Math.floor(ratio * LETTERS.length)]); };
+    const choose = event => { const letters = teacherLetters(); const rect = rail.getBoundingClientRect(); const ratio = Math.max(0, Math.min(0.999, (event.clientY - rect.top) / rect.height)); applyTeacherLetter(letters[Math.floor(ratio * letters.length)]); };
     rail.addEventListener('pointerdown', event => { event.preventDefault(); rail.setPointerCapture(event.pointerId); choose(event); });
     rail.addEventListener('pointermove', event => { if (rail.hasPointerCapture(event.pointerId)) choose(event); });
     rail.addEventListener('pointerup', event => { if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId); });
   }
-  function lessons(items, splitWeeks, tone) {
+  function lessons(items, splitWeeks, toneStart) {
     if (!items.length) return '<span class="schedule-free">Немає занять</span>';
-    return items.map(l => `<div class="schedule-lesson tone-${tone % 7}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3>${mode === 'teacher' ? `<span class="schedule-groups">${l.groups.length ? `Група ${l.groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>` : `<span class="schedule-teacher">${dot(l.teacherId)}<span>${escape(l.teacher || 'Викладача не вказано')}</span></span>`}${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}<span class="schedule-room">${l.room ? `Кабінет · ${escape(l.room)}` : 'Кабінет не вказано'}</span></div>`).join('');
+    return items.map(l => { const colorIndex = toneStart.next++; const lessonColor = `hsl(${((colorIndex * 137.508) % 360).toFixed(2)} 72% 58%)`; return `<div class="schedule-lesson tone-${colorIndex % 7}" style="--lesson-color:${lessonColor}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3>${mode === 'teacher' ? `<span class="schedule-groups">${l.groups.length ? `Група ${l.groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>` : `<span class="schedule-teacher">${dot(l.teacherId)}<span>${escape(l.teacher || 'Викладача не вказано')}</span></span>`}${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}<span class="schedule-room">${l.room ? `Кабінет · ${escape(l.room)}` : 'Кабінет не вказано'}</span></div>`; }).join('');
   }
   function render(data) {
     el('source').href = data.source;
     el('checked').textContent = `Перевірено ${date(data.checkedAt)}`;
     const periodEnd = new Date(`${data.semester.end}T23:59:59+02:00`);
     el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
-    el('table').innerHTML = `<div class="schedule-table-scroll" tabindex="0" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map((row, rowIndex) => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks, rowIndex)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const colorCursor = {next:0};
+    el('table').innerHTML = `<div class="schedule-table-scroll" tabindex="0" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks, colorCursor)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   async function load(force = false) {
     if (!catalog) return boot();
