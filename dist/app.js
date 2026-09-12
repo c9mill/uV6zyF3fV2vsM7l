@@ -1,8 +1,63 @@
 const actions=document.querySelector('.header-actions');
+// Discard the old reverse-translation preference before loading the widget.
+if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/uk$/.test(cookie.trim()))){
+  for(const domain of ['',`; domain=${location.hostname}`,`; domain=.${location.hostname}`]){
+    document.cookie=`googtrans=; path=/; max-age=0${domain}`;
+  }
+}
 const translateRoot=document.createElement('div');translateRoot.id='google_translate_element';translateRoot.hidden=true;document.body.appendChild(translateRoot);
 window.googleTranslateElementInit=()=>new google.translate.TranslateElement({pageLanguage:'uk',includedLanguages:'uk,en',autoDisplay:false},'google_translate_element');
 const translateScript=document.createElement('script');translateScript.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';translateScript.async=true;document.head.appendChild(translateScript);
-if(actions&&!actions.querySelector('.language-toggle')){const languageButton=document.createElement('button');languageButton.className='icon-button language-toggle notranslate';languageButton.type='button';languageButton.textContent='ENG';languageButton.title='English';languageButton.setAttribute('translate','no');languageButton.setAttribute('aria-label','Перемкнути мову: українська / English');languageButton.addEventListener('click',()=>{const select=document.querySelector('.goog-te-combo');if(!select)return;const english=languageButton.dataset.lang!=='en';select.value=english?'en':'uk';select.dispatchEvent(new Event('change'));languageButton.dataset.lang=english?'en':'uk';languageButton.textContent=english?'УКР':'ENG'});actions.insertBefore(languageButton,actions.firstElementChild)}
+if(actions&&!actions.querySelector('.language-toggle')){
+  const languageButton=document.createElement('button');
+  languageButton.className='icon-button language-toggle notranslate';
+  languageButton.type='button';
+  languageButton.setAttribute('translate','no');
+  const setLanguage=english=>{
+    languageButton.dataset.lang=english?'en':'uk';
+    languageButton.textContent=english?'УКР':'ENG';
+    languageButton.title=english?'Українська (оригінал)':'English';
+    languageButton.setAttribute('aria-label',english?'Показати український оригінал':'Switch to English');
+    document.documentElement.lang=english?'en':'uk';
+  };
+  setLanguage(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/en$/.test(cookie.trim())));
+  const waitForControl=async find=>{
+    for(let attempt=0;attempt<100;attempt++){
+      const control=find();
+      if(control)return control;
+      await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    throw new Error('Translation control unavailable');
+  };
+  languageButton.addEventListener('click',async()=>{
+    const english=languageButton.dataset.lang!=='en';
+    languageButton.disabled=true;
+    try{
+      if(english){
+        const select=await waitForControl(()=>document.querySelector('.goog-te-combo option[value="en"]')?.parentElement);
+        select.value='en';
+        select.dispatchEvent(new Event('change'));
+      }else{
+        // Restore Google's saved original DOM; selecting "uk" translates it again.
+        const restore=await waitForControl(()=>{
+          for(const frame of document.querySelectorAll('iframe')){
+            try{
+              const control=frame.contentDocument?.querySelector('button[id$=".restore"]');
+              if(control)return control;
+            }catch{/* Ignore unrelated cross-origin frames. */}
+          }
+        });
+        restore.click();
+      }
+      setLanguage(english);
+    }catch(error){
+      console.warn('Could not switch language',error);
+    }finally{
+      languageButton.disabled=false;
+    }
+  });
+  actions.insertBefore(languageButton,actions.firstElementChild);
+}
 const menuButton=document.querySelector('.menu-toggle');
 const mobileNav=document.querySelector('#mobile-nav');
 const headerSearch=document.querySelector('.header-search');
