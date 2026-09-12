@@ -6,7 +6,13 @@
   const LETTERS = [...'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'];
   const STORAGE = 'fkbad.schedule.selection.v3';
   const DATA_STORAGE = 'fkbad.schedule.data.v3';
-  const categoryNames = {architects:'Архітектори · А', designers:'Дизайнери · ОД', builders:'Будівельники · цифри', projects:'Проєктувальники · П', reduced:'Скорочена програма · С'};
+  const STUDENT_CATEGORIES = [
+    {id:'architects', label:'А'},
+    {id:'builders', label:'Б'},
+    {id:'designers', label:'ОД'},
+    {id:'projects', label:'П'},
+    {id:'reduced', label:'С'}
+  ];
   let catalog, mode = 'student', selected = {student:null, teacher:null}, studentCategory = 'all', teacherLetter = 'all', generation = 0, controller;
   const colors = new Map(), memory = new Map();
   let deviceData = {};
@@ -51,8 +57,13 @@
     const panel = el('picker');
     panel.classList.toggle('is-teacher', !isStudent);
     if (isStudent) {
-      const categories = ['all','architects','projects','builders','designers','reduced'];
-      panel.innerHTML = `<div class="group-categories" role="tablist" aria-label="Категорія групи">${categories.map(id => `<button type="button" class="group-category" data-category="${id}" aria-selected="${id === studentCategory}">${id === 'all' ? 'Усі групи' : categoryNames[id]}</button>`).join('')}</div><div class="group-list">${groupItems().map(item => `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" aria-pressed="${item.id === selected.student}"><span class="group-code">${escape(item.name)}</span><span class="group-full-name">Група ${escape(item.name)}</span></button>`).join('') || '<p class="schedule-picker-empty">У цій категорії груп поки немає</p>'}</div>`;
+      const choices = catalog.student.map(item => {
+        const category = groupCategory(item.name);
+        const hidden = category !== studentCategory ? ' hidden' : '';
+        return `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" data-group-category="${category}" aria-pressed="${item.id === selected.student}"${hidden}><span class="group-code">${escape(item.name)}</span><span class="group-full-name">Група ${escape(item.name)}</span></button>`;
+      }).join('');
+      panel.innerHTML = `<div class="teacher-picker group-picker"><div class="group-list">${choices}<p class="schedule-picker-empty"${groupItems().length ? ' hidden' : ''}>У цій категорії груп поки немає</p></div><div class="alphabet-index group-index" role="listbox" aria-label="Категорії груп">${STUDENT_CATEGORIES.map(category => `<button type="button" data-category-select="${category.id}" aria-label="Категорія ${category.label}" aria-selected="${studentCategory === category.id}">${category.label}</button>`).join('')}</div></div>`;
+      bindCategoryRail();
     } else {
       const availableLetters = teacherLetters();
       if (teacherLetter !== 'all' && !availableLetters.includes(teacherLetter)) teacherLetter = 'all';
@@ -78,13 +89,30 @@
     if (empty) empty.hidden = Boolean(visible);
     save();
   }
-  function bindAlphabet() {
-    const rail = el('picker').querySelector('.alphabet-index');
-    if (!rail) return;
-    const choose = event => { const letters = teacherLetters(); const rect = rail.getBoundingClientRect(); const ratio = Math.max(0, Math.min(0.999, (event.clientY - rect.top) / rect.height)); applyTeacherLetter(letters[Math.floor(ratio * letters.length)]); };
+  function applyStudentCategory(category) {
+    const valid = STUDENT_CATEGORIES.some(item => item.id === category);
+    studentCategory = valid ? category : STUDENT_CATEGORIES[0].id;
+    const panel = el('picker');
+    panel.querySelectorAll('[data-category-select]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.categorySelect === studentCategory)));
+    panel.querySelectorAll('.group-list .schedule-choice').forEach(button => { button.hidden = button.dataset.groupCategory !== studentCategory; });
+    const visible = panel.querySelectorAll('.group-list .schedule-choice:not([hidden])').length;
+    const empty = panel.querySelector('.schedule-picker-empty');
+    if (empty) empty.hidden = Boolean(visible);
+    save();
+  }
+  function bindRail(rail, values, apply) {
+    if (!rail || !values.length) return;
+    const choose = event => { const rect = rail.getBoundingClientRect(); const ratio = Math.max(0, Math.min(0.999, (event.clientY - rect.top) / rect.height)); apply(values[Math.floor(ratio * values.length)]); };
     rail.addEventListener('pointerdown', event => { event.preventDefault(); rail.setPointerCapture(event.pointerId); choose(event); });
     rail.addEventListener('pointermove', event => { if (rail.hasPointerCapture(event.pointerId)) choose(event); });
     rail.addEventListener('pointerup', event => { if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId); });
+  }
+  function bindCategoryRail() {
+    bindRail(el('picker').querySelector('.group-index'), STUDENT_CATEGORIES.map(item => item.id), applyStudentCategory);
+  }
+  function bindAlphabet() {
+    const rail = el('picker').querySelector('.alphabet-index');
+    bindRail(rail, teacherLetters(), applyTeacherLetter);
   }
   function subjectColor(subject) {
     const key = String(subject || '').trim().toLocaleLowerCase('uk-UA');
@@ -127,7 +155,7 @@
   function closePicker() { el('selector').classList.remove('is-open'); el('picker-backdrop').hidden = true; document.body.classList.remove('schedule-sheet-open'); }
   async function boot() {
     el('refresh').disabled = true; el('status').textContent = 'Отримуємо групи й викладачів…';
-    try { catalog = await get('/api/schedule'); catalog.teacher.forEach(item => colors.set(item.id, `hsl(${hue(item.id).toFixed(2)} 65% 57%)`)); el('semester').textContent = catalog.semester.title; for (const type of ['student','teacher']) if (selected[type] && !catalog[type].some(item => item.id === selected[type])) selected[type] = null; if (studentCategory !== 'all' && !groupItems().length) studentCategory = 'all'; picker(); save(); if (selected[mode]) await load(); else { el('status').textContent = 'Зроби вибір, щоб побачити розклад.'; openPicker(); } }
+    try { catalog = await get('/api/schedule'); catalog.teacher.forEach(item => colors.set(item.id, `hsl(${hue(item.id).toFixed(2)} 65% 57%)`)); el('semester').textContent = catalog.semester.title; for (const type of ['student','teacher']) if (selected[type] && !catalog[type].some(item => item.id === selected[type])) selected[type] = null; if (studentCategory === 'all') studentCategory = groupCategory(catalog.student.find(item => item.id === selected.student)?.name || catalog.student[0]?.name); if (!groupItems().length) studentCategory = STUDENT_CATEGORIES.find(category => catalog.student.some(item => groupCategory(item.name) === category.id))?.id || STUDENT_CATEGORIES[0].id; picker(); save(); if (selected[mode]) await load(); else { el('status').textContent = 'Зроби вибір, щоб побачити розклад.'; openPicker(); } }
     catch (error) { el('semester').textContent = 'Розклад із Всеосвіти'; el('status').textContent = error.message; el('table').setAttribute('aria-busy','false'); el('refresh').disabled = false; }
   }
   syncModeButtons();
@@ -142,8 +170,8 @@
     if (selected[mode]) load();
   }));
   el('picker').addEventListener('click', event => {
-    const category = event.target.closest('[data-category]');
-    if (category) { studentCategory = category.dataset.category; save(); picker(); return; }
+    const category = event.target.closest('[data-category-select]');
+    if (category) { applyStudentCategory(category.dataset.categorySelect); return; }
     const letter = event.target.closest('[data-letter-select]');
     if (letter) { applyTeacherLetter(letter.dataset.letterSelect); return; }
     const button = event.target.closest('.schedule-choice');
