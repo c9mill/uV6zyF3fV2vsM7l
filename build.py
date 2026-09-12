@@ -167,21 +167,29 @@ if logo_file and logo_file.is_file():
             logo_image = logo_image.crop(alpha_box).resize((192, 192), Image.Resampling.LANCZOS)
         logo_image.save(OUT / FAVICON.lstrip('/'), 'WEBP', quality=94, method=6)
 
+def navigation_label(label):
+    text = label.lower()
+    abbreviations = ('ВСП', 'ФКБАД', 'ПНУ', 'БЦІ', 'ОПП', 'БЕБС', 'ОБСБД', 'КП', 'ЄДЕБО', 'ЗНО', 'НМТ', 'ДПА', 'НАЗЯВО', 'ІІ', 'ІІІ', 'IV', 'VI', 'VII', 'VIII', 'IX')
+    for abbreviation in abbreviations:
+        text = re.sub(r'(?<!\w)' + re.escape(abbreviation.lower()) + r'(?!\w)', abbreviation, text)
+    return text[:1].upper() + text[1:]
+
 def full_navigation(items, active=''):
     overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
     result = ''
     for item in items:
         label = item['label']
+        display_label = navigation_label(label)
         url = overview.get(label.upper(), item.get('url'))
         if url in ('#', 'http://2'): url = None
         children = item.get('children', [])
         if children:
             intro = link(url, 'Огляд розділу') if url else ''
-            result += '<details class="navigation-group"><summary>'+escape(label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active)+'</div></details>'
+            result += '<details class="navigation-group"><summary>'+escape(display_label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active)+'</div></details>'
         elif url:
-            result += link(url, escape(label), 'navigation-link')
+            result += link(url, escape(display_label), 'navigation-link')
         else:
-            result += '<div class="navigation-unavailable"><span>'+escape(label)+'</span><small>Матеріал поки недоступний на вихідному сайті</small></div>'
+            result += '<div class="navigation-unavailable"><span>'+escape(display_label)+'</span><small>Матеріал поки недоступний на вихідному сайті</small></div>'
     return result
 
 def header(active=''):

@@ -192,3 +192,17 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .site-header .mobile-nav.has-alphabet .navigation-tree{height:100%;max-height:none;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;column-gap:32px;row-gap:12px}
  .site-header .mobile-nav.has-alphabet .navigation-alphabet{align-self:flex-start}
 }
+
+/* Open section directory: independent columns avoid gaps between long groups. */
+.navigation-catalog{min-width:0}
+.site-header .mobile-nav .navigation-catalog a,.site-header .mobile-nav .navigation-catalog summary{text-transform:none}
+@media(min-width:1001px){
+ .site-header .mobile-nav.has-alphabet .navigation-tree{display:block}
+ .navigation-catalog{columns:3;column-gap:28px}
+ .navigation-catalog>details,.navigation-catalog>a,.navigation-catalog>.navigation-unavailable{break-inside:avoid;display:block;margin-bottom:14px}
+ .site-header .mobile-nav.has-alphabet .navigation-catalog>details>summary{font-size:.96rem;font-weight:700;color:var(--accent)}
+ .site-header .mobile-nav.has-alphabet .navigation-catalog .navigation-children{margin-left:0;padding:0 0 6px 4px}
+ .site-header .mobile-nav.has-alphabet .navigation-catalog .navigation-children a,.site-header .mobile-nav.has-alphabet .navigation-catalog .navigation-children summary{padding:7px 10px;min-height:32px;font-size:.82rem;line-height:1.4}
+ .site-header .mobile-nav.has-alphabet .navigation-catalog .navigation-children .navigation-children{padding-left:10px}
+}
+@media(min-width:1600px){.navigation-catalog{columns:4}}

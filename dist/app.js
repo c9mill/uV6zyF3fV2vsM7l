@@ -126,6 +126,11 @@ if(navigationTree){
  const finish=event=>{if(rail.hasPointerCapture(event.pointerId))rail.releasePointerCapture(event.pointerId);shell.classList.remove('is-browsing');};
  rail.addEventListener('pointerup',finish);rail.addEventListener('pointercancel',finish);rail.addEventListener('lostpointercapture',()=>shell.classList.remove('is-browsing'));
  navigationTree.id='navigation-sections';navigationTree.before(toolbar,shell);shell.append(navigationTree,rail,bubble);mobileNav.classList.add('has-alphabet');
+ const catalog=document.createElement('div');catalog.className='navigation-catalog';catalog.append(...entries);navigationTree.append(catalog);
+ const desktopMenu=matchMedia('(min-width:1001px)');
+ const expandDirectory=()=>{for(const group of catalog.querySelectorAll('details'))group.open=desktopMenu.matches;};
+ expandDirectory();desktopMenu.addEventListener('change',expandDirectory);
+
 }
 const menuBackdrop=document.createElement('button');
 menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.hidden=true;
