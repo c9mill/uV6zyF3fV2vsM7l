@@ -226,7 +226,7 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .home-page .hero h1>br{display:none}
  .home-page .hero h1 .hero-word{display:block;width:fit-content;max-width:100%;white-space:nowrap;--headline-color:var(--ink);color:var(--headline-color)}
  .home-page .hero h1 .future{--headline-color:var(--accent)}
- .home-page .hero h1 .together{--headline-color:#e477e8;font-size:.88em;letter-spacing:-.035em}
+ .home-page .hero h1 .together{--headline-color:#e477e8;font-size:.8em;letter-spacing:-.04em}
  .home-page .hero-subtitle{font-family:"Arial Black",Arial,sans-serif;font-weight:900;letter-spacing:-.025em;--headline-color:var(--ink);color:var(--headline-color)}
 @supports (-webkit-background-clip:text) or (background-clip:text){
   .home-page .hero h1 .hero-word,.home-page .hero-subtitle{background:linear-gradient(to bottom,var(--headline-color) 22%,var(--headline-color) 40%,color-mix(in srgb,var(--headline-color) 64%,var(--canvas)) 72%,color-mix(in srgb,var(--headline-color) 23%,var(--canvas)) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
