@@ -31,6 +31,14 @@
   document.addEventListener('pointerdown',event=>{if(!group.contains(event.target))setOpen(false);});
  });
 
+ // Keep wide content tables scrollable without changing their rows or semantics.
+ document.querySelectorAll('main table').forEach(table=>{
+  if(table.closest('.schedule-table-scroll'))return;
+  let wrapper=table.closest('.table-scroll');
+  if(!wrapper){wrapper=document.createElement('div');wrapper.className='table-scroll';table.before(wrapper);wrapper.append(table);}
+  wrapper.tabIndex=0;wrapper.setAttribute('role','region');
+  wrapper.setAttribute('aria-label',table.caption?.textContent.trim()||'Таблиця — прокрутіть, щоб переглянути всі стовпці');
+ });
  // Filtered news uses the same natural-photo sizing as pre-rendered cards.
  function sizeNewsPhoto(img){
   if(!img.matches('.news-image img')||!img.naturalWidth)return;

@@ -59,6 +59,31 @@ html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:var(--canva
 a:any-link,a:any-link *{text-decoration-line:none!important}
 
 /* A quiet, slowly drifting atmospheric background in the college palette. */
+/* Main section titles only; news listings and articles retain their typography. */
+.core-page .page-heading h1,.core-page .schedule-heading h1{font-family:"Arial Black",Arial,sans-serif;font-weight:900;letter-spacing:-.035em;line-height:1.12;overflow-wrap:anywhere}
+/* Quiet luminous tables, with a clear reading track across each row. */
+main .table-scroll,main .schedule-table-scroll{border-radius:20px;padding:6px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 9%,var(--card)),var(--card) 65%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 16%,transparent),0 10px 32px color-mix(in srgb,var(--accent) 6%,transparent);scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--accent) 42%,var(--muted)) transparent;transition:box-shadow 350ms ease;max-width:100%;overscroll-behavior-x:contain}
+main .table-scroll:focus-visible,main .schedule-table-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:4px;box-shadow:0 0 24px color-mix(in srgb,var(--accent) 15%,transparent)}
+main .table-scroll table{width:100%;border-collapse:separate;border-spacing:0 3px;line-height:1.6}
+main .table-scroll :is(th,td){padding:16px 18px;vertical-align:top;color:var(--ink);transition:background-color 240ms,box-shadow 240ms;background:color-mix(in srgb,var(--card) 88%,var(--surface))}
+main .table-scroll tr:nth-child(even) td{background:color-mix(in srgb,var(--blue-soft) 36%,var(--card))}
+main .table-scroll th,main .schedule-week thead th{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 17%,var(--card)),color-mix(in srgb,var(--accent) 6%,var(--card)));color:var(--ink);font-weight:700;padding:16px 12px;box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--accent) 24%,transparent)}
+main .table-scroll tr>:first-child{border-radius:12px 0 0 12px}main .table-scroll tr>:last-child{border-radius:0 12px 12px 0}
+main .table-scroll tr>:only-child{border-radius:12px}
+main .schedule-week thead th{border-radius:12px}
+main .schedule-week td{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 4%,var(--surface)),var(--surface));transition:box-shadow 250ms,background-color 250ms;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 7%,transparent)}
+main :is(.table-scroll,.schedule-table-scroll) tr:focus-within>td{background:color-mix(in srgb,var(--accent) 11%,var(--card))}
+@media(hover:hover){
+ main :is(.table-scroll,.schedule-table-scroll) tbody tr:hover>td{background:color-mix(in srgb,var(--accent) 9%,var(--card))}
+ main :is(.table-scroll,.schedule-table-scroll) tbody td:hover{background:color-mix(in srgb,var(--accent) 15%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 38%,transparent),0 0 18px color-mix(in srgb,var(--accent) 12%,transparent)}
+ main .schedule-mobile-lesson:hover{background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+}
+main .schedule-day{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent),0 7px 22px color-mix(in srgb,var(--accent) 5%,transparent)}
+main .schedule-day>h3{background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 16%,var(--card)),transparent);border-radius:12px;padding:12px}
+main .schedule-mobile-lesson{border-radius:12px;transition:background-color 250ms,box-shadow 250ms}
+main .schedule-mobile-lesson:active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+@media(max-width:720px){main .table-scroll :is(th,td){padding:13px 14px;font-size:.875rem;min-width:120px}}
+@media print{main .table-scroll,main .schedule-table-scroll{overflow:visible;box-shadow:none;background:none}main .table-scroll :is(th,td){background:none;color:#000}}
 .cosmic-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:.38}
 .cosmic-backdrop>div{position:absolute;inset:-5%;pointer-events:none}
 .cosmic-nebula{background:radial-gradient(ellipse at 72% 28%,#a8c6ef16,transparent 48%),radial-gradient(ellipse at 42% 53%,#80b8c629,transparent 47%),linear-gradient(151deg,transparent 22%,#83aeca09 33%,#c7dbe724 43%,#a6c3d71c 48%,#1539680a 53%,#8caaca15 60%,transparent 75%);filter:blur(18px)}
