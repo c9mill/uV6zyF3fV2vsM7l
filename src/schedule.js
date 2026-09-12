@@ -55,7 +55,12 @@
     } else {
       const availableLetters = teacherLetters();
       if (teacherLetter !== 'all' && !availableLetters.includes(teacherLetter)) teacherLetter = 'all';
-      panel.innerHTML = `<div class="teacher-picker"><div class="teacher-list">${teacherItems().map(item => `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" data-letter="${escape(item.name.trim().charAt(0).toLocaleUpperCase('uk-UA'))}" aria-pressed="${item.id === selected.teacher}">${dot(item.id)}<span>${escape(item.name)}</span></button>`).join('') || '<p class="schedule-picker-empty">На цю літеру викладачів немає</p>'}</div><div class="alphabet-index" role="listbox" aria-label="Алфавіт викладачів">${availableLetters.map(letter => `<button type="button" data-letter-select="${letter}" aria-label="Літера ${letter}" aria-selected="${teacherLetter === letter}">${letter}</button>`).join('')}</div></div>`;
+      const choices = catalog.teacher.map(item => {
+        const letter = item.name.trim().charAt(0).toLocaleUpperCase('uk-UA');
+        const hidden = teacherLetter !== 'all' && letter !== teacherLetter ? ' hidden' : '';
+        return `<button type="button" class="schedule-choice" data-id="${escape(item.id)}" data-letter="${escape(letter)}" aria-pressed="${item.id === selected.teacher}"${hidden}>${dot(item.id)}<span>${escape(item.name)}</span></button>`;
+      }).join('');
+      panel.innerHTML = `<div class="teacher-picker"><div class="teacher-list">${choices}<p class="schedule-picker-empty"${teacherItems().length ? ' hidden' : ''}>На цю літеру викладачів немає</p></div><div class="alphabet-index" role="listbox" aria-label="Алфавіт викладачів">${availableLetters.map(letter => `<button type="button" data-letter-select="${letter}" aria-label="Літера ${letter}" aria-selected="${teacherLetter === letter}">${letter}</button>`).join('')}</div></div>`;
       bindAlphabet();
     }
   }
