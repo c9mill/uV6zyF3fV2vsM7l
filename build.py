@@ -141,7 +141,7 @@ def header(active=''):
     desktop = desktop.replace(student_link, f'<div class="nav-group">{student_link}<button class="nav-expand" aria-label="Навчальні ресурси" aria-expanded="false" aria-controls="study-menu">{icon("chevron")}</button><div class="nav-dropdown" id="study-menu" inert><span class="eyebrow">Для твоїх планів</span><a href="/вступнику/">Вступнику {icon("arrow")}</a><a href="/бібліотека/">Бібліотека {icon("book")}</a><a href="/документи/">Документи {icon("file")}</a>{link(SCHEDULE,"Розклад занять "+icon("calendar"))}</div></div>')
     search = f'''<form class="header-search" action="/пошук/" method="get" role="search" aria-label="Пошук на сайті" autocomplete="off"><button type="submit" aria-label="Знайти">{icon("search")}</button><input type="search" name="q" aria-label="Пошуковий запит" placeholder="Пошук на сайті" required autocomplete="off"></form>'''
     return f'''<a class="skip-link" href="#main">Перейти до вмісту</a>
-    <header class="site-header"><div class="container header-inner"><a class="brand" href="/" aria-label="ВСП ФКБАД ПНУ — головна"><img src="{LOGO}" alt="" width="96" height="72"><span><strong>ВСП «ФКБАД ПНУ»</strong></span></a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="/" aria-label="ВСП ФКБАД Поліського університету — головна"><img src="{LOGO}" alt="" width="96" height="72"><span><strong>ВСП ФКБАД Поліського університету</strong></span></a>
     <nav class="desktop-nav" aria-label="Головна навігація">{desktop}</nav>{search}<div class="header-actions"><button class="icon-button theme-toggle" type="button" aria-label="Увімкнути темну тему" aria-pressed="false" title="Увімкнути темну тему"><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg></button><a class="button compact" href="/вступнику/">Вступнику {icon('external')}</a><button class="icon-button menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Відкрити меню"><span></span><span></span></button></div></div>
     <nav id="mobile-nav" class="mobile-nav container" aria-label="Мобільна навігація" hidden>{search}{items}<a href="/вступнику/">Вступнику</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></nav></header>'''
 def footer():
@@ -208,7 +208,8 @@ def home_legacy():
 def home():
     body = home_legacy()
     body = body.replace('Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span>', 'ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету»')
-    body = body.replace('Почни з коледжу.', 'Будуй майбутнє з нами')
+    body = body.replace('Майбутнє.</span>', 'Майбутнє</span>')
+    body = body.replace('Почни з коледжу.', 'Разом з нами')
     return body
 
 for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
