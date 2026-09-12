@@ -16,6 +16,7 @@
   const color = id => colors.get(id) || `hsl(${hue(id).toFixed(2)} 65% 57%)`;
   const dot = id => `<span class="schedule-dot" style="--person:${color(id)}" aria-hidden="true"></span>`;
   const date = value => new Intl.DateTimeFormat('uk-UA', {dateStyle:'short', timeStyle:'short', timeZone:'Europe/Kyiv'}).format(new Date(value));
+  const syncModeButtons = () => root.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
   const save = () => { try { localStorage.setItem(STORAGE, JSON.stringify({mode, selected, studentCategory, teacherLetter})); } catch {} };
   const persistData = (key, data) => { deviceData[key] = data; try { localStorage.setItem(DATA_STORAGE, JSON.stringify(deviceData)); } catch {} };
   async function get(url, signal) {
@@ -126,7 +127,17 @@
     try { catalog = await get('/api/schedule'); catalog.teacher.forEach(item => colors.set(item.id, `hsl(${hue(item.id).toFixed(2)} 65% 57%)`)); el('semester').textContent = catalog.semester.title; for (const type of ['student','teacher']) if (selected[type] && !catalog[type].some(item => item.id === selected[type])) selected[type] = null; if (studentCategory !== 'all' && !groupItems().length) studentCategory = 'all'; picker(); save(); if (selected[mode]) await load(); else { el('status').textContent = 'Зроби вибір, щоб побачити розклад.'; openPicker(); } }
     catch (error) { el('semester').textContent = 'Розклад із Всеосвіти'; el('status').textContent = error.message; el('table').setAttribute('aria-busy','false'); el('refresh').disabled = false; }
   }
-  root.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => { if (button.dataset.mode === mode) { openPicker(); return; } mode = button.dataset.mode; save(); root.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode))); picker(); openPicker(); if (selected[mode]) load(); }));
+  syncModeButtons();
+  root.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+    if (button.dataset.mode === mode) { syncModeButtons(); if (catalog) openPicker(); return; }
+    mode = button.dataset.mode;
+    syncModeButtons();
+    save();
+    if (!catalog) return;
+    picker();
+    openPicker();
+    if (selected[mode]) load();
+  }));
   el('picker').addEventListener('click', event => {
     const category = event.target.closest('[data-category]');
     if (category) { studentCategory = category.dataset.category; save(); picker(); return; }
