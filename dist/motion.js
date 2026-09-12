@@ -181,6 +181,7 @@
   let deckFrame=0;
   function drawDecks(){
     deckFrame=0;
+    if(!pointer.matches){for(const deck of decks)for(const card of deck.cards){card.style.removeProperty('transform');card.style.removeProperty('z-index');}return;}
     for(const deck of decks){
       if(!deck.visible)continue;
       const {grid,cards,heading}=deck,rect=grid.getBoundingClientRect();
@@ -205,7 +206,7 @@
       }
     }
   }
-  function queueDecks(){if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}
+  function queueDecks(){if(!pointer.matches)return;if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}
   const deckObserver=new IntersectionObserver(entries=>{
     for(const entry of entries){const deck=decks.find(d=>d.grid===entry.target);deck.visible=entry.isIntersecting;}
     queueDecks();

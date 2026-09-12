@@ -29,6 +29,8 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 /* Touch devices use the browser's native scrolling and a lighter static backdrop. */
 @media(hover:none),(pointer:coarse){
  html{scroll-behavior:auto}
+ .program-deck>.program-card,.program-deck>.news-card,.deck-heading{transform:none!important;opacity:1!important;transition:none!important;will-change:auto}
+ .motion-enabled .home-stage{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important;will-change:auto}
  body:before,body:after{animation:none!important;will-change:auto;inset:0;transform:none}
  .cosmic-dust{animation:cosmic-drift 150s ease-in-out infinite alternate!important;will-change:transform;transform:none}
  .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 90s ease-in-out infinite alternate;will-change:transform}
