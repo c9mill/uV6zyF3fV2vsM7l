@@ -121,27 +121,27 @@ document.querySelectorAll('.header-search').forEach(form=>form.addEventListener(
 
 const documentForm=document.querySelector('#document-filter');
 if(documentForm){
- const input=document.querySelector('#document-query'),category=document.querySelector('#document-category'),rows=[...document.querySelectorAll('.document-row')];
- function filterDocuments(){let count=0;for(const row of rows){const visible=norm(row.textContent).includes(norm(input.value))&&(!category.value||row.dataset.category===category.value);row.hidden=!visible;if(visible)count++;}document.querySelector('#document-status').textContent=`Знайдено документів: ${count}`;document.querySelector('#document-empty').hidden=count>0;}
- input.addEventListener('input',()=>filterDocuments());category.addEventListener('change',filterDocuments);documentForm.addEventListener('submit',e=>{e.preventDefault();filterDocuments();});document.querySelector('#reset-documents').addEventListener('click',()=>{documentForm.reset();filterDocuments();input.focus();});
+ const input=document.querySelector('#document-query'),rows=[...document.querySelectorAll('.document-row')];
+ function filterDocuments(){let count=0;for(const row of rows){const visible=norm(row.textContent).includes(norm(input.value));row.hidden=!visible;if(visible)count++;}document.querySelector('#document-status').textContent=`Знайдено документів: ${count}`;document.querySelector('#document-empty').hidden=count>0;}
+ input.addEventListener('input',()=>filterDocuments());documentForm.addEventListener('submit',e=>{e.preventDefault();filterDocuments();});document.querySelector('#reset-documents')?.addEventListener('click',()=>{documentForm.reset();filterDocuments();input.focus();});
 }
 
 function moreButton(container,callback){const b=document.createElement('button');b.type='button';b.className='button load-more';b.textContent='Показати ще';b.addEventListener('click',()=>{b.remove();callback();});container.append(b);}
 const siteSearch=document.querySelector('#site-search');
 if(siteSearch){
- const input=document.querySelector('#site-query'),type=document.querySelector('#search-type'),results=document.querySelector('#search-results'),status=document.querySelector('#search-status');
- const params=new URLSearchParams(location.hash.slice(1)||location.search);input.value=params.get('q')||'';type.value=params.get('type')||'';
+ const input=document.querySelector('#site-query'),results=document.querySelector('#search-results'),status=document.querySelector('#search-status');
+ const params=new URLSearchParams(location.hash.slice(1)||location.search);input.value=params.get('q')||'';
  let request=0;
  async function search(updateURL=true){
-  const id=++request,q=input.value.trim(),kind=type.value;results.replaceChildren();
+  const id=++request,q=input.value.trim();results.replaceChildren();
   if(!q){status.textContent='Введи назву або ключове слово.';return;}
-  if(updateURL){const p=new URLSearchParams({q});if(kind)p.set('type',kind);history.replaceState(null,'','#'+p);}
+  if(updateURL){const p=new URLSearchParams({q});history.replaceState(null,'','#'+p);}
   status.textContent='Шукаємо матеріали…';
-  try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>(!kind||r.type===kind)&&matches(r,q)).sort((a,b)=>Number(norm(b.title).includes(norm(q)))-Number(norm(a.title).includes(norm(q))));status.textContent=found.length?`Знайдено матеріалів: ${found.length}`:'Нічого не знайдено. Спробуй інше слово або зміни тип матеріалу.';
+  try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>matches(r,q)).sort((a,b)=>Number(norm(b.title).includes(norm(q)))-Number(norm(a.title).includes(norm(q))));status.textContent=found.length?`Знайдено матеріалів: ${found.length}`:'Нічого не знайдено. Спробуй інше слово.';
    let shown=0;function renderMore(){const batch=found.slice(shown,shown+20);results.insertAdjacentHTML('beforeend',batch.map(r=>`<article class="search-result"><small>${escapeHTML(r.type)}${r.type==='Новина'?' · '+escapeHTML(r.date):''}</small><h2><a href="${escapeHTML(r.url)}"${externalAttrs(r.url)}>${escapeHTML(r.title)}${r.url.startsWith('http')?' ↗':''}</a></h2><p>${escapeHTML((r.text||'').slice(0,220))}${r.text?.length>220?'…':''}</p></article>`).join(''));shown+=batch.length;if(shown<found.length)moreButton(results,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити пошук. Перевір з’єднання та натисни «Знайти» ще раз.';}
  }
- siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});type.addEventListener('change',()=>search());input.addEventListener('input',()=>search());if(input.value)search(false);
+ siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});input.addEventListener('input',()=>search());if(input.value)search(false);
 }
 
 const newsForm=document.querySelector('#news-filter');
