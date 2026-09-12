@@ -158,6 +158,13 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .location-photo:has(>.campus-anniversary){min-height:0;align-self:center;border-radius:24px;background:var(--card)}
 .location-photo:has(>.campus-anniversary)>div{position:static;margin:0;padding:20px 24px;background:var(--card);color:var(--ink)}
 .home-page .hero-visual .hero-note{top:clamp(18px,2vw,28px);right:clamp(18px,2vw,28px);bottom:auto}
+/* One continuous, subtle shade across both lines of the hero title. */
+.home-page .hero h1{font-family:"Arial Black",Arial,sans-serif;font-weight:900;line-height:1.04;letter-spacing:-.065em;padding-block:.04em;width:fit-content;max-width:100%}
+@supports (-webkit-background-clip:text) or (background-clip:text){
+ .home-page .hero h1{background-image:linear-gradient(to bottom,transparent 12%,rgb(0 0 0 / .18) 100%),linear-gradient(to bottom,var(--ink) 0%,var(--ink) 50%,var(--accent) 50%,var(--accent) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+ .home-page .hero h1 .hero-word{color:transparent;-webkit-text-fill-color:transparent}
+}
+@media(max-width:720px){.home-page .hero h1{font-size:clamp(3rem,16.2vw,7.25rem);letter-spacing:-.07em}.home-page .hero h1 .hero-word{white-space:nowrap}}
 @media(max-width:1000px){
  .hero-visual:has(>.campus-anniversary){grid-template-columns:1fr}
  .hero-visual:has(>.campus-anniversary) .hero-note{grid-column:1;grid-row:4;margin:0 20px 20px}
