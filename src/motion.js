@@ -181,7 +181,7 @@
   let deckFrame=0;
   function drawDecks(){
     deckFrame=0;
-    if(!pointer.matches){for(const deck of decks)for(const card of deck.cards){card.style.removeProperty('transform');card.style.removeProperty('z-index');}return;}
+    if(reduced.matches){for(const deck of decks){for(const card of deck.cards){card.style.removeProperty('transform');card.style.removeProperty('z-index');}if(deck.heading){deck.heading.style.removeProperty('transform');deck.heading.style.removeProperty('opacity');}}return;}
     for(const deck of decks){
       if(!deck.visible)continue;
       const {grid,cards,heading}=deck,rect=grid.getBoundingClientRect();
@@ -206,9 +206,15 @@
       }
     }
   }
-  function queueDecks(){if(!pointer.matches)return;if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}
+  function queueDecks(){if(reduced.matches)return;if(!deckFrame&&decks.some(d=>d.visible))deckFrame=requestAnimationFrame(drawDecks);}
   const deckObserver=new IntersectionObserver(entries=>{
-    for(const entry of entries){const deck=decks.find(d=>d.grid===entry.target);deck.visible=entry.isIntersecting;}
+    for(const entry of entries){
+      const deck=decks.find(d=>d.grid===entry.target);deck.visible=entry.isIntersecting;
+      // The deck moves cards together, so reveal the whole stack when it enters.
+      // This prevents a translated card from remaining hidden because its original
+      // layout position was still below the viewport when the observer first ran.
+      if(entry.isIntersecting)deck.cards.forEach(card=>card.classList.add('card-reveal-visible'));
+    }
     queueDecks();
   },{rootMargin:'180px'});
   decks.forEach(({grid})=>{
