@@ -62,7 +62,8 @@ a:any-link,a:any-link *{text-decoration-line:none!important}
 /* Homepage invitation: luminous blue folds, with real selectable copy. */
 .future-invitation{padding-block:28px}
 .future-banner{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:space-between;gap:32px;min-height:290px;padding:64px 56px;border-radius:32px;background:#08183f;color:#fff;box-shadow:0 20px 65px #1449cf25;transition:box-shadow 550ms,transform 550ms cubic-bezier(.22,1,.36,1)}
-.future-art{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;background:radial-gradient(ellipse at 72% -15%,#65d8ffb0,transparent 45%),radial-gradient(ellipse at 100% 100%,#7690ffb0,transparent 33%),linear-gradient(120deg,#091333 8%,#102f8c 59%,#294bdd);box-shadow:inset 0 0 0 1px #8daaff8a,inset 0 0 28px #458cff42}
+.future-art{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;background:linear-gradient(115deg,#2544b8,#3159ee 60%,#547bf3);box-shadow:inset 0 0 0 1px #8daaff8a,inset 0 0 28px #458cff42}
+.future-art:before,.future-art:after{display:none}
 .future-art:before{content:"";position:absolute;width:74%;height:200%;left:42%;top:21%;border-radius:50%;transform:rotate(-27deg);background:linear-gradient(115deg,#7ce9ff 1%,#2785e8 10%,#1a43b8 28%,#14226a 60%);box-shadow:-2px -2px 12px #9fedffb0}
 .future-art:after{content:"";position:absolute;width:56%;height:240%;left:68%;top:-108%;border-radius:45%;transform:rotate(29deg);background:linear-gradient(95deg,#7bd7ff 0%,#4665e4 8%,#263bb2 35%,#12358f 80%);box-shadow:-2px 0 12px #b3efffb0}
 .future-copy{position:relative;max-width:80%;z-index:1}
