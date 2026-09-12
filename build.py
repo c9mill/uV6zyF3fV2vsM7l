@@ -208,8 +208,8 @@ def home_legacy():
 def home():
     body = home_legacy()
     body = body.replace('Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span>', 'ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету»')
-    body = body.replace('Майбутнє.</span>', 'Майбутнє</span>')
-    body = body.replace('Почни з коледжу.', 'Разом з нами')
+    body = body.replace('Майбутнє.</span>', 'майбутнє</span>')
+    body = body.replace('Почни з коледжу.', 'разом з нами')
     return body
 
 for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:

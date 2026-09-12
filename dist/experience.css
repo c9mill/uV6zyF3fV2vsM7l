@@ -225,10 +225,11 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .home-page .hero h1{font-family:"Arial Black",Arial,sans-serif;font-weight:900;font-size:clamp(3rem,7.7vw,7.5rem);font-size:clamp(3rem,17cqi,7.5rem);line-height:1.18;letter-spacing:-.025em;padding:0;width:100%;max-width:100%;margin-bottom:24px}
 .home-page .hero h1>br{display:none}
 .home-page .hero h1 .hero-word{display:block;width:fit-content;max-width:100%;white-space:nowrap;--headline-color:var(--ink);color:var(--headline-color)}
-.home-page .hero h1 .future{--headline-color:var(--accent)}
+ .home-page .hero h1 .future{--headline-color:var(--accent)}
+ .home-page .hero-subtitle{font-family:"Arial Black",Arial,sans-serif;font-weight:900;letter-spacing:-.025em;--headline-color:var(--ink);color:var(--headline-color)}
 @supports (-webkit-background-clip:text) or (background-clip:text){
- .home-page .hero h1 .hero-word{background:linear-gradient(to bottom,var(--headline-color) 22%,var(--headline-color) 40%,color-mix(in srgb,var(--headline-color) 64%,var(--canvas)) 72%,color-mix(in srgb,var(--headline-color) 23%,var(--canvas)) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-}
+  .home-page .hero h1 .hero-word,.home-page .hero-subtitle{background:linear-gradient(to bottom,var(--headline-color) 22%,var(--headline-color) 40%,color-mix(in srgb,var(--headline-color) 64%,var(--canvas)) 72%,color-mix(in srgb,var(--headline-color) 23%,var(--canvas)) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+ }
 @media(max-width:720px){.home-page .hero h1{font-size:16.3vw;font-size:18cqi;line-height:1.2;letter-spacing:-.03em;width:calc(100% + 20px);max-width:none;margin-left:-10px;margin-bottom:26px}}
 @media(max-width:1000px){
  .hero-visual:has(>.campus-anniversary){grid-template-columns:1fr}
