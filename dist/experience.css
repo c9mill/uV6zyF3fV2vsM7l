@@ -169,13 +169,16 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .location-photo:has(>.campus-anniversary){min-height:0;align-self:center;border-radius:24px;background:var(--card)}
 .location-photo:has(>.campus-anniversary)>div{position:static;margin:0;padding:20px 24px;background:var(--card);color:var(--ink)}
 .home-page .hero-visual .hero-note{top:clamp(18px,2vw,28px);right:clamp(18px,2vw,28px);bottom:auto}
-/* One continuous, subtle shade across both lines of the hero title. */
-.home-page .hero h1{font-family:"Arial Black",Arial,sans-serif;font-weight:900;line-height:1.04;letter-spacing:-.065em;padding-block:.04em;width:fit-content;max-width:100%}
+/* Broad two-line headline, with the soft metallic shading in the references. */
+.home-page .hero-copy{min-width:0;container-type:inline-size}
+.home-page .hero h1{font-family:"Arial Black",Arial,sans-serif;font-weight:900;font-size:clamp(3rem,7.7vw,7.5rem);font-size:clamp(3rem,17cqi,7.5rem);line-height:1.18;letter-spacing:-.025em;padding:0;width:100%;max-width:100%;margin-bottom:24px}
+.home-page .hero h1>br{display:none}
+.home-page .hero h1 .hero-word{display:block;width:fit-content;max-width:100%;white-space:nowrap;--headline-color:var(--ink);color:var(--headline-color)}
+.home-page .hero h1 .future{--headline-color:var(--accent)}
 @supports (-webkit-background-clip:text) or (background-clip:text){
- .home-page .hero h1{background-image:linear-gradient(to bottom,transparent 12%,rgb(0 0 0 / .18) 100%),linear-gradient(to bottom,var(--ink) 0%,var(--ink) 50%,var(--accent) 50%,var(--accent) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
- .home-page .hero h1 .hero-word{color:transparent;-webkit-text-fill-color:transparent}
+ .home-page .hero h1 .hero-word{background:linear-gradient(to bottom,var(--headline-color) 22%,var(--headline-color) 40%,color-mix(in srgb,var(--headline-color) 64%,var(--canvas)) 72%,color-mix(in srgb,var(--headline-color) 23%,var(--canvas)) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 }
-@media(max-width:720px){.home-page .hero h1{font-size:clamp(3rem,16.2vw,7.25rem);letter-spacing:-.07em}.home-page .hero h1 .hero-word{white-space:nowrap}}
+@media(max-width:720px){.home-page .hero h1{font-size:16.3vw;font-size:18cqi;line-height:1.2;letter-spacing:-.03em;width:calc(100% + 20px);max-width:none;margin-left:-10px;margin-bottom:26px}}
 @media(max-width:1000px){
  .hero-visual:has(>.campus-anniversary){grid-template-columns:1fr}
  .hero-visual:has(>.campus-anniversary) .hero-note{grid-column:1;grid-row:4;margin:0 20px 20px}
