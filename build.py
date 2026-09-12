@@ -32,6 +32,14 @@ def clean_text(html):
     s = BeautifulSoup(html, 'html.parser')
     for t in s(['style','script']): t.decompose()
     return re.sub(r'\s+', ' ', s.get_text(' ', strip=True)).strip()
+
+def strip_heading_periods(html):
+    """Remove full stops from visible h1-h3 text without touching attributes."""
+    def clean(match):
+        fragment = match.group(0)
+        return re.sub(r'(?<=>)([^<]*)(?=<)', lambda text: text.group(1).replace('.', ''), fragment)
+    return re.sub(r'<h([1-3])\b[^>]*>.*?</h\1>', clean, html, flags=re.I | re.S)
+
 def title(p):
     t = clean_text(p['title']['rendered'])
     if not t:
@@ -165,6 +173,7 @@ def shell(title_text,body,path='/',description='',article=False):
             if parent_link and (parent_link.get('href') == CAMPUS or norm(parent_link.get('href','')) == norm(MANIFEST[47]['original_url'])):
                 parent_link['href'] = ANNIVERSARY
         body = str(content)
+    body = strip_heading_periods(body)
     desc = description or 'Спеціальності, вступ, новини та студентське життя Фахового коледжу будівництва, архітектури та дизайну в Житомирі.'
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — ФКБАД</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — ФКБАД"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}{' core-page' if not article and path != '/новини/' else ''}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
