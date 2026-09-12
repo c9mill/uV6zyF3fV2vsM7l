@@ -147,8 +147,9 @@
     x=event.clientX;y=event.clientY;
     if(!visible){cx=x;cy=y;visible=true;}
     const textInput=event.target.closest('input,textarea,select,[contenteditable="true"]');
-    cursor.classList.toggle('is-visible',!textInput);
-    cursor.classList.toggle('is-active',!!event.target.closest('a,button'));
+    const staticSchedule=event.target.closest('.schedule-table-scroll');
+    cursor.classList.toggle('is-visible',!textInput&&!staticSchedule);
+    cursor.classList.toggle('is-active',!staticSchedule&&!!event.target.closest('a,button'));
     const nextMagnet=event.target.closest('.button,.header-actions>.icon-button,.back-top');
     if(nextMagnet!==magnet){clearMagnet();magnet=nextMagnet;magnet?.classList.add('motion-magnet');}
     const nextSurface=event.target.closest('.program-card,.news-card,.resource-tile');
