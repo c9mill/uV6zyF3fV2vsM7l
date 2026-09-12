@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
 const VERSION = '6b7c16fa44db';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=920e99d607e8", "/experience.css?v=0d08a983ee20", "/app.js?v=194740b7d613", "/experience.js?v=09165a93ab85", "/motion.css?v=1c0b9e9dcd94", "/motion.js?v=db38d07ceee8", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=a2f3902e58a1"];
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=920e99d607e8", "/experience.css?v=7dc75d79e419", "/app.js?v=194740b7d613", "/experience.js?v=09165a93ab85", "/motion.css?v=1c0b9e9dcd94", "/motion.js?v=90e944b590d0", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=a2f3902e58a1"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
