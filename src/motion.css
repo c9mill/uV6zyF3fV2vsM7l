@@ -151,3 +151,21 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .site-header .mobile-nav .navigation-tree a{opacity:1;transform:none;transition-delay:0ms}
 
 .navigation-unavailable{padding:12px 14px;font-size:.85rem;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}.navigation-unavailable small{display:block;margin-top:4px;font-size:.72rem}
+
+/* Compact, touch-draggable alphabet directory. Only the list scrolls. */
+.site-header .mobile-nav.has-alphabet{width:min(600px,100%);padding:18px;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100dvh - 140px)}
+.navigation-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 6px 12px;flex:none;color:var(--ink);font-size:.9rem}
+.navigation-toolbar button{border:0;border-radius:10px;background:var(--blue-soft);color:var(--accent);padding:8px 12px;font-size:.8rem}
+.navigation-browser{position:relative;display:flex;align-items:flex-start;gap:10px;min-height:0;overflow:hidden}
+.site-header .navigation-browser .navigation-tree{flex:1;min-width:0;max-height:calc(100dvh - 218px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;gap:2px;padding-right:4px}
+.site-header .navigation-browser .navigation-tree a,.site-header .navigation-browser .navigation-tree summary{padding:10px 12px;min-height:40px;line-height:1.35;font-size:.85rem}
+.site-header .navigation-browser .navigation-children{margin-left:4px;padding:2px 0 6px 8px}
+.site-header .navigation-browser .navigation-children a,.site-header .navigation-browser .navigation-children summary{font-size:.8rem}
+.navigation-alphabet{position:relative;display:flex;flex-direction:column;flex:none;width:44px;touch-action:none;user-select:none;-webkit-user-select:none}
+.navigation-alphabet button{display:flex;align-items:center;justify-content:center;width:44px;height:30px;flex:none;padding:0;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:.78rem;font-weight:700;transition:background 120ms,color 120ms}
+.navigation-alphabet button[aria-pressed=true]{background:var(--blue-soft);color:var(--accent)}
+.navigation-letter-preview{position:absolute;right:56px;top:15px;transform:translateY(-50%) scale(.85);display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--accent);color:white;font-size:1.4rem;font-weight:700;opacity:0;pointer-events:none;transition:opacity 120ms,transform 120ms}
+.is-browsing .navigation-letter-preview{opacity:1;transform:translateY(-50%) scale(1)}
+@media(max-width:720px){.site-header .mobile-nav.has-alphabet{width:100%;padding:14px}.site-header .navigation-browser .navigation-tree{max-height:calc(100dvh - 282px)}.site-header .navigation-browser .navigation-tree a,.site-header .navigation-browser .navigation-tree summary{min-height:44px;padding:10px 8px}.navigation-browser{gap:4px}.navigation-alphabet button{height:28px}}
+@media(max-height:650px){.navigation-alphabet button{height:20px}.site-header .navigation-browser .navigation-tree{max-height:calc(100dvh - 230px)}}
+@media(prefers-reduced-motion:reduce){.navigation-alphabet button,.navigation-letter-preview{transition:none}}

@@ -71,6 +71,62 @@ if(actions&&!actions.querySelector('.language-toggle')){
 }
 const menuButton=document.querySelector('.menu-toggle');
 const mobileNav=document.querySelector('#mobile-nav');
+// Alphabet navigation keeps the original links and nested sections intact.
+const navigationTree=mobileNav?.querySelector('.navigation-tree');
+if(navigationTree){
+ const collator=new Intl.Collator('uk',{sensitivity:'base',numeric:true});
+ const label=el=>(el.querySelector(':scope > summary,:scope > span')||el).textContent.trim();
+ for(const children of navigationTree.querySelectorAll('.navigation-children')){
+  const nodes=[...children.children];
+  nodes.sort((a,b)=>label(a)==='Огляд розділу'?-1:label(b)==='Огляд розділу'?1:collator.compare(label(a),label(b)));
+  children.append(...nodes);
+ }
+ const shortcuts=navigationTree.querySelector('.navigation-shortcuts');
+ if(shortcuts){navigationTree.append(...shortcuts.children);shortcuts.remove();}
+ const entries=[...navigationTree.children].sort((a,b)=>collator.compare(label(a),label(b)));
+ navigationTree.append(...entries);
+ const letterOf=el=>label(el).charAt(0).toLocaleUpperCase('uk');
+ const letters=[...new Set(entries.map(letterOf))];
+ const shell=document.createElement('div');shell.className='navigation-browser';
+ const toolbar=document.createElement('div');toolbar.className='navigation-toolbar';
+ const heading=document.createElement('strong');heading.textContent='Усі розділи';heading.setAttribute('aria-live','polite');
+ const reset=document.createElement('button');reset.type='button';reset.textContent='Усі розділи';reset.hidden=true;
+ toolbar.append(heading,reset);
+ const rail=document.createElement('div');rail.className='navigation-alphabet';rail.setAttribute('role','group');rail.setAttribute('aria-label','Розділи за абеткою');
+ const bubble=document.createElement('span');bubble.className='navigation-letter-preview';bubble.setAttribute('aria-hidden','true');
+ const buttons=[];let selected='*';
+ function selectLetter(value){
+  if(selected===value)return;
+  selected=value;
+  for(const entry of entries)entry.hidden=value!=='*'&&letterOf(entry)!==value;
+  for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.letter===value));
+  heading.textContent=value==='*'?'Усі розділи':`Розділи на «${value}»`;
+  reset.hidden=value==='*';navigationTree.scrollTop=0;
+  bubble.textContent=value==='*'?'Усі':value;
+ }
+ for(const value of ['*',...letters]){
+  const button=document.createElement('button');button.type='button';button.dataset.letter=value;button.textContent=value==='*'?'•':value;
+  button.setAttribute('aria-label',value==='*'?'Усі розділи':`Розділи на літеру ${value}`);
+  button.setAttribute('aria-pressed',String(value==='*'));button.setAttribute('aria-controls','navigation-sections');
+  button.addEventListener('click',()=>selectLetter(value));buttons.push(button);rail.append(button);
+ }
+ reset.addEventListener('click',()=>selectLetter('*'));
+ rail.addEventListener('keydown',event=>{
+  const index=buttons.indexOf(document.activeElement);if(index<0)return;
+  const next=event.key==='ArrowDown'?Math.min(index+1,buttons.length-1):event.key==='ArrowUp'?Math.max(index-1,0):event.key==='Home'?0:event.key==='End'?buttons.length-1:-1;
+  if(next<0)return;event.preventDefault();buttons[next].focus();selectLetter(buttons[next].dataset.letter);
+ });
+ const choose=event=>{
+  const index=Math.max(0,Math.min(buttons.length-1,Math.floor((event.clientY-rail.getBoundingClientRect().top)/rail.clientHeight*buttons.length)));
+  selectLetter(buttons[index].dataset.letter);bubble.textContent=index?buttons[index].dataset.letter:'Усі';
+  bubble.style.top=`${buttons[index].offsetTop+buttons[index].offsetHeight/2}px`;
+ };
+ rail.addEventListener('pointerdown',event=>{if(event.button!==0)return;event.preventDefault();rail.setPointerCapture(event.pointerId);shell.classList.add('is-browsing');choose(event);});
+ rail.addEventListener('pointermove',event=>{if(rail.hasPointerCapture(event.pointerId))choose(event);});
+ const finish=event=>{if(rail.hasPointerCapture(event.pointerId))rail.releasePointerCapture(event.pointerId);shell.classList.remove('is-browsing');};
+ rail.addEventListener('pointerup',finish);rail.addEventListener('pointercancel',finish);rail.addEventListener('lostpointercapture',()=>shell.classList.remove('is-browsing'));
+ navigationTree.id='navigation-sections';navigationTree.before(toolbar,shell);shell.append(navigationTree,rail,bubble);mobileNav.classList.add('has-alphabet');
+}
 const menuBackdrop=document.createElement('button');
 menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.hidden=true;
 menuBackdrop.tabIndex=-1;menuBackdrop.setAttribute('aria-label','Закрити меню');
