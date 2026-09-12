@@ -106,6 +106,11 @@ main .schedule-mobile-lesson:active{box-shadow:inset 0 0 0 1px color-mix(in srgb
 @media(max-width:720px){main .table-scroll :is(th,td){padding:13px 14px;font-size:.875rem;min-width:120px}}
 @media print{main .table-scroll,main .schedule-table-scroll{overflow:visible;box-shadow:none;background:none}main .table-scroll :is(th,td){background:none;color:#000}}
 .cosmic-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;opacity:.38}
+.location-photo.panorama-frame{min-height:480px;background:var(--card);box-shadow:var(--card-shadow);isolation:isolate}
+.location-photo.panorama-frame>iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:var(--card)}
+.location-photo.panorama-frame>div{z-index:2;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:#142332d9}
+@media(max-width:720px){.location-photo.panorama-frame{min-height:360px}}
+@media(prefers-reduced-motion:reduce){.location-photo.panorama-frame>iframe{scroll-behavior:auto}}
 .cosmic-backdrop>div{position:absolute;inset:-5%;pointer-events:none}
 .cosmic-nebula{background:radial-gradient(ellipse at 72% 28%,#a8c6ef16,transparent 48%),radial-gradient(ellipse at 42% 53%,#80b8c629,transparent 47%),linear-gradient(151deg,transparent 22%,#83aeca09 33%,#c7dbe724 43%,#a6c3d71c 48%,#1539680a 53%,#8caaca15 60%,transparent 75%);filter:blur(18px)}
 .cosmic-dust{background:url('/cosmos.svg') center/cover no-repeat;opacity:.85;animation:cosmic-drift 190s ease-in-out infinite alternate}
