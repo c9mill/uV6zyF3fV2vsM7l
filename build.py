@@ -174,10 +174,11 @@ def navigation_label(label):
         text = re.sub(r'(?<!\w)' + re.escape(abbreviation.lower()) + r'(?!\w)', abbreviation, text)
     return text[:1].upper() + text[1:]
 
-def full_navigation(items, active=''):
+def full_navigation(items, active='', prefix=''):
     overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
     result = ''
-    for item in items:
+    for index, item in enumerate(items):
+        node_id = prefix + str(index)
         label = item['label']
         display_label = navigation_label(label)
         url = overview.get(label.upper(), item.get('url'))
@@ -185,11 +186,11 @@ def full_navigation(items, active=''):
         children = item.get('children', [])
         if children:
             intro = link(url, 'Огляд розділу') if url else ''
-            result += '<details class="navigation-group"><summary>'+escape(display_label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active)+'</div></details>'
+            result += '<details id="menu-'+node_id+'" class="navigation-group"><summary>'+escape(display_label)+'</summary><div class="navigation-children">'+intro+full_navigation(children, active, node_id+'-')+'</div></details>'
         elif url:
             result += link(url, escape(display_label), 'navigation-link')
         else:
-            result += '<div class="navigation-unavailable"><span>'+escape(display_label)+'</span><small>Матеріал поки недоступний на вихідному сайті</small></div>'
+            result += '<div id="menu-'+node_id+'" class="navigation-unavailable"><span>'+escape(display_label)+'</span><small>Матеріал поки недоступний на вихідному сайті</small></div>'
     return result
 
 def header(active=''):
@@ -603,6 +604,22 @@ for p in PAGES:
 
 not_found=page_heading('Сторінку не знайдено','Можливо, посилання змінилося. Скористайся пошуком або повернися на головну.')+f'<div class="container page-content button-row">{button("/пошук/","Знайти на сайті")}{button("/","На головну",True)}</div>'
 write('/404.html',shell('Сторінку не знайдено',not_found,'/404.html'),standalone=True)
+# Include the actual menu labels, including groups with no standalone page.
+def index_navigation(items, parents=(), prefix=''):
+    overview = {'ПРО КОЛЕДЖ':'/про-коледж/','ВСТУПНИКУ':'/вступнику/','СТУДЕНТУ':'/студенту/','БІБЛІОТЕКА':'/бібліотека/','ВИХОВНА РОБОТА':'/виховна-робота/','НОВИНИ':'/новини/'}
+    for index, item in enumerate(items):
+        node_id = prefix + str(index)
+        label = navigation_label(item['label'])
+        url = overview.get(item['label'].upper(), item.get('url'))
+        unavailable = url in (None, '#', 'http://2')
+        target = '/#menu-' + node_id if unavailable else local_url(url)
+        context = ' · '.join((*parents, label))
+        if unavailable and not item.get('children'):
+            context += ' · Матеріал поки недоступний на вихідному сайті'
+        SEARCH.append({'title':label,'url':target,'type':'Розділ','text':context})
+        index_navigation(item.get('children', []), (*parents, label), node_id+'-')
+index_navigation(NAVIGATION)
+
 (OUT/'search-index.json').write_text(json.dumps(SEARCH,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
 (OUT/'route-map.json').write_text(json.dumps({str(k):v for k,v in ROUTES.items()},ensure_ascii=False),encoding='utf-8')
 (OUT/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n',encoding='utf-8')
