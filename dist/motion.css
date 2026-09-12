@@ -30,8 +30,8 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 @media(hover:none),(pointer:coarse){
  html{scroll-behavior:auto}
  body:before,body:after{animation:none!important;will-change:auto;inset:0;transform:none}
- .cosmic-dust{animation:cosmic-drift 72s ease-in-out infinite alternate!important;will-change:transform;transform:none}
- .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 34s ease-in-out infinite alternate;will-change:transform}
+ .cosmic-dust{animation:cosmic-drift 150s ease-in-out infinite alternate!important;will-change:transform;transform:none}
+ .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 90s ease-in-out infinite alternate;will-change:transform}
  .site-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--canvas)!important}
  .hero-note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
  .home-page .hero-copy>*,.home-page .hero-visual,.page-heading h1,.page-lead,.schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table{animation:none!important}
@@ -39,7 +39,7 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .hero-photo{transform:none!important;transition:none!important}
  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
-@media(prefers-reduced-motion:reduce){.cosmic-nebula,.cosmic-dust,.cosmic-glints,.shooting-star{animation:none!important;will-change:auto}}
+@media(prefers-reduced-motion:reduce){.cosmic-nebula,.cosmic-dust,.cosmic-glints{animation:none!important;will-change:auto}}
 /* One window transition at every width, anchored to the menu button. */
 .site-header .mobile-nav{opacity:0;transform:translate3d(0,-14px,0) scale(.92);transform-origin:calc(100% - 32px) 0;transition:opacity 300ms ease,transform 520ms cubic-bezier(.22,1,.36,1);pointer-events:none}
 .site-header .mobile-nav.is-open{opacity:1;transform:translate3d(0,0,0) scale(1);pointer-events:auto}
