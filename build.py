@@ -605,16 +605,18 @@ def council_board():
     </div>'''
 
 def student_government():
-    source=next(p for p in PAGES if ROUTES[p['id']]=='/студентське-самоврядування/')
-    content=sanitize(source['content']['rendered'],title(source))
-    soup=BeautifulSoup(content,'html.parser')
-    old_table=soup.select_one('.table-scroll')
-    if old_table:
-        old_table.replace_with(BeautifulSoup(council_board(),'html.parser'))
-    old_title=next((heading for heading in soup.find_all(['h2','h3']) if 'Склад студентської ради' in heading.get_text(' ',strip=True)),None)
-    if old_title:
-        old_title.decompose()
-    return page_heading('Студентське самоврядування','Ініціативи, представництво та студентське життя коледжу')+f'<div class="container page-content council-page"><div class="prose council-prose">{soup}</div></div>'
+    intro=f'''<section class="council-intro">
+      <div class="council-intro-copy"><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
+      <div class="council-orbit" aria-hidden="true"><span class="council-orbit-ring ring-one"></span><span class="council-orbit-ring ring-two"></span><span class="council-orbit-core">{icon('users')}</span><span class="council-orbit-node node-one">{icon('design')}</span><span class="council-orbit-node node-two">{icon('heart')}</span><span class="council-orbit-node node-three">{icon('sport')}</span><span class="council-orbit-node node-four">{icon('music')}</span></div>
+    </section>'''
+    activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентська рада</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
+      <article><span>{icon('users')}</span><small>01</small><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
+      <article><span>{icon('music')}</span><small>02</small><h3>Організовуємо</h3><p>Створюємо зустрічі, культурні, спортивні й волонтерські події.</p></article>
+      <article><span>{icon('heart')}</span><small>03</small><h3>Підтримуємо</h3><p>Перетворюємо студентські ініціативи на спільні проєкти та корисні зміни.</p></article>
+    </div></section>'''
+    cta=f'''<section class="council-cta"><span>{icon('edit')}</span><div><p class="eyebrow">Є ідея</p><h2>Запропонуй наступну</h2><p>Розкажи про ініціативу представнику свого напряму або звернися до коледжу.</p></div><div class="button-row">{button('/контакти/','Зв’язатися')}{button('/новини/','Події студентів',True)}</div></section>'''
+    heading=page_heading('Студентське самоврядування','Ініціативи, представництво та студентське життя коледжу').replace('page-heading container','page-heading container council-page-heading',1)
+    return heading+f'<div class="container page-content council-page">{intro}{council_board()}{activity}{cta}</div>'
 
 CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page),'/студентське-самоврядування/':('Студентське самоврядування',student_government),'/політика-конфіденційності/':('Політика конфіденційності',privacy_policy),'/умови-користування/':('Умови користування',terms_policy),'/політика-cookie/':('Політика cookies',cookie_policy),'/повернення-коштів/':('Політика платежів і повернення коштів',refund_policy),SCHEDULE:('Розклад занять',lambda:(ROOT/'src/schedule.html').read_text(encoding='utf-8'))}
 for path,(name,render) in CUSTOM.items():write(path,shell(name,render(),path))
