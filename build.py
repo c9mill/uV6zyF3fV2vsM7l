@@ -12,6 +12,9 @@ EXPORT = ROOT.parent / 'fkbad_migrator/fkbad_export_lean'
 OUT = ROOT / 'dist'
 OUT.mkdir(exist_ok=True)
 (OUT / 'assets').mkdir(exist_ok=True)
+GOOGLE_VERIFICATION = ROOT / 'src/google6addcaa4704e2621.html'
+if GOOGLE_VERIFICATION.is_file():
+    shutil.copy2(GOOGLE_VERIFICATION, OUT / GOOGLE_VERIFICATION.name)
 def read(name): return json.loads((EXPORT / name).read_text(encoding='utf-8'))
 PAGES = read('backend/pages.json')
 POSTS = sorted(read('backend/posts.json'), key=lambda x:x['date'], reverse=True)
