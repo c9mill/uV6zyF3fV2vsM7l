@@ -148,6 +148,21 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 @media print{body:before,body:after{display:none}.editorial-section,.editorial-photo{box-shadow:none;background:transparent;break-inside:avoid}}
 
 /* Student council: full roster on desktop, focused role tabs on phones. */
+/* Shared council-style tables; schedule tables never receive this wrapper class. */
+main .warm-table-scroll{padding:0!important;border:0!important;border-radius:0;background:transparent!important;box-shadow:none!important;overflow-x:auto;max-width:100%;scrollbar-color:#c6a44e transparent;transition:none}
+main .warm-table-scroll:focus-visible{outline:2px solid #c6a44e;outline-offset:4px;box-shadow:none}
+main .warm-table-scroll table{width:100%;border-collapse:separate!important;border-spacing:0 6px!important;background:transparent!important;border:0!important;box-shadow:none!important;line-height:1.6}
+main .warm-table-scroll :is(thead,tbody,tfoot){background:transparent!important;border:0!important;box-shadow:none!important}
+main .warm-table-scroll tr,main .warm-table-scroll tr:hover{background:linear-gradient(105deg,#f2c96b21,#dfb44912)!important;border:0!important;box-shadow:none!important;transition:none}
+main .warm-table-scroll thead tr{background:linear-gradient(115deg,#f2c96b2b,#d9913814)!important}
+main .warm-table-scroll table :is(th,td),main .warm-table-scroll table tr:nth-child(even) td,main .warm-table-scroll table tr:hover>:is(th,td),main .warm-table-scroll table tr:focus-within>td,main .warm-table-scroll table td:hover{padding:18px 20px;background:transparent!important;color:var(--ink);border:0!important;box-shadow:none!important;transition:none}
+main .warm-table-scroll table th{font-weight:700;text-align:left}
+main .warm-table-scroll table tr>:first-child{border-radius:16px 0 0 16px}
+main .warm-table-scroll table tr>:last-child{border-radius:0 16px 16px 0}
+main .warm-table-scroll table tr>:only-child{border-radius:16px}
+main .warm-table-scroll a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:720px){main .warm-table-scroll table :is(th,td){padding:13px 14px;font-size:.875rem}}
+@media print{main .warm-table-scroll tr,main .warm-table-scroll thead tr{background:transparent!important}main .warm-table-scroll table :is(th,td){color:#000}}
 html:has(.council-page){--canvas:#fff9e9;--surface:#fffdf4;--card:#fff9e9;--soft:#f6edcf;--elevated:#fff7df;--ink:#342a17;--muted:#756443;--accent:#996913;--accent-solid:#96620e;--line:#e4d5aa;--blue-soft:#f6e8bd;--glass:#fff9e9ed;background:var(--canvas)}
 html[data-theme="dark"]:has(.council-page){--canvas:#191711;--surface:#262219;--card:#29251b;--soft:#302a1c;--elevated:#393021;--ink:#fff6df;--muted:#cbbb98;--accent:#ebc461;--accent-solid:#9a6b18;--line:#55482c;--blue-soft:#3b3019;--glass:#211c14ed}
 html:has(.council-page) body{background:var(--canvas);color:var(--ink)}

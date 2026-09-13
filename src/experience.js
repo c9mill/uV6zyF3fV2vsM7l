@@ -36,6 +36,7 @@
   if(table.matches('.council-table')||table.closest('.schedule-table-scroll'))return;
   let wrapper=table.closest('.table-scroll');
   if(!wrapper){wrapper=document.createElement('div');wrapper.className='table-scroll';table.before(wrapper);wrapper.append(table);}
+  wrapper.classList.add('warm-table-scroll');
   wrapper.tabIndex=0;wrapper.setAttribute('role','region');
   wrapper.setAttribute('aria-label',table.caption?.textContent.trim()||'Таблиця — прокрутіть, щоб переглянути всі стовпці');
  });
