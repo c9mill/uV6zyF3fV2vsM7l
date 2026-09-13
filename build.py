@@ -614,7 +614,7 @@ def council_board():
 def student_government():
     intro=f'''<section class="council-intro">
       <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентської ради коледжу" width="2200" height="1556"></figure>
-      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
+      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><span>напрямів роботи</span><strong>11</strong></div><div><span>студентів у команді</span><strong>20</strong></div><div><span>спільний голос</span><strong>1</strong></div></div></div>
     </section>'''
     activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентська рада</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
       <article class="council-activity-card"><span>{icon('users')}</span><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
