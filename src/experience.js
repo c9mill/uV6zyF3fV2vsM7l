@@ -69,3 +69,42 @@
   new MutationObserver(observeExcerpts).observe(grid,{childList:true});
  });
 })();
+
+// Internal-page interactions share one light observer and keep all content readable.
+(()=>{
+ const root=document.documentElement;
+ if(!root.hasAttribute('data-page-palette'))return;
+ const nav=document.querySelector('.section-explorer');
+ const links=nav?[...nav.querySelectorAll('a')]:[];
+ const targets=links.map(link=>document.getElementById(decodeURIComponent(link.hash.slice(1))));
+ const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+ function mark(index){links.forEach((link,i)=>{if(i===index)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
+ if(links.length&&'IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   for(const entry of entries)if(entry.isIntersecting)mark(targets.indexOf(entry.target));
+  },{rootMargin:'-15% 0px -65% 0px'});
+  targets.filter(Boolean).forEach(target=>observer.observe(target));
+  links.forEach((link,index)=>link.addEventListener('click',()=>{
+   const target=targets[index];if(!target)return;
+   mark(index);target.tabIndex=-1;target.focus({preventScroll:true});
+  }));
+ }
+ const cards=document.querySelectorAll('main .editorial-section,main .resource-group,main .resource-tile,main .news-card,main .document-row,main .contact-details>div,main .steps>div');
+ cards.forEach((card,i)=>{card.classList.add('interior-card');card.style.setProperty('--card-hue',`calc(var(--page-hue) + ${[0,32,-28,65][i%4]})`);});
+ if('IntersectionObserver' in window){
+  const reveal=new IntersectionObserver(entries=>{
+   for(const entry of entries)if(entry.isIntersecting){
+    if(!reduced.matches)entry.target.classList.add('interior-arrived');
+    reveal.unobserve(entry.target);
+   }
+  },{threshold:.06});
+  cards.forEach(card=>reveal.observe(card));
+ }
+ // Newly filtered news and search results receive the same card treatment.
+ ['news-results','search-results'].forEach(id=>{
+  const list=document.getElementById(id);if(!list)return;
+  new MutationObserver(()=>{[...list.children].forEach((card,i)=>{
+   card.classList.add('interior-card');card.style.setProperty('--card-hue',`calc(var(--page-hue) + ${[0,32,-28,65][i%4]})`);
+  });}).observe(list,{childList:true});
+ });
+})();

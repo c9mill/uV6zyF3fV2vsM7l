@@ -240,6 +240,7 @@ def shell(title_text,body,path='/',description='',article=False):
     desc = normalize_name_text(description or f'{FULL_DISPLAY} у Житомирі: спеціальності, вступ, новини та студентське життя.')
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}{' core-page' if not article and path != '/новини/' else ''}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
+PAGE_PALETTES = {}
 def write(path,content,standalone=False):
     # Give each internal route its own stable palette; preserve the two bespoke pages.
     if path != '/' and 'council-page-heading' not in content and '<html lang="uk"' in content:
@@ -257,7 +258,7 @@ def write(path,content,standalone=False):
         ]
         title_match = re.search(r'<title>(.*?)</title>', content)
         label = unquote(path).lower()
-        # Articles share the news palette, irrespective of the subject in their slug.
+        # Every route, including individual articles, gets a distinct hue.
         if ' is-article' in content:
             hue = 345
         else:
@@ -265,7 +266,33 @@ def write(path,content,standalone=False):
             if hue is None:
                 label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
                 hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
-        content = content.replace('<html lang="uk"', f'<html lang="uk" data-page-palette="{hue}" style="--page-hue:{hue}"', 1)
+        seed = int(hashlib.sha256(path.encode()).hexdigest()[:8],16)
+        hue = round((hue + (seed % 36000) / 100) % 360, 2)
+        while hue in PAGE_PALETTES and PAGE_PALETTES[hue] != path:
+            hue = round((hue + .17) % 360, 2)
+        PAGE_PALETTES[hue] = path
+        companion = round((hue + 35 + seed % 55) % 360, 2)
+        content = content.replace('<html lang="uk"', f'<html lang="uk" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{companion}"', 1)
+        # A navigation strip links to real content headings, never invented sections.
+        page = BeautifulSoup(content, 'html.parser')
+        main = page.select_one('main')
+        page_heading = page.select_one('.page-heading')
+        if main and page_heading:
+            headings = [h for h in main.select('h2,h3')
+                        if h.get_text(strip=True) and not h.find_parent(['aside','table','details'])
+                        and not h.find_parent(class_=re.compile(r'news-card|program-card|resource-tile|page-sidebar|empty-state|schedule|map-consent'))]
+            if len(headings) >= 2:
+                nav = page.new_tag('nav', attrs={'class':'section-explorer container','aria-label':'На цій сторінці'})
+                for index,h in enumerate(headings[:24],1):
+                    anchor = h.get('id') or f'page-section-{index}'
+                    while not h.get('id') and page.find(id=anchor):
+                        anchor += '-section'
+                    h['id'] = anchor
+                    link_tag = page.new_tag('a',href='#'+anchor)
+                    link_tag.string = h.get_text(' ',strip=True)
+                    nav.append(link_tag)
+                page_heading.insert_after(nav)
+                content = str(page)
     for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
