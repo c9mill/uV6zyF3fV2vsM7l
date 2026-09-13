@@ -148,6 +148,14 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 @media print{body:before,body:after{display:none}.editorial-section,.editorial-photo{box-shadow:none;background:transparent;break-inside:avoid}}
 
 /* Student council: full roster on desktop, focused role tabs on phones. */
+html:has(.council-page){--canvas:#fff9e9;--surface:#fffdf4;--card:#fff9e9;--soft:#f6edcf;--elevated:#fff7df;--ink:#342a17;--muted:#756443;--accent:#996913;--accent-solid:#96620e;--line:#e4d5aa;--blue-soft:#f6e8bd;--glass:#fff9e9ed;background:var(--canvas)}
+html[data-theme="dark"]:has(.council-page){--canvas:#191711;--surface:#262219;--card:#29251b;--soft:#302a1c;--elevated:#393021;--ink:#fff6df;--muted:#cbbb98;--accent:#ebc461;--accent-solid:#9a6b18;--line:#55482c;--blue-soft:#3b3019;--glass:#211c14ed}
+html:has(.council-page) body{background:var(--canvas);color:var(--ink)}
+html:has(.council-page) body:before{background:radial-gradient(ellipse at 16% 25%,#e0b64725,transparent 48%),radial-gradient(ellipse at 82% 65%,#bd87312b,transparent 52%)}
+html:has(.council-page) body:after{background:radial-gradient(ellipse at 70% 18%,#f9dd9218,transparent 45%),radial-gradient(ellipse at 25% 80%,#d4a73c20,transparent 50%)}
+html:has(.council-page) .cosmic-nebula{background:radial-gradient(ellipse at 35% 60%,#efc75b25,transparent 55%),radial-gradient(ellipse at 78% 20%,#d69a3320,transparent 50%)}
+html:has(.council-page) .cosmic-dust{filter:sepia(1);opacity:.45}
+html:has(.council-page) :is(.site-header,.mobile-nav,.footer){background:var(--surface)}
 .council-page{max-width:1320px}
 .council-intro{position:relative;isolation:isolate;display:grid;gap:0;padding:13px;overflow:hidden;border-radius:34px;background:radial-gradient(circle at 86% 88%,#e9a44e33,transparent 34%),radial-gradient(circle at 15% 95%,#ffcf6a1f,transparent 35%),linear-gradient(145deg,color-mix(in srgb,var(--card) 90%,#6a441b 10%),color-mix(in srgb,var(--card) 78%,#b76c24 22%));box-shadow:0 30px 90px color-mix(in srgb,#c77a2c 17%,transparent),inset 0 0 0 1px color-mix(in srgb,#ffc56d 22%,transparent)}
 .council-intro:before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(circle at 12% 22%,#fff2d5 0 1px,transparent 1.7px),radial-gradient(circle at 37% 76%,#ffc970 0 1px,transparent 1.8px),radial-gradient(circle at 72% 39%,#fff 0 .8px,transparent 1.6px);background-size:190px 170px,240px 210px,150px 130px;opacity:.24}
@@ -174,14 +182,16 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
 .council-board-heading>p strong{font-size:1.1rem;color:var(--ink)}
 .council-board-heading>p span{padding-inline:7px;color:var(--accent)}
 .council-desktop{overflow:visible;border-radius:0;background:transparent;box-shadow:none}
-.council-table{width:100%;border-collapse:separate;border-spacing:0 6px;table-layout:fixed;font-size:.9rem}
+.council-table{width:100%;border-collapse:separate;border-spacing:0 6px;table-layout:fixed;font-size:.9rem;background:transparent;border:0;box-shadow:none}
 .council-table th{padding:19px 24px;background:linear-gradient(115deg,color-mix(in srgb,#f2c96b 17%,transparent),color-mix(in srgb,#d99138 8%,transparent));color:var(--muted);font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;text-align:left;font-weight:650}
 .council-table th:first-child{border-radius:18px 0 0 18px}.council-table th:last-child{border-radius:0 18px 18px 0}
 .council-table th:first-child{width:78px}.council-table th:nth-child(2){width:48%}
 .council-table td{padding:20px 24px;vertical-align:middle;background:transparent!important;border:0!important;box-shadow:none!important}
-.council-table tbody tr{--row-accent:#638cff;position:relative;background:linear-gradient(105deg,color-mix(in srgb,#f2c96b 8%,transparent),color-mix(in srgb,var(--row-accent) 7%,transparent));transition:background-color 260ms ease}
+.council-table tbody tr{--row-accent:#638cff;position:relative;background:linear-gradient(105deg,#f2c96b21,#dfb44912);transition:none}
 .council-table tbody tr+tr{box-shadow:none}
-.council-table tbody tr:hover{background:linear-gradient(105deg,color-mix(in srgb,#f2c96b 12%,transparent),color-mix(in srgb,var(--row-accent) 10%,transparent))}
+.council-table tbody tr:hover{background:linear-gradient(105deg,#f2c96b21,#dfb44912)}
+.council-table th{border:0;box-shadow:none;color:var(--ink)}
+.council-table tbody td:first-child{border-radius:16px 0 0 16px}.council-table tbody td:last-child{border-radius:0 16px 16px 0}
 .council-table tbody tr td:first-child{position:relative}
 .council-table tbody tr td:first-child:before{display:none}
 .council-table td:nth-child(2){display:flex;align-items:center;gap:18px}
@@ -229,9 +239,9 @@ body:after{background:radial-gradient(ellipse at 70% 18%,#ffffff85,transparent 4
  .council-desktop{display:none}
  .council-mobile{display:block;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
  .council-mobile-hint{padding:20px 20px 13px;margin:0!important;font-size:.76rem;color:var(--muted)}
- .council-tabs{display:grid;padding:0 10px 11px}
+ .council-tabs{display:grid;gap:8px;padding:0 10px 11px}
  .council-tab{--row-accent:#638cff;width:100%;display:grid;grid-template-columns:43px minmax(0,1fr) 19px;align-items:center;gap:14px;text-align:left;padding:14px 10px;border:0;border-radius:18px;background:transparent;color:var(--ink);transition:background-color 220ms ease,transform 220ms cubic-bezier(.22,1,.36,1)}
- .council-tab+.council-tab{box-shadow:inset 0 1px color-mix(in srgb,var(--ink) 6%,transparent)}
+ .council-tab,.council-tab+.council-tab{background:linear-gradient(105deg,#f2c96b21,#dfb44912);box-shadow:none}
  .council-tab:active{transform:scale(.985);background:color-mix(in srgb,var(--row-accent) 9%,transparent)}
  .council-tab>.icon{width:18px;color:var(--muted)}
  .council-tab-copy{min-width:0;display:block}
