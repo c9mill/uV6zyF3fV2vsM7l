@@ -1,2 +1,4 @@
 beautifulsoup4>=4.12,<5
 Pillow>=10,<13
+Markdown>=3.7,<4
+PyYAML>=6,<7

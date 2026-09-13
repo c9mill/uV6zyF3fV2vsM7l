@@ -3,34 +3,111 @@ from pathlib import Path
 from urllib.parse import urlparse, unquote, quote
 from html import escape, unescape
 from datetime import datetime
-import hashlib, json, re, shutil, sys
+import hashlib, json, os, re, shutil, sys
 from bs4 import BeautifulSoup
 from PIL import Image, ImageOps
+import markdown
+import yaml
 
 ROOT = Path(__file__).resolve().parent
-EXPORT = ROOT.parent / 'fkbad_migrator/fkbad_export_lean'
+CONTENT = ROOT / 'src/content'
+LEGACY_EXPORT = Path(os.environ.get('FKBAD_LEGACY_EXPORT', ROOT.parent / 'fkbad_migrator/fkbad_export_lean'))
 OUT = ROOT / 'dist'
 OUT.mkdir(exist_ok=True)
+# Generated HTML is replaced on every build so removed or unpublished CMS
+# entries cannot survive in the deployment as stale pages.
+for generated_page in OUT.rglob('index.html'):
+    generated_page.unlink()
 (OUT / 'assets').mkdir(exist_ok=True)
 GOOGLE_VERIFICATION = ROOT / 'src/google6addcaa4704e2621.html'
 if GOOGLE_VERIFICATION.is_file():
     shutil.copy2(GOOGLE_VERIFICATION, OUT / GOOGLE_VERIFICATION.name)
-def read(name): return json.loads((EXPORT / name).read_text(encoding='utf-8'))
-PAGES = read('backend/pages.json')
-POSTS = sorted(read('backend/posts.json'), key=lambda x:x['date'], reverse=True)
-MEDIA = {x['id']:x for x in read('backend/media.json')}
-MANIFEST = read('media_manifest.json')
-MENUS = read('menus.json')[0]['tree']
+
+def read_frontmatter(path):
+    text = path.read_text(encoding='utf-8')
+    match = re.match(r'^---\s*\n(.*?)\n---\s*\n?(.*)$', text, re.S)
+    if not match:
+        return {}, text
+    return yaml.safe_load(match.group(1)) or {}, match.group(2)
+
+def cms_record(path, kind):
+    data, body = read_frontmatter(path)
+    if not data.get('published', True):
+        return None
+    date_value = str(data.get('date') or '2000-01-01T00:00:00')
+    slug = str(data.get('slug') or re.sub(r'^\d{4}-\d{2}-\d{2}-', '', path.stem)).strip('/')
+    if kind == 'post':
+        route = str(data.get('route') or f'/{date_value[:4]}/{date_value[5:7]}/{date_value[8:10]}/{slug}/')
+    else:
+        route = str(data.get('route') or f'/{slug}/')
+    route = '/' + route.strip('/') + '/' if route.strip('/') else '/'
+    legacy_id = data.get('legacy_id')
+    entry_id = int(legacy_id) if str(legacy_id or '').isdigit() else -int(hashlib.sha1(str(path).encode()).hexdigest()[:10], 16)
+    rendered_body = markdown.markdown(body, extensions=['extra', 'sane_lists']) if body.strip() else ''
+    return {
+        'id': entry_id,
+        'date': date_value,
+        'slug': slug,
+        'status': 'publish',
+        'type': kind,
+        'link': str(data.get('legacy_url') or route),
+        'route': route,
+        'title': {'rendered': str(data.get('title') or slug.replace('-', ' ').capitalize())},
+        'content': {'rendered': rendered_body, 'protected': False},
+        'excerpt': {'rendered': str(data.get('excerpt') or ''), 'protected': False},
+        'featured_image': str(data.get('featured_image') or ''),
+        'category': str(data.get('category') or 'Життя коледжу'),
+        '_cms': True,
+    }
+
+def cms_collection(name, kind):
+    folder = CONTENT / name
+    if not folder.is_dir():
+        return []
+    entries = [cms_record(path, kind) for path in folder.rglob('*.md')]
+    return [entry for entry in entries if entry]
+
+def legacy_read(name):
+    return json.loads((LEGACY_EXPORT / name).read_text(encoding='utf-8'))
+
+PAGES = cms_collection('pages', 'page')
+POSTS = cms_collection('news', 'post')
+if not PAGES:
+    PAGES = legacy_read('backend/pages.json')
+if not POSTS:
+    POSTS = legacy_read('backend/posts.json')
+POSTS = sorted(POSTS, key=lambda x:x['date'], reverse=True)
+MEDIA = {x['id']:x for x in legacy_read('backend/media.json')} if (LEGACY_EXPORT/'backend/media.json').is_file() else {}
+MANIFEST = legacy_read('media_manifest.json') if (LEGACY_EXPORT/'media_manifest.json').is_file() else []
 NAVIGATION = json.loads((ROOT/'src/navigation.json').read_text(encoding='utf-8'))
+MENU_SOURCE = CONTENT / 'navigation-source.json'
+MENUS = json.loads(MENU_SOURCE.read_text(encoding='utf-8')) if MENU_SOURCE.is_file() else NAVIGATION
 BY_ID = {p['id']:p for p in PAGES + POSTS}
 NAME = 'Фаховий коледж будівництва, архітектури та дизайну'
 FULL_NAME = NAME + ' Поліського національного університету'
 ABBR = 'ВСП ФКБАД Поліського університету'
 FULL_DISPLAY = f'ВСП «{FULL_NAME}»'
+SETTINGS_FILE = CONTENT / 'settings/site.json'
+SITE_SETTINGS = json.loads(SETTINGS_FILE.read_text(encoding='utf-8')) if SETTINGS_FILE.is_file() else {}
+PHONE_PRIMARY = SITE_SETTINGS.get('phone_primary', '(0412) 47-28-47')
+PHONE_SECONDARY = SITE_SETTINGS.get('phone_secondary', '(0412) 42-20-83')
+PHONE_THIRD = SITE_SETTINGS.get('phone_third', '(0412) 47-30-04')
+EMAIL = SITE_SETTINGS.get('email', 'bkzt@ukr.net')
+ADDRESS = SITE_SETTINGS.get('address', '10029, Україна, м. Житомир\nвул. Степана Бандери, 6')
+FACEBOOK = SITE_SETTINGS.get('facebook', 'https://www.facebook.com/FKBAD')
+TELEGRAM = SITE_SETTINGS.get('telegram', 'https://t.me/FKBAD_PNY')
+INSTAGRAM = SITE_SETTINGS.get('instagram', 'https://www.instagram.com/fkbad_')
+HERO_DESCRIPTION = SITE_SETTINGS.get('hero_description', 'Від першого ескізу до справжніх змін. Знайди свій напрям у будівництві, проєктуванні та дизайні.')
+FOOTER_SIGNATURE = SITE_SETTINGS.get('footer_signature', 'Твори майбутнє')
+FOOTER_SLOGAN = SITE_SETTINGS.get('footer_slogan', 'Освіта, що створює майбутнє.')
+
+def phone_href(number):
+    return '+' + re.sub(r'\D', '', number) if number.strip().startswith('+') else '+38' + re.sub(r'\D', '', number)
+
 MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня']
 ROUTES = {308:'/',625:'/',307:'/новини/',592:'/про-коледж/',593:'/вступнику/',594:'/студенту/'}
 for p in PAGES + POSTS:
-    ROUTES.setdefault(p['id'], unquote(urlparse(p['link']).path))
+    ROUTES.setdefault(p['id'], p.get('route') or unquote(urlparse(p['link']).path))
 URLS = {unquote(urlparse(p['link']).path).rstrip('/') or '/':ROUTES[p['id']] for p in PAGES + POSTS}
 URLS['/головна'] = '/'
 
@@ -86,10 +163,19 @@ for m in MANIFEST:
 COPIED = {}
 def asset(url):
     if not url: return ''
+    if url.startswith('/assets/'):
+        return url if (OUT / url.lstrip('/')).is_file() else ''
+    if url.startswith('/uploads/'):
+        source = ROOT / 'src' / url.lstrip('/')
+        target = OUT / url.lstrip('/')
+        if source.is_file():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+            return url
+        return url if target.is_file() else ''
     m = ASSETS.get(norm(url))
     if not m: return ''
-    source = EXPORT / m['local_file']
-    if not source.is_file(): return ''
+    source = LEGACY_EXPORT / m['local_file']
     if m['local_file'] in COPIED: return COPIED[m['local_file']]
     name = hashlib.sha1(m['local_file'].encode()).hexdigest()[:16]
     existing = OUT / 'assets' / (name+'.webp')
@@ -97,6 +183,7 @@ def asset(url):
         result='/assets/'+existing.name
         COPIED[m['local_file']]=result
         return result
+    if not source.is_file(): return ''
     try:
         with Image.open(source) as original:
             im = ImageOps.exif_transpose(original)
@@ -111,6 +198,8 @@ def asset(url):
     return result
 def photo(index): return asset(MANIFEST[index]['original_url'])
 def featured(p):
+    if p.get('featured_image'):
+        return asset(p['featured_image']) or p['featured_image']
     u = MEDIA.get(p.get('featured_media'),{}).get('source_url')
     result = asset(u)
     if result: return result
@@ -157,11 +246,14 @@ def menu_find(needle): return next((x for x in flatten(MENUS) if needle.lower() 
 SCHEDULE = '/розклад/'
 RULES = menu_find('ПРАВИЛА ПРИЙОМУ НА НАВЧАННЯ У 2026').get('url','/вступнику/')
 DATES = menu_find('Строки вступної кампанії').get('url','/вступнику/')
-CAMPUS = photo(47)
+shutil.copytree(ROOT/'src/assets', OUT/'assets', dirs_exist_ok=True)
+CAMPUS = '/assets/campus.webp'
 ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
 ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
 shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
-LOGO = photo(1885)
+LOGO = '/assets/site-logo.webp'
+ADMISSION_PROGRAMS = '/assets/admission-programs.webp'
+ADMISSION_CONTACTS = '/assets/admission-contacts.webp'
 FAVICON = '/favicon.webp'
 COUNCIL_HERO = '/assets/student-council-hero.webp'
 COUNCIL_LOGO = '/assets/student-council-logo.svg'
@@ -219,7 +311,9 @@ def header(active=''):
     <nav class="desktop-nav" aria-label="Головна навігація">{desktop}</nav>{search}<div class="header-actions"><button class="icon-button theme-toggle" type="button" aria-label="Увімкнути темну тему" aria-pressed="false" title="Увімкнути темну тему"><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg></button><a class="button compact" href="/вступнику/">Вступнику {icon('external')}</a><button class="icon-button menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Відкрити меню"><span></span><span></span></button></div></div>
     <nav id="mobile-nav" class="mobile-nav container" aria-label="Головна навігація" hidden>{search}<div class="navigation-tree">{full_navigation(NAVIGATION,active)}<div class="navigation-shortcuts"><a href="/спеціальності/">Спеціальності</a><a href="/розклад/">Розклад занять</a><a href="/контакти/">Контакти</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></div></div></nav></header>'''
 def footer():
-    return f'''<footer class="footer"><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials"><a href="https://www.facebook.com/FKBAD" target="_blank" rel="noopener noreferrer">Фейсбук ↗</a><a href="https://t.me/FKBAD_PNY" target="_blank" rel="noopener noreferrer">Телеграм ↗</a><a href="https://www.instagram.com/fkbad_" target="_blank" rel="noopener noreferrer">Інстаграм ↗</a></div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>10029, м. Житомир<br>вул. Степана Бандери, 6</p><a href="tel:+380412472847">(0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a></div></div><div class="container footer-signature" aria-hidden="true">Твори майбутнє</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><span>Освіта, що створює майбутнє.</span></div></footer>'''
+    socials = ''.join(link(url, label+' ↗') for url,label in [(FACEBOOK,'Фейсбук'),(TELEGRAM,'Телеграм'),(INSTAGRAM,'Інстаграм')] if url)
+    address = escape(ADDRESS).replace('\n', '<br>')
+    return f'''<footer class="footer"><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials">{socials}</div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>{address}</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{escape(EMAIL)}</a></div></div><div class="container footer-signature" aria-hidden="true">{escape(FOOTER_SIGNATURE)}</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><span>{escape(FOOTER_SLOGAN)}</span></div></footer>'''
 THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'})()"
 
 def shell(title_text,body,path='/',description='',article=False):
@@ -236,10 +330,25 @@ def shell(title_text,body,path='/',description='',article=False):
             img['alt'] = f'80 років {FULL_DISPLAY}'
             img['class'] = img.get('class', []) + ['campus-anniversary']
             parent_link = img.find_parent('a')
-            if parent_link and (parent_link.get('href') == CAMPUS or norm(parent_link.get('href','')) == norm(MANIFEST[47]['original_url'])):
+            if parent_link and parent_link.get('href') == CAMPUS:
                 parent_link['href'] = ANNIVERSARY
         body = str(content)
     body = normalize_college_names(strip_heading_periods(body))
+    contact_replacements = {
+        'tel:+380412472847': f'tel:{phone_href(PHONE_PRIMARY)}',
+        '(0412) 47-28-47': PHONE_PRIMARY,
+        'tel:+380412422083': f'tel:{phone_href(PHONE_SECONDARY)}',
+        '(0412) 42-20-83': PHONE_SECONDARY,
+        'tel:+380412473004': f'tel:{phone_href(PHONE_THIRD)}',
+        '(0412) 47-30-04': PHONE_THIRD,
+        'mailto:bkzt@ukr.net': f'mailto:{escape(EMAIL, quote=True)}',
+        'bkzt@ukr.net': escape(EMAIL),
+        'https://www.facebook.com/FKBAD': FACEBOOK,
+        'https://t.me/FKBAD_PNY': TELEGRAM,
+        'https://www.instagram.com/fkbad_': INSTAGRAM,
+    }
+    for original, replacement in contact_replacements.items():
+        body = body.replace(original, replacement)
     title_text = normalize_name_text(title_text)
     desc = normalize_name_text(description or f'{FULL_DISPLAY} у Житомирі: спеціальності, вступ, новини та студентське життя.')
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{'home-page' if path=='/' else 'inner-page'}{' is-article' if article else ''}{' core-page' if not article and path != '/новини/' else ''}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
@@ -310,12 +419,17 @@ def news_card(p):
     img = featured(p)
     width, height = 640, 430
     if img:
-        with Image.open(OUT / img.lstrip('/')) as photo_file:
-            width, height = photo_file.size
+        try:
+            with Image.open(OUT / img.lstrip('/')) as photo_file:
+                width, height = photo_file.size
+        except (OSError, ValueError):
+            pass
     ratio = max(.7, min(1.9, width / height))
     visual = f'<img src="{img}" alt="{escape(title(p),quote=True)}" loading="lazy" width="{width}" height="{height}">' if img else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
-    excerpt = re.sub(r'\s+', ' ', clean_text(p['content']['rendered'])).strip()
-    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><a href="{ROUTES[p["id"]]}" class="news-image">{visual}</a><div class="news-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>Життя коледжу</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
+    excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
+    excerpt = re.sub(r'\s+', ' ', excerpt).strip()
+    category = p.get('category', 'Життя коледжу')
+    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><a href="{ROUTES[p["id"]]}" class="news-image">{visual}</a><div class="news-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
 PROGRAMS = [
     ('будівництво','Будівництво та експлуатація будівель та споруд','Від креслення до реальної будівлі. Теорія, навчальні майстерні та практика на будівельних майданчиках.','Будівництво','БУДІВЕЛЬНИК'),
     ('проєктування','Проєктування будівель та інтер’єрів','Простір починається з ідеї. Знайомся з освітньою програмою та роботами студентів коледжу.','Проєктування','ПРОЄКТУВАЛЬНИК'),
@@ -325,13 +439,13 @@ def program_cards():
 def section_heading(eyebrow,heading,url='',label='Дізнатися більше'):
     return f'<div class="section-heading"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2></div>'+ (link(url,label+icon('arrow'),'text-link') if url else '')+'</div>'
 def home_legacy():
-    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span></p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">Від першого ескізу до справжніх змін.<br>Знайди свій напрям у будівництві, проєктуванні та дизайні.</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус {ABBR} у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
+    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span></p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">{escape(HERO_DESCRIPTION)}</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус {ABBR} у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
     <div class="container quick-links">{link(SCHEDULE,icon('calendar')+'<span><strong>Розклад занять</strong><small>Твій навчальний день</small></span>'+icon('external'))}{link('/вступнику/',icon('cap')+'<span><strong>Вступна кампанія 2026</strong><small>Правила, строки, документи</small></span>'+icon('arrow'))}{link('/документи/',icon('file')+'<span><strong>Документи коледжу</strong><small>Відкрито та зручно</small></span>'+icon('arrow'))}</div>
     <section class="section container">{section_heading('Навчання з перспективою','Знайди свою справу.','/спеціальності/','Усі освітні програми')}{program_cards()}<p class="program-footnote">Спеціальність G19 «Будівництво та цивільна інженерія»</p></section>
     <section class="news-section section"><div class="container">{section_heading('Події та люди','Коледж сьогодні','/новини/','Усі новини')}<div class="news-grid">{''.join(news_card(p) for p in POSTS[:3])}</div></div></section>
     <section class="section container"><div class="student-feature"><div><p class="eyebrow">Більше, ніж навчання</p><h2>Твій простір<br>твої можливості</h2><p>Студентське самоврядування, творчість, спорт і підтримка. Усе, що допомагає знайти себе та відчути себе частиною коледжу.</p>{button('/студенту/','Студентське життя')}</div><div class="student-resources">{link(SCHEDULE,icon('calendar')+'Розклад занять'+icon('external'))}{link('/бібліотека/',icon('book')+'Бібліотека'+icon('arrow'))}{link('/студентське-самоврядування/',icon('cap')+'Студентське самоврядування'+icon('arrow'))}{link('/соціальне-забезпечення/',icon('file')+'Соціальна підтримка'+icon('arrow'))}</div></div></section>
     <section class="container future-invitation"><a class="future-banner" href="/вступнику/"><span class="future-art" aria-hidden="true"></span><span class="future-star future-star-large" aria-hidden="true"></span><span class="future-star future-star-small" aria-hidden="true"></span><div class="future-copy"><h2>Почнемо твоє майбутнє?</h2><p>Твоє майбутнє починається з одного рішення.</p></div><span class="future-arrow" aria-hidden="true">{icon('arrow')}</span></a></section>
-    <section class="section container contact-teaser">{section_heading('Завжди на зв’язку','Зустрінемось у коледжі.','/контакти/','Усі контакти')}<div><p>{icon('pin')} м. Житомир, вул. Степана Бандери, 6</p><a href="tel:+380412472847">{icon('phone')} (0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">{icon('mail')} bkzt@ukr.net</a></div></section>'''
+    <section class="section container contact-teaser">{section_heading('Завжди на зв’язку','Зустрінемось у коледжі.','/контакти/','Усі контакти')}<div><p>{icon('pin')} {escape(ADDRESS).replace(chr(10), ', ')}</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{icon('phone')} {escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{icon('mail')} {escape(EMAIL)}</a></div></section>'''
 
 def home():
     body = home_legacy()
@@ -343,6 +457,10 @@ for filename in ['styles.css','app.js','experience.css','experience.js','schedul
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
+for static_dir in ('admin', 'uploads'):
+    source_dir = ROOT / 'src' / static_dir
+    if source_dir.is_dir():
+        shutil.copytree(source_dir, OUT / static_dir, dirs_exist_ok=True)
 shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,
@@ -356,7 +474,7 @@ pwa_precache += [asset_url(name) for name in ['styles.css','experience.css','app
 service_worker = (ROOT/'src/sw.js').read_text(encoding='utf-8')
 service_worker = service_worker.replace('__PWA_VERSION__', PWA_VERSION).replace('__PWA_PRECACHE__', json.dumps(pwa_precache, ensure_ascii=False))
 (OUT/'sw.js').write_text(service_worker, encoding='utf-8')
-(OUT/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/schedule'],'exclude':[]}),encoding='utf-8')
+(OUT/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/schedule','/api/auth','/api/callback'],'exclude':[]}),encoding='utf-8')
 write('/',shell(ABBR,home()))
 if '--preview' in sys.argv:
     print('Homepage ready');sys.exit(0)
@@ -518,7 +636,7 @@ def editorial_content(content):
 
 def sidebar(active=''):
     items=[('/вступнику/','Вступнику'),('/студенту/','Студенту'),('/спеціальності/','Спеціальності'),('/документи/','Документи'),('/про-коледж/','Про коледж'),('/контакти/','Контакти')]
-    return '<aside class="page-sidebar"><p class="eyebrow">Корисні розділи</p>'+''.join(f'<a href="{u}"'+(' aria-current="page"' if u==active else '')+f'>{t}{icon("arrow")}</a>' for u,t in items)+f'<div class="sidebar-help"><h3>Потрібна допомога?</h3><p>Звернися до коледжу</p><a href="tel:+380412472847">(0412) 47-28-47</a><a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a></div></aside>'
+    return '<aside class="page-sidebar"><p class="eyebrow">Корисні розділи</p>'+''.join(f'<a href="{u}"'+(' aria-current="page"' if u==active else '')+f'>{t}{icon("arrow")}</a>' for u,t in items)+f'<div class="sidebar-help"><h3>Потрібна допомога?</h3><p>Звернися до коледжу</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{escape(EMAIL)}</a></div></aside>'
 
 def admissions():
     items=menu('ВСТУПНИКУ')
@@ -530,10 +648,12 @@ def students():
     bells=menu_find('РОЗКЛАД ДЗВІНКІВ')
     cards=[(SCHEDULE,'Розклад занять','І семестр 2026–2027 навчального року','calendar'),(bells.get('url','/студенту/'),'Розклад дзвінків','Початок і завершення навчальних пар','calendar'),('/дистанційне-навчання/','Дистанційне навчання','Матеріали та освітні ресурси','book'),('/бібліотека/','Бібліотека','Навчальна література й корисні матеріали','book')]
     tiles='<div class="resource-tiles">'+''.join(link(u,icon(i)+f'<h2>{t}</h2><p>{d}</p>'+icon('external' if u.startswith('http') else 'arrow'),'resource-tile') for u,t,d,i in cards)+'</div>'
-    return page_heading('Студенту','Навчання, розклад і підтримка — усе потрібне в одному місці.')+f'<div class="container page-content">{tiles}<div class="content-columns"><section><h2 class="subheading">Навчальні ресурси</h2><div class="resource-list">{resource_groups(menu("СТУДЕНТУ"))}</div><h2 class="subheading spaced">Життя у коледжі</h2>'+''.join(doc_link(title(BY_ID[i]),ROUTES[i]) for i in [1133,1135,1136,1137,372,1615])+f'</section>{sidebar("/студенту/")}</div></div>'
+    life_links = [doc_link('Студентське самоврядування', '/студентське-самоврядування/')]
+    life_links += [doc_link(title(BY_ID[i]), ROUTES[i]) for i in [1135, 1136, 1137, 372, 1615]]
+    return page_heading('Студенту','Навчання, розклад і підтримка — усе потрібне в одному місці.')+f'<div class="container page-content">{tiles}<div class="content-columns"><section><h2 class="subheading">Навчальні ресурси</h2><div class="resource-list">{resource_groups(menu("СТУДЕНТУ"))}</div><h2 class="subheading spaced">Життя у коледжі</h2>'+''.join(life_links)+f'</section>{sidebar("/студенту/")}</div></div>'
 
 def programs_page():
-    return page_heading('Спеціальності','Знайди напрям, у якому твої ідеї стануть професією.')+f'<section class="container page-content"><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійні програми коледжу для вступників 2026 року</p></div></div>{program_cards()}<div class="content-columns spaced"><section><h2 class="subheading">Дізнайся більше про навчання</h2>{doc_link("Освітньо-професійні програми",ROUTES[820])}{doc_link("Відділення будівництва та цивільної інженерії",ROUTES[9911])}{doc_link("Дипломне проєктування: проєктування та дизайн",ROUTES[9767])}{doc_link("Дипломне проєктування: будівництво",ROUTES[9812])}{doc_link("Перелік програм для вступу",MANIFEST[1882]["original_url"])}</section>{sidebar("/спеціальності/")}</div></section>'
+    return page_heading('Спеціальності','Знайди напрям, у якому твої ідеї стануть професією.')+f'<section class="container page-content"><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійні програми коледжу для вступників 2026 року</p></div></div>{program_cards()}<div class="content-columns spaced"><section><h2 class="subheading">Дізнайся більше про навчання</h2>{doc_link("Освітньо-професійні програми",ROUTES[820])}{doc_link("Відділення будівництва та цивільної інженерії",ROUTES[9911])}{doc_link("Дипломне проєктування: проєктування та дизайн",ROUTES[9767])}{doc_link("Дипломне проєктування: будівництво",ROUTES[9812])}{doc_link("Перелік програм для вступу",ADMISSION_PROGRAMS)}</section>{sidebar("/спеціальності/")}</div></section>'
 
 def specialty(p):
     slug,name,desc,short,presentation=p
@@ -552,20 +672,24 @@ def about():
 def contacts():
     maps='https://www.google.com/maps/search/?api=1&query='+quote('ФКБАД Житомир Степана Бандери 6')
     panorama='https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1s45HCKK93GS4wM5-t3xUAlQ!2m2!1d28.6623673!2d50.2626345!3f153.51!4f6.3869310165970035!5f0.7820865974627469'
-    return page_heading('Контакти','Маєш запитання про навчання чи вступ? Звертайся до нас.')+f'''<div class="container page-content"><div class="contact-layout"><section class="contact-details"><div><span class="contact-icon">{icon('pin')}</span><h2>Завітай до коледжу</h2><p>10029, Україна, м. Житомир<br>вул. Степана Бандери, 6</p>{link(maps,'Прокласти маршрут '+icon('external'),'text-link')}</div><div><span class="contact-icon">{icon('phone')}</span><h2>Зателефонуй</h2><a href="tel:+380412472847">(0412) 47-28-47</a><a href="tel:+380412422083">(0412) 42-20-83</a><a href="tel:+380412473004">(0412) 47-30-04</a></div><div><span class="contact-icon">{icon('mail')}</span><h2>Напиши нам</h2><a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a><p class="form-privacy-note">Надсилай лише дані, потрібні для відповіді.</p></div></section><div class="location-photo panorama-frame map-consent" data-map-src="{escape(panorama,quote=True)}"><div class="map-consent-panel"><span class="contact-icon">{icon('pin')}</span><h2>Панорама Google Maps</h2><p>Панорама завантажується із серверів Google і може використовувати cookies та отримати технічні дані про пристрій. Вона не завантажиться без твого вибору.</p><button class="button" type="button" data-load-map>Завантажити панораму</button><a href="/політика-cookie/">Докладніше про cookies</a></div></div></div><div class="content-columns spaced"><section><h2 class="subheading">Приймальна комісія</h2><p class="page-lead">Контактна інформація для вступників</p>{doc_link('Контакти приймальної комісії',MANIFEST[1883]['original_url'])}{doc_link('Правила прийому на навчання у 2026 році',RULES)}{doc_link('Строки вступної кампанії',DATES)}</section><aside class="contact-social"><h2 class="subheading">Коледж у соціальних мережах</h2>{doc_link('Фейсбук','https://www.facebook.com/FKBAD')}{doc_link('Телеграм','https://t.me/FKBAD_PNY')}{doc_link('Інстаграм','https://www.instagram.com/fkbad_')}</aside></div></div>'''
+    return page_heading('Контакти','Маєш запитання про навчання чи вступ? Звертайся до нас.')+f'''<div class="container page-content"><div class="contact-layout"><section class="contact-details"><div><span class="contact-icon">{icon('pin')}</span><h2>Завітай до коледжу</h2><p>10029, Україна, м. Житомир<br>вул. Степана Бандери, 6</p>{link(maps,'Прокласти маршрут '+icon('external'),'text-link')}</div><div><span class="contact-icon">{icon('phone')}</span><h2>Зателефонуй</h2><a href="tel:+380412472847">(0412) 47-28-47</a><a href="tel:+380412422083">(0412) 42-20-83</a><a href="tel:+380412473004">(0412) 47-30-04</a></div><div><span class="contact-icon">{icon('mail')}</span><h2>Напиши нам</h2><a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a><p class="form-privacy-note">Надсилай лише дані, потрібні для відповіді.</p></div></section><div class="location-photo panorama-frame map-consent" data-map-src="{escape(panorama,quote=True)}"><div class="map-consent-panel"><span class="contact-icon">{icon('pin')}</span><h2>Панорама Google Maps</h2><p>Панорама завантажується із серверів Google і може використовувати cookies та отримати технічні дані про пристрій. Вона не завантажиться без твого вибору.</p><button class="button" type="button" data-load-map>Завантажити панораму</button><a href="/політика-cookie/">Докладніше про cookies</a></div></div></div><div class="content-columns spaced"><section><h2 class="subheading">Приймальна комісія</h2><p class="page-lead">Контактна інформація для вступників</p>{doc_link('Контакти приймальної комісії',ADMISSION_CONTACTS)}{doc_link('Правила прийому на навчання у 2026 році',RULES)}{doc_link('Строки вступної кампанії',DATES)}</section><aside class="contact-social"><h2 class="subheading">Коледж у соціальних мережах</h2>{doc_link('Фейсбук','https://www.facebook.com/FKBAD')}{doc_link('Телеграм','https://t.me/FKBAD_PNY')}{doc_link('Інстаграм','https://www.instagram.com/fkbad_')}</aside></div></div>'''
 
 DOCUMENTS=[]
 seen_docs=set()
 def add_doc(t,u,category):
     url=local_url(u)
     if not url or url in seen_docs or len(clean_text(t))<4:return
-    if not any(k in url for k in ['drive.google.com','docs.google.com','.pdf','zakon.rada.gov.ua']):return
+    if not (url.startswith('/uploads/') or any(k in url for k in ['drive.google.com','docs.google.com','.pdf','.doc','.docx','.xls','.xlsx','.ppt','.pptx','zakon.rada.gov.ua'])):return
     seen_docs.add(url);DOCUMENTS.append({'title':clean_text(t),'url':url,'category':category})
 for group in MENUS:
     for item in flatten(group.get('children',[])): add_doc(item['label'],item['url'],group['label'].capitalize())
 for pid in [591,797,798,796,1079,820,8327,8535]:
     for a in BeautifulSoup(BY_ID[pid]['content']['rendered'],'html.parser').select('a[href]'):
         add_doc(a.get_text(' ',strip=True),a['href'],title(BY_ID[pid]))
+for document_file in (CONTENT/'documents').rglob('*.json'):
+    document_data = json.loads(document_file.read_text(encoding='utf-8'))
+    if document_data.get('published', True):
+        add_doc(document_data.get('title', ''), document_data.get('file') or document_data.get('url', ''), document_data.get('category', 'Документи коледжу'))
 
 def documents():
     rows=''.join(f'<div class="document-row" data-category="{escape(d["category"],quote=True)}">{doc_link(d["title"],d["url"],d["category"])}</div>' for d in DOCUMENTS)
@@ -712,7 +836,7 @@ for p in POSTS:
     # Avoid duplicating a featured photograph already present in the article.
     image=f'<img class="article-hero" src="{hero}" alt="{escape(t,quote=True)}" width="1200" height="760">' if hero and hero not in content else ''
     others=[x for x in POSTS if x['id']!=p['id']][:3]
-    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>Життя коледжу</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
+    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
 
 # Preserve original important WordPress page paths with static forwarding pages.

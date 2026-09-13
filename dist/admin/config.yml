@@ -1,0 +1,134 @@
+locale: uk
+
+backend:
+  name: github
+  repo: c9mill/uV6zyF3fV2vsM7l
+  branch: main
+  site_domain: fkbad.pages.dev
+  base_url: https://fkbad.pages.dev
+  auth_endpoint: /api/auth
+  use_graphql: true
+
+local_backend: true
+publish_mode: simple
+site_url: https://fkbad.pages.dev
+display_url: https://fkbad.pages.dev
+logo_url: https://fkbad.pages.dev/favicon.webp
+media_folder: src/uploads
+public_folder: /uploads
+
+slug:
+  encoding: unicode
+  clean_accents: false
+  sanitize_replacement: "-"
+
+collections:
+  - name: news
+    label: Новини та оголошення
+    label_singular: Публікація
+    folder: src/content/news
+    create: true
+    delete: true
+    extension: md
+    format: yaml-frontmatter
+    path: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: title
+    summary: "{{date | date('DD.MM.YYYY')}} — {{title}}"
+    sortable_fields: [date, title, category]
+    view_filters:
+      - { label: Оголошення, field: category, pattern: Оголошення }
+      - { label: Студентське життя, field: category, pattern: Студентське життя }
+      - { label: Вступнику, field: category, pattern: Вступнику }
+    editor:
+      preview: true
+    fields:
+      - { label: Заголовок, name: title, widget: string, hint: Коротко опиши головну подію }
+      - { label: Дата і час публікації, name: date, widget: datetime, date_format: DD.MM.YYYY, time_format: HH:mm }
+      - label: Розділ
+        name: category
+        widget: select
+        default: Життя коледжу
+        options:
+          - Життя коледжу
+          - Оголошення
+          - Вступнику
+          - Студентське життя
+          - Освітній процес
+          - Студентська рада
+          - Досягнення
+      - { label: Головне фото, name: featured_image, widget: image, required: false, hint: Рекомендовано горизонтальне фото без тексту }
+      - { label: Короткий опис, name: excerpt, widget: text, required: false, hint: Якщо залишити порожнім, сайт сформує опис із тексту }
+      - { label: Опубліковано, name: published, widget: boolean, default: true }
+      - { label: Адреса сторінки, name: route, widget: hidden, required: false }
+      - { label: Стара адреса, name: legacy_url, widget: hidden, required: false }
+      - { label: Номер старого матеріалу, name: legacy_id, widget: hidden, required: false }
+      - label: Текст публікації
+        name: body
+        widget: richtext
+        modes: [rich_text, raw]
+        buttons: [bold, italic, link, heading-two, heading-three, quote, bulleted-list, numbered-list]
+        editor_components: [image]
+
+  - name: pages
+    label: Сторінки сайту
+    label_singular: Сторінка
+    folder: src/content/pages
+    create: false
+    delete: false
+    extension: md
+    format: yaml-frontmatter
+    identifier_field: title
+    summary: "{{title}}"
+    sortable_fields: [title]
+    editor:
+      preview: true
+    fields:
+      - { label: Назва сторінки, name: title, widget: string }
+      - { label: Адреса сторінки, name: route, widget: hidden }
+      - { label: Стара адреса, name: legacy_url, widget: hidden, required: false }
+      - { label: Номер старої сторінки, name: legacy_id, widget: hidden }
+      - { label: Опубліковано, name: published, widget: boolean, default: true }
+      - label: Вміст сторінки
+        name: body
+        widget: richtext
+        modes: [rich_text, raw]
+        buttons: [bold, italic, link, heading-two, heading-three, quote, bulleted-list, numbered-list]
+        editor_components: [image]
+
+  - name: documents
+    label: Документи та посилання
+    label_singular: Документ
+    folder: src/content/documents
+    create: true
+    delete: true
+    extension: json
+    format: json
+    identifier_field: title
+    summary: "{{category}} — {{title}}"
+    sortable_fields: [category, title]
+    fields:
+      - { label: Назва, name: title, widget: string }
+      - { label: Категорія, name: category, widget: string, default: Документи коледжу }
+      - { label: Файл, name: file, widget: file, required: false, hint: Завантаж файл або вкажи посилання нижче }
+      - { label: Зовнішнє посилання, name: url, widget: string, required: false }
+      - { label: Опубліковано, name: published, widget: boolean, default: true }
+
+  - name: settings
+    label: Налаштування сайту
+    files:
+      - name: general
+        label: Контакти та підписи
+        file: src/content/settings/site.json
+        format: json
+        fields:
+          - { label: Основний телефон, name: phone_primary, widget: string }
+          - { label: Додатковий телефон 1, name: phone_secondary, widget: string, required: false }
+          - { label: Додатковий телефон 2, name: phone_third, widget: string, required: false }
+          - { label: Електронна пошта, name: email, widget: string }
+          - { label: Поштова адреса, name: address, widget: text }
+          - { label: Facebook, name: facebook, widget: string, required: false }
+          - { label: Telegram, name: telegram, widget: string, required: false }
+          - { label: Instagram, name: instagram, widget: string, required: false }
+          - { label: Опис на головній, name: hero_description, widget: text }
+          - { label: Великий підпис унизу, name: footer_signature, widget: string }
+          - { label: Нижній підпис, name: footer_slogan, widget: string }

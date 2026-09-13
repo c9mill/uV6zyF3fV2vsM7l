@@ -142,9 +142,72 @@ async function catalog(ctx) {
   }, ctx);
 }
 
+const oauthCookie = request => {
+  const match = (request.headers.get('cookie') || '').match(/(?:^|;\s*)decap_oauth_state=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+};
+
+const oauthPage = (status, content) => {
+  const payload = JSON.stringify(content).replace(/</g, '\\u003c');
+  return `<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Вхід до редактора</title></head><body><p>Завершуємо вхід…</p><script>
+    const receiveMessage = message => {
+      if (!window.opener) return;
+      window.opener.postMessage('authorization:github:${status}:' + ${JSON.stringify(payload)}, message.origin);
+      window.removeEventListener('message', receiveMessage);
+    };
+    window.addEventListener('message', receiveMessage);
+    if (window.opener) window.opener.postMessage('authorizing:github', '*');
+  </script></body></html>`;
+};
+
+async function oauthAuth(request, env) {
+  if (!env.GITHUB_CLIENT_ID) return new Response('GitHub OAuth is not configured yet.', {status:503});
+  const url = new URL(request.url);
+  const stateBytes = crypto.getRandomValues(new Uint8Array(24));
+  const state = [...stateBytes].map(value => value.toString(16).padStart(2, '0')).join('');
+  const target = new URL('https://github.com/login/oauth/authorize');
+  target.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
+  target.searchParams.set('redirect_uri', `${url.origin}/api/callback`);
+  target.searchParams.set('scope', env.GITHUB_OAUTH_SCOPE || 'public_repo user:email');
+  target.searchParams.set('state', state);
+  return new Response(null, {status:302, headers:{
+    Location: target.href,
+    'Cache-Control':'no-store',
+    'Set-Cookie':`decap_oauth_state=${encodeURIComponent(state)}; Path=/api/; Max-Age=600; HttpOnly; Secure; SameSite=Lax`
+  }});
+}
+
+async function oauthCallback(request, env) {
+  const url = new URL(request.url);
+  const state = url.searchParams.get('state') || '';
+  const code = url.searchParams.get('code') || '';
+  const githubError = url.searchParams.get('error');
+  const headers = {
+    'Content-Type':'text/html; charset=utf-8',
+    'Cache-Control':'no-store',
+    'Content-Security-Policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'",
+    'Set-Cookie':'decap_oauth_state=; Path=/api/; Max-Age=0; HttpOnly; Secure; SameSite=Lax'
+  };
+  if (githubError) return new Response(oauthPage('error', {message:'GitHub login was cancelled.'}), {status:401, headers});
+  if (!code || !state || state !== oauthCookie(request)) return new Response(oauthPage('error', {message:'Invalid or expired login request.'}), {status:400, headers});
+  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) return new Response(oauthPage('error', {message:'GitHub OAuth is not configured yet.'}), {status:503, headers});
+  const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+    method:'POST',
+    headers:{Accept:'application/json','Content-Type':'application/json','User-Agent':'fkbad-decap-oauth'},
+    body:JSON.stringify({client_id:env.GITHUB_CLIENT_ID,client_secret:env.GITHUB_CLIENT_SECRET,code,redirect_uri:`${url.origin}/api/callback`})
+  });
+  const result = await tokenResponse.json();
+  if (!tokenResponse.ok || result.error || !result.access_token) {
+    return new Response(oauthPage('error', {message:result.error_description || 'GitHub did not return an access token.'}), {status:401, headers});
+  }
+  return new Response(oauthPage('success', {token:result.access_token,provider:'github'}), {status:200, headers});
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/auth') return oauthAuth(request, env);
+    if (url.pathname === '/api/callback') return oauthCallback(request, env);
     if (url.pathname !== '/api/schedule') return env.ASSETS.fetch(request);
     if (request.method !== 'GET') return new Response('Method not allowed', {status:405, headers:{Allow:'GET'}});
     const mode = url.searchParams.get('mode'), id = url.searchParams.get('id');

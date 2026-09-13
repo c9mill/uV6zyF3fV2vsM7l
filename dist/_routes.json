@@ -1,1 +1,1 @@
-{"version": 1, "include": ["/api/schedule"], "exclude": []}
+{"version": 1, "include": ["/api/schedule", "/api/auth", "/api/callback"], "exclude": []}
