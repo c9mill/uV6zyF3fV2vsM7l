@@ -159,6 +159,10 @@ ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_byte
 shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
 LOGO = photo(1885)
 FAVICON = '/favicon.webp'
+COUNCIL_HERO = '/assets/student-council-hero.webp'
+COUNCIL_LOGO = '/assets/student-council-logo.svg'
+for council_asset in (COUNCIL_HERO, COUNCIL_LOGO):
+    shutil.copy2(ROOT/'src'/council_asset.lstrip('/'), OUT/council_asset.lstrip('/'))
 logo_file = OUT / LOGO.lstrip('/') if LOGO else None
 if logo_file and logo_file.is_file():
     # The exported logo has a wide transparent canvas. Make a square tab icon
@@ -599,7 +603,7 @@ def council_board():
       <p class="eyebrow">Напрям студентської ради</p><h4>{escape(role)}</h4>{council_members(members)}
     </section>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
     return f'''<div class="council-board">
-      <div class="council-board-heading"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div><p><strong>{len(COUNCIL)}</strong> напрямів <span>·</span> <strong>{sum(len(m) for _,m,_ in COUNCIL)}</strong> студентів</p></div>
+      <div class="council-board-heading"><div class="council-board-title"><img src="{COUNCIL_LOGO}" alt="Логотип студентської ради" width="82" height="81"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div></div><p><strong>{len(COUNCIL)}</strong> напрямів <span>·</span> <strong>{sum(len(m) for _,m,_ in COUNCIL)}</strong> студентів</p></div>
       <div class="council-desktop"><table class="council-table"><thead><tr><th scope="col">№</th><th scope="col">Посада та обов’язки</th><th scope="col">Студенти та групи</th></tr></thead><tbody>{desktop_rows}</tbody></table></div>
       <div class="council-mobile" data-council>
         <div class="council-mobile-list"><p class="council-mobile-hint">Обери напрям, щоб переглянути склад</p><div class="council-tabs" role="tablist" aria-label="Склад студентської ради">{mobile_tabs}</div></div>
@@ -610,7 +614,7 @@ def council_board():
 def student_government():
     intro=f'''<section class="council-intro">
       <div class="council-intro-copy"><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
-      <div class="council-orbit" aria-hidden="true"><span class="council-orbit-ring ring-one"></span><span class="council-orbit-ring ring-two"></span><span class="council-orbit-core">{icon('users')}</span><span class="council-orbit-node node-one">{icon('design')}</span><span class="council-orbit-node node-two">{icon('heart')}</span><span class="council-orbit-node node-three">{icon('sport')}</span><span class="council-orbit-node node-four">{icon('music')}</span></div>
+      <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентської ради коледжу" width="2200" height="1556"></figure>
     </section>'''
     activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентська рада</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
       <article><span>{icon('users')}</span><small>01</small><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
