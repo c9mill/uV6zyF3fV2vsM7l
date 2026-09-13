@@ -369,6 +369,38 @@ document.querySelector('[data-clear-site-data]')?.addEventListener('click',async
  const status=document.querySelector('[data-clear-status]');if(status)status.textContent='Локальні налаштування та кеш цього сайту очищено.';event.currentTarget.disabled=true;
 });
 
+document.querySelectorAll('[data-council]').forEach(council=>{
+ const list=council.querySelector('.council-mobile-list');
+ const detail=council.querySelector('.council-mobile-detail');
+ const tabs=[...council.querySelectorAll('[data-council-tab]')];
+ const panels=[...council.querySelectorAll('.council-panel')];
+ const back=council.querySelector('[data-council-back]');
+ const reveal=()=>requestAnimationFrame(()=>window.scrollTo({top:Math.max(0,council.getBoundingClientRect().top+scrollY-112),behavior:reducedMotion.matches?'auto':'smooth'}));
+ const animateIn=(element,direction)=>{
+  if(reducedMotion.matches||!element.animate)return;
+  element.animate([{opacity:0,transform:`translate3d(${direction*24}px,0,0)`},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:380,easing:'cubic-bezier(.22,1,.36,1)'});
+ };
+ const open=tab=>{
+  const panel=council.querySelector(`#${CSS.escape(tab.dataset.councilTab)}`);if(!panel)return;
+  tabs.forEach(item=>{item.setAttribute('aria-selected',String(item===tab));item.tabIndex=item===tab?0:-1;});
+  panels.forEach(item=>item.hidden=item!==panel);
+  list.hidden=true;detail.hidden=false;animateIn(detail,1);reveal();
+  back.focus({preventScroll:true});
+ };
+ const close=()=>{
+  const selected=tabs.find(tab=>tab.getAttribute('aria-selected')==='true')||tabs[0];
+  detail.hidden=true;list.hidden=false;animateIn(list,-1);reveal();selected?.focus({preventScroll:true});
+ };
+ tabs.forEach((tab,index)=>{
+  tab.addEventListener('click',()=>open(tab));
+  tab.addEventListener('keydown',event=>{
+   if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+   event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowDown'?1:-1)+tabs.length)%tabs.length;tabs[next].focus();
+  });
+ });
+ back?.addEventListener('click',close);
+});
+
 // Support old WordPress ID links while serving ordinary static HTML everywhere else.
 const legacyParams=new URLSearchParams(location.search);const legacyId=legacyParams.get('page_id')||legacyParams.get('p');
 if(legacyId&&/^\d+$/.test(legacyId)){fetch('/route-map.json').then(r=>r.ok?r.json():{}).then(routes=>{if(routes[legacyId])location.replace(routes[legacyId]);}).catch(()=>{});}

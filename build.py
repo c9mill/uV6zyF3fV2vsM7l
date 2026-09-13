@@ -130,7 +130,7 @@ def local_url(u):
     if u.startswith('http://'): u = 'https://'+u[7:]
     return u
 def icon(name):
-    paths = {'arrow':'<path d="M5 12h14m-6-6 6 6-6 6"/>','external':'<path d="M7 17 17 7M7 7h10v10"/>','search':'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>','menu':'<path d="M4 7h16M4 12h16M4 17h16"/>','close':'<path d="m6 6 12 12M6 18 18 6"/>','book':'<path d="M3 5c4-1 6 0 9 2 3-2 5-3 9-2v14c-4-1-6 0-9 2-3-2-5-3-9-2ZM12 7v14"/>','calendar':'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h3m4 0h3"/>','file':'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9ZM14 3v6h6M8 13h8m-8 4h6"/>','pin':'<path d="M19 10c0 6-7 11-7 11S5 16 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>','phone':'<path d="M5 3H3c-1 10 8 19 18 18v-5l-5-2-2 3-7-7 3-2-2-5Z"/>','mail':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/>','cap':'<path d="m2 9 10-5 10 5-10 5ZM6 11v6c4 3 8 3 12 0v-6m4-2v8"/>','chevron':'<path d="m8 10 4 4 4-4"/>'}
+    paths = {'arrow':'<path d="M5 12h14m-6-6 6 6-6 6"/>','external':'<path d="M7 17 17 7M7 7h10v10"/>','search':'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>','menu':'<path d="M4 7h16M4 12h16M4 17h16"/>','close':'<path d="m6 6 12 12M6 18 18 6"/>','book':'<path d="M3 5c4-1 6 0 9 2 3-2 5-3 9-2v14c-4-1-6 0-9 2-3-2-5-3-9-2ZM12 7v14"/>','calendar':'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h3m4 0h3"/>','file':'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9ZM14 3v6h6M8 13h8m-8 4h6"/>','pin':'<path d="M19 10c0 6-7 11-7 11S5 16 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>','phone':'<path d="M5 3H3c-1 10 8 19 18 18v-5l-5-2-2 3-7-7 3-2-2-5Z"/>','mail':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/>','cap':'<path d="m2 9 10-5 10 5-10 5ZM6 11v6c4 3 8 3 12 0v-6m4-2v8"/>','chevron':'<path d="m8 10 4 4 4-4"/>','leader':'<path d="M7 8.5 9.5 11 12 6l2.5 5L17 8.5l1 7H6l1-7Z"/><path d="M7 19h10"/>','design':'<circle cx="12" cy="12" r="8"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><path d="M8.5 15c2 1.8 5 1.8 7 0"/>','build':'<path d="M4 21V9l8-5 8 5v12M8 21v-7h8v7M3 21h18"/>','edit':'<path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m13.5 7.5 3 3"/>','shield':'<path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/>','music':'<path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>','users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>','camera':'<path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="4"/>','sport':'<circle cx="12" cy="12" r="9"/><path d="m8 4 2 4-3 3-5-1m20 0-5 1-3-3 2-4m-8 16 1-5h6l1 5m-9-9 2 4m8-4-2 4"/>','heart':'<path d="M20.8 5.8a5.5 5.5 0 0 0-7.8 0L12 6.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/>','home':'<path d="m3 11 9-8 9 8v10h-6v-6H9v6H3V11Z"/>'}
     return f'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{paths.get(name,paths["arrow"])}</svg>'
 def link(u,label,cls=''):
     u = local_url(u)
@@ -565,7 +565,58 @@ def refund_policy():
     <h2>Як подати запит</h2><p>Для ідентифікації платежу та належної процедури зверніться до коледжу за телефоном <a href="tel:+380412472847">(0412) 47-28-47</a> або електронною поштою <a href="mailto:bkzt@ukr.net">bkzt@ukr.net</a>. Не надсилайте повний номер банківської картки, CVV-код, пароль або одноразовий код. Коледж повідомить перелік лише тих документів, які необхідні для конкретного звернення.</p>
     <h2>Законодавчі гарантії</h2><p>Якщо до конкретного платежу застосовуються правила захисту прав споживачів або інші обов’язкові норми, вони мають перевагу над будь-яким положенням цієї політики. Дивіться <a href="https://zakon.rada.gov.ua/go/1023-12" target="_blank" rel="noopener noreferrer">Закон України «Про захист прав споживачів»</a>.</p>''')
 
-CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page),'/політика-конфіденційності/':('Політика конфіденційності',privacy_policy),'/умови-користування/':('Умови користування',terms_policy),'/політика-cookie/':('Політика cookies',cookie_policy),'/повернення-коштів/':('Політика платежів і повернення коштів',refund_policy),SCHEDULE:('Розклад занять',lambda:(ROOT/'src/schedule.html').read_text(encoding='utf-8'))}
+COUNCIL = [
+    ('Голова студентської ради', [('Сівченко Віра', 'ІІ-9-42А')], 'leader'),
+    ('Заступник голови студентської ради відділення «Проєктування та дизайн»', [('Гуральська Анастасія', 'ІІІ-9/11-40А')], 'design'),
+    ('Заступник голови студентської ради відділення «Будівництво та цивільна інженерія»', [('Антонюк Артем', 'ІІІ-9/11-131')], 'build'),
+    ('Секретар студентської ради', [('Фіалковська Марія', 'ІІ-9-16ОД')], 'edit'),
+    ('Сектор військово-патріотичного виховання в коледжі', [('Грибук Ігор', 'ІІІ-9/11-132'), ('Лапінський Вадим', 'ІІ-11-26С')], 'shield'),
+    ('Сектор культмасової роботи та дозвілля студентів і гурткової роботи', [('Кучмійчук Анна', 'IV-9/11-39А'), ('Башинський Назарій', 'І-9-134'), ('Сьомак Анастасія', 'ІІІ-9/11-15ОД'), ('Степура Анастасія', 'ІІ-9/11-17ОД')], 'music'),
+    ('Сектор роботи з молодіжними громадськими організаціями', [('Захарченко Аміна', 'IV-9/11-13ОД'), ('Бугаревич Поліна', 'ІІІ-9/11-14ОД')], 'users'),
+    ('Робота зі ЗМІ, фоторепортаж, статті та публікації', [('Олійник Марія', 'IІІ-9/11-41А'), ('Самолюк Антоніна', 'І-9-18ОД/2П')], 'camera'),
+    ('Сектор спорту та здоров’я', [('Суходольський Роман', 'ІV-9/11-130'), ('Харипончук Андрій', 'IV-11-25С'), ('Курдя Яна', 'ІІ-11-27С')], 'sport'),
+    ('Сектор волонтерської роботи', [('Свінцицький Павло', 'ІІ-9/11-133'), ('Сокорчук Ігнат', 'І-9-1П')], 'heart'),
+    ('Голова студради гуртожитку № 1, сектор роботи зі студпрофкомом', [('Симончук Ірина', 'IV-9/11-39А')], 'home'),
+]
+
+def council_members(members):
+    return '<ul class="council-members">'+''.join(f'<li><strong>{escape(name)}</strong><span>{escape(group)}</span></li>' for name,group in members)+'</ul>'
+
+def council_board():
+    desktop_rows=''.join(f'''<tr class="council-tone-{(index%6)+1}">
+      <td><span class="council-number">{index:02}</span></td>
+      <td><span class="council-role-icon">{icon(role_icon)}</span><strong class="council-role">{escape(role)}</strong></td>
+      <td>{council_members(members)}</td>
+    </tr>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
+    mobile_tabs=''.join(f'''<button class="council-tab council-tone-{(index%6)+1}" id="council-tab-{index}" type="button" role="tab" aria-selected="false" aria-controls="council-panel-{index}" data-council-tab="council-panel-{index}">
+      <span class="council-role-icon">{icon(role_icon)}</span><span class="council-tab-copy"><small>{index:02}</small><strong>{escape(role)}</strong></span>{icon('arrow')}
+    </button>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
+    mobile_panels=''.join(f'''<section class="council-panel council-tone-{(index%6)+1}" id="council-panel-{index}" role="tabpanel" aria-labelledby="council-tab-{index}" hidden>
+      <div class="council-panel-mark"><span class="council-role-icon">{icon(role_icon)}</span><span>{index:02}</span></div>
+      <p class="eyebrow">Напрям студентської ради</p><h4>{escape(role)}</h4>{council_members(members)}
+    </section>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
+    return f'''<div class="council-board">
+      <div class="council-board-heading"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div><p><strong>{len(COUNCIL)}</strong> напрямів <span>·</span> <strong>{sum(len(m) for _,m,_ in COUNCIL)}</strong> студентів</p></div>
+      <div class="council-desktop"><table class="council-table"><thead><tr><th scope="col">№</th><th scope="col">Посада та обов’язки</th><th scope="col">Студенти та групи</th></tr></thead><tbody>{desktop_rows}</tbody></table></div>
+      <div class="council-mobile" data-council>
+        <div class="council-mobile-list"><p class="council-mobile-hint">Обери напрям, щоб переглянути склад</p><div class="council-tabs" role="tablist" aria-label="Склад студентської ради">{mobile_tabs}</div></div>
+        <div class="council-mobile-detail" hidden><button class="council-back" type="button" data-council-back>{icon('arrow')}<span>Усі напрями</span></button>{mobile_panels}</div>
+      </div>
+    </div>'''
+
+def student_government():
+    source=next(p for p in PAGES if ROUTES[p['id']]=='/студентське-самоврядування/')
+    content=sanitize(source['content']['rendered'],title(source))
+    soup=BeautifulSoup(content,'html.parser')
+    old_table=soup.select_one('.table-scroll')
+    if old_table:
+        old_table.replace_with(BeautifulSoup(council_board(),'html.parser'))
+    old_title=next((heading for heading in soup.find_all(['h2','h3']) if 'Склад студентської ради' in heading.get_text(' ',strip=True)),None)
+    if old_title:
+        old_title.decompose()
+    return page_heading('Студентське самоврядування','Ініціативи, представництво та студентське життя коледжу')+f'<div class="container page-content council-page"><div class="prose council-prose">{soup}</div></div>'
+
+CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page),'/студентське-самоврядування/':('Студентське самоврядування',student_government),'/політика-конфіденційності/':('Політика конфіденційності',privacy_policy),'/умови-користування/':('Умови користування',terms_policy),'/політика-cookie/':('Політика cookies',cookie_policy),'/повернення-коштів/':('Політика платежів і повернення коштів',refund_policy),SCHEDULE:('Розклад занять',lambda:(ROOT/'src/schedule.html').read_text(encoding='utf-8'))}
 for path,(name,render) in CUSTOM.items():write(path,shell(name,render(),path))
 for p in PROGRAMS:
     path='/спеціальності/'+p[0]+'/'
