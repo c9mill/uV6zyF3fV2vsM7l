@@ -613,13 +613,13 @@ def council_board():
 
 def student_government():
     intro=f'''<section class="council-intro">
-      <div class="council-intro-copy"><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
       <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентської ради коледжу" width="2200" height="1556"></figure>
+      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
     </section>'''
     activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентська рада</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
-      <article><span>{icon('users')}</span><small>01</small><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
-      <article><span>{icon('music')}</span><small>02</small><h3>Організовуємо</h3><p>Створюємо зустрічі, культурні, спортивні й волонтерські події.</p></article>
-      <article><span>{icon('heart')}</span><small>03</small><h3>Підтримуємо</h3><p>Перетворюємо студентські ініціативи на спільні проєкти та корисні зміни.</p></article>
+      <article><span>{icon('users')}</span><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
+      <article><span>{icon('music')}</span><h3>Організовуємо</h3><p>Створюємо зустрічі, культурні, спортивні й волонтерські події.</p></article>
+      <article><span>{icon('heart')}</span><h3>Підтримуємо</h3><p>Перетворюємо студентські ініціативи на спільні проєкти та корисні зміни.</p></article>
     </div></section>'''
     cta=f'''<section class="council-cta"><span>{icon('edit')}</span><div><p class="eyebrow">Є ідея</p><h2>Запропонуй наступну</h2><p>Розкажи про ініціативу представнику свого напряму або звернися до коледжу.</p></div><div class="button-row">{button('/контакти/','Зв’язатися')}{button('/новини/','Події студентів',True)}</div></section>'''
     heading=page_heading('Студентське самоврядування','Ініціативи, представництво та студентське життя коледжу').replace('page-heading container','page-heading container council-page-heading',1)
