@@ -77,6 +77,7 @@
     }
   }
   function applyTeacherLetter(letter) {
+    if (teacherLetter === letter) return;
     const letters = teacherLetters();
     teacherLetter = letter === 'all' || letters.includes(letter) ? letter : 'all';
     const active = teacherLetter;
@@ -90,6 +91,7 @@
     save();
   }
   function applyStudentCategory(category) {
+    if (studentCategory === category) return;
     const valid = STUDENT_CATEGORIES.some(item => item.id === category);
     studentCategory = valid ? category : STUDENT_CATEGORIES[0].id;
     const panel = el('picker');
@@ -102,10 +104,35 @@
   }
   function bindRail(rail, values, apply) {
     if (!rail || !values.length) return;
-    const choose = event => { const rect = rail.getBoundingClientRect(); const ratio = Math.max(0, Math.min(0.999, (event.clientY - rect.top) / rect.height)); apply(values[Math.floor(ratio * values.length)]); };
-    rail.addEventListener('pointerdown', event => { event.preventDefault(); rail.setPointerCapture(event.pointerId); choose(event); });
-    rail.addEventListener('pointermove', event => { if (rail.hasPointerCapture(event.pointerId)) choose(event); });
-    rail.addEventListener('pointerup', event => { if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId); });
+    let centers = [], pointer = null, frame = 0, y = 0, last = null;
+    const choose = () => {
+      frame = 0;
+      if (!centers.length) return;
+      let index = 0;
+      centers.forEach((center, i) => { if (Math.abs(y - center) < Math.abs(y - centers[index])) index = i; });
+      if (values[index] !== last) { last = values[index]; apply(last); }
+    };
+    rail.addEventListener('pointerdown', event => {
+      if (!event.isPrimary || event.button !== 0) return;
+      event.preventDefault(); pointer = event.pointerId; last = null;
+      centers = [...rail.querySelectorAll('button')].map(button => { const rect = button.getBoundingClientRect(); return rect.top + rect.height / 2; });
+      rail.setPointerCapture(pointer); y = event.clientY; choose();
+    });
+    rail.addEventListener('pointermove', event => {
+      if (event.pointerId !== pointer) return;
+      y = event.clientY; if (!frame) frame = requestAnimationFrame(choose);
+    });
+    const finish = event => {
+      if (event.pointerId !== pointer) return;
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      if (event.type === 'pointerup') { y = event.clientY; choose(); }
+      const id = pointer; pointer = null; centers = [];
+      if (rail.hasPointerCapture(id)) rail.releasePointerCapture(id);
+    };
+    rail.addEventListener('pointerup', finish);
+    rail.addEventListener('pointercancel', finish);
+    rail.addEventListener('lostpointercapture', finish);
   }
   function bindCategoryRail() {
     bindRail(el('picker').querySelector('.group-index'), STUDENT_CATEGORIES.map(item => item.id), applyStudentCategory);
@@ -129,6 +156,21 @@
     el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
     el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
+  function markToday() {
+    const normalize = value => String(value).toLocaleLowerCase('uk-UA').replace(/[^а-яіїєґ]/g, '');
+    const today = normalize(new Intl.DateTimeFormat('uk-UA', {weekday:'long', timeZone:'Europe/Kyiv'}).format(new Date()));
+    let column = -1;
+    el('table').querySelectorAll('thead th').forEach((header, index) => {
+      header.querySelector('.schedule-today-label')?.remove();
+      const active = index > 0 && normalize(header.textContent) === today;
+      header.classList.toggle('schedule-today', active); header.removeAttribute('aria-current');
+      if (active) {
+        column = index; header.setAttribute('aria-current', 'date');
+        const label = document.createElement('span'); label.className = 'schedule-today-label'; label.textContent = 'Сьогодні'; header.append(label);
+      }
+    });
+    el('table').querySelectorAll('tbody tr').forEach(row => [...row.children].forEach((cell, index) => cell.classList.toggle('schedule-today-cell', index === column)));
+  }
   async function load(force = false) {
     if (!catalog) return boot();
     const id = selected[mode];
@@ -143,11 +185,11 @@
       if (!force && saved && Date.now() - Date.parse(saved.checkedAt) < 300000) data = saved;
       else { data = await get(`/api/schedule?mode=${mode}&id=${id}`, controller.signal); memory.set(key, data); persistData(key, data); }
       if (current !== generation) return;
-      memory.set(key, data); render(data);
+      memory.set(key, data); render(data); markToday();
     } catch (error) {
       if (current !== generation || error.name === 'AbortError') return;
       const stale = deviceData[`${mode}/${id}`];
-      if (stale) { render(stale); el('status').textContent = 'Показано останнє збережене оновлення. Підключення недоступне.'; }
+      if (stale) { render(stale); markToday(); el('status').textContent = 'Показано останнє збережене оновлення. Підключення недоступне.'; }
       else { el('status').textContent = error.message; el('table').innerHTML = '<p class="schedule-empty">Натисніть «Оновити», щоб спробувати знову, або відкрийте джерело нижче.</p>'; }
     } finally { if (current === generation) { el('table').setAttribute('aria-busy', 'false'); el('refresh').disabled = false; } }
   }
@@ -180,6 +222,7 @@
   });
   el('change').addEventListener('click', openPicker); el('picker-close').addEventListener('click', closePicker); el('picker-backdrop').addEventListener('click', closePicker); el('refresh').addEventListener('click', () => load(true));
   setInterval(() => { if (!document.hidden && catalog && selected[mode]) load(true); }, 300000);
+  setInterval(() => { if (!document.hidden) markToday(); }, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && catalog && selected[mode]) load(); });
   boot();
 })();

@@ -13,3 +13,14 @@
 .schedule-lesson{background:color-mix(in srgb,var(--lesson-color) 13%,var(--surface));box-shadow:none}
 @media(min-width:901px) and (max-width:1240px){.schedule-heading{display:block}.schedule-modes{grid-column:auto;width:min(310px,100%);margin:20px auto 0}}
 .alphabet-index.group-index{min-height:124px;align-self:start}
+.schedule-picker,.group-picker,.group-list,.teacher-list{overflow-anchor:none}
+.group-picker .group-list{height:360px;max-height:360px;overscroll-behavior-y:contain}
+.alphabet-index{flex-shrink:0;touch-action:none}
+@media(max-width:900px),(pointer:coarse){
+ .group-picker .group-list{height:clamp(180px,42svh,360px);max-height:none}
+ .alphabet-index button,.alphabet-index button:hover,.alphabet-index button[aria-selected=true]{transform:none;transition:color 160ms,background-color 160ms}
+ .schedule-choice:hover{transform:none}
+}
+.schedule-week thead th.schedule-today{background:var(--accent-solid,var(--accent));color:#fff;box-shadow:none}
+.schedule-today-label{display:block;margin-top:5px;font-size:.64rem;font-weight:600;letter-spacing:.02em;color:inherit}
+.schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{background:color-mix(in srgb,var(--accent) 12%,var(--surface));box-shadow:none}
