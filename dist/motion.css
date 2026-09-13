@@ -17,7 +17,8 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .program-deck .program-label{font-size:.7rem;padding:3px 8px}
  .program-deck .program-top>.icon{width:16px;height:16px}
  .program-deck .program-art{position:absolute;top:17px;right:44px;width:auto;height:auto;min-height:0;margin:0;padding:0}
- .program-deck .program-art>.icon{display:none}
+ .program-deck .program-art{display:flex;align-items:center;gap:8px}
+ .program-deck .program-art>.icon{display:block;width:21px;height:21px}
  .program-deck .program-code{font-size:.75rem;line-height:1;opacity:.7}
  .program-deck .program-card>.eyebrow,.program-deck .program-card>p{display:none}
  .program-deck .program-card h3{font-size:clamp(1rem,4.2vw,1.25rem);line-height:1.2;margin:8px 0 10px;letter-spacing:-.025em}
