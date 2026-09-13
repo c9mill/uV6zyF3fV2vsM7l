@@ -403,3 +403,26 @@ img.campus-anniversary{object-fit:contain;object-position:center}
 .typed-letter-new{display:inline-block;animation:typed-letter-in 500ms cubic-bezier(.22,.75,.18,1) calc(var(--typed-index)*30ms) both;will-change:transform,opacity,filter}
 .typed-letter-removing{display:inline-block;animation:typed-letter-out 520ms cubic-bezier(.35,.05,.7,.2) both;will-change:transform,opacity,filter}
 @media(prefers-reduced-motion:reduce){.typed-letter-new,.typed-letter-removing{animation:none;opacity:1;transform:none;filter:none}}
+
+/* Route palettes, assigned during generation before the first paint. */
+html[data-page-palette]{--canvas:hsl(var(--page-hue) 35% 97%);--surface:hsl(var(--page-hue) 35% 99%);--card:hsl(var(--page-hue) 34% 94%);--card-hover:hsl(var(--page-hue) 38% 90%);--soft:var(--card);--elevated:var(--surface);--ink:hsl(var(--page-hue) 28% 17%);--muted:hsl(var(--page-hue) 17% 39%);--accent:hsl(var(--page-hue) 65% 34%);--accent-solid:hsl(var(--page-hue) 65% 34%);--secondary:var(--accent);--line:hsl(var(--page-hue) 25% 82%);--blue-soft:hsl(var(--page-hue) 44% 90%);--glass:hsl(var(--page-hue) 35% 97% / .94);--shadow:0 18px 55px hsl(var(--page-hue) 40% 20% / .08);--card-shadow:0 8px 28px hsl(var(--page-hue) 40% 20% / .06);--card-shadow-hover:0 16px 38px hsl(var(--page-hue) 40% 20% / .12);background:var(--canvas)}
+html[data-page-palette][data-theme="dark"]{--canvas:hsl(var(--page-hue) 22% 8%);--surface:hsl(var(--page-hue) 23% 12%);--card:hsl(var(--page-hue) 23% 14%);--card-hover:hsl(var(--page-hue) 27% 18%);--ink:hsl(var(--page-hue) 36% 95%);--muted:hsl(var(--page-hue) 20% 72%);--accent:hsl(var(--page-hue) 70% 73%);--accent-solid:hsl(var(--page-hue) 58% 36%);--line:hsl(var(--page-hue) 22% 27%);--blue-soft:hsl(var(--page-hue) 32% 20%);--glass:hsl(var(--page-hue) 23% 12% / .94)}
+html[data-page-palette] body{background:var(--canvas);color:var(--ink)}
+html[data-page-palette] body:before{background:radial-gradient(ellipse at 16% 25%,hsl(var(--page-hue) 70% 55% / .14),transparent 48%),radial-gradient(ellipse at 82% 65%,hsl(var(--page-hue) 60% 45% / .16),transparent 52%)}
+html[data-page-palette] body:after{background:radial-gradient(ellipse at 70% 18%,hsl(var(--page-hue) 80% 80% / .09),transparent 45%),radial-gradient(ellipse at 25% 80%,hsl(var(--page-hue) 60% 55% / .12),transparent 50%)}
+html[data-page-palette] .cosmic-nebula{background:radial-gradient(ellipse at 35% 60%,hsl(var(--page-hue) 60% 65% / .14),transparent 55%),radial-gradient(ellipse at 78% 20%,hsl(var(--page-hue) 60% 45% / .12),transparent 50%)}
+html[data-page-palette] .cosmic-dust{filter:sepia(1) hue-rotate(calc((var(--page-hue) - 45) * 1deg));opacity:.45}
+html[data-page-palette] :is(.site-header,.mobile-nav,.footer){background:var(--surface)}
+html[data-page-palette] :is(.page-heading h1,.subheading,.section-heading h2){color:var(--accent)}
+html[data-page-palette] :is(.search-field,.header-search,.icon-button,.theme-toggle,.socials a){background:var(--card);color:var(--ink)}
+html[data-page-palette] .button{background:var(--accent-solid);color:#fff;box-shadow:0 8px 24px hsl(var(--page-hue) 55% 45% / .15)}
+html[data-page-palette] .button.secondary{background:var(--blue-soft);color:var(--ink)}
+html[data-page-palette] :is(.admission-banner,.future-banner,.future-art){background:linear-gradient(120deg,hsl(var(--page-hue) 50% 22%),hsl(var(--page-hue) 60% 40%));box-shadow:none}
+html[data-page-palette] :is(.program-card,.news-card,.resource-tile,.editorial-section,.page-sidebar,.info-banner){background:linear-gradient(125deg,var(--card),var(--surface))}
+html[data-page-palette] .footer :is(a,p,h3,strong,span,.footer-bottom){color:var(--muted)}
+html[data-page-palette] .footer :is(h3,a:hover){color:var(--accent)}
+html[data-page-palette] .footer-signature{background:linear-gradient(180deg,var(--ink),var(--accent));background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+html[data-page-palette] main .warm-table-scroll{scrollbar-color:var(--accent) transparent}
+html[data-page-palette] main .warm-table-scroll :is(tr,tr:hover){background:linear-gradient(105deg,hsl(var(--page-hue) 65% 58% / .13),hsl(var(--page-hue) 60% 45% / .07))!important}
+html[data-page-palette] main .warm-table-scroll thead tr{background:linear-gradient(115deg,hsl(var(--page-hue) 65% 58% / .2),hsl(var(--page-hue) 60% 45% / .12))!important}
+html[data-page-palette] main .warm-table-scroll:focus-visible{outline-color:var(--accent)}
