@@ -606,7 +606,7 @@ def council_board():
       <p class="eyebrow">Напрям студентської ради</p><h4>{escape(role)}</h4>{council_members(members)}
     </section>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
     return f'''<div class="council-board">
-      <div class="council-board-heading"><div class="council-board-title"><img src="{COUNCIL_LOGO}" alt="Логотип студентської ради" width="82" height="81"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div></div><p><strong>{len(COUNCIL)}</strong> напрямів <span>·</span> <strong>{sum(len(m) for _,m,_ in COUNCIL)}</strong> студентів</p></div>
+      <div class="council-board-heading"><div class="council-board-title"><img src="{COUNCIL_LOGO}" alt="Логотип студентської ради" width="82" height="81"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div></div></div>
       <div class="council-desktop"><table class="council-table"><thead><tr><th scope="col">№</th><th scope="col">Посада та обов’язки</th><th scope="col">Студенти та групи</th></tr></thead><tbody>{desktop_rows}</tbody></table></div>
       <div class="council-mobile" data-council>
         <div class="council-mobile-list"><p class="council-mobile-hint">Обери напрям, щоб переглянути склад</p><div class="council-tabs" role="tablist" aria-label="Склад студентської ради">{mobile_tabs}</div></div>

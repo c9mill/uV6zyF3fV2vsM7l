@@ -156,6 +156,10 @@ html:has(.council-page) body:after{background:radial-gradient(ellipse at 70% 18%
 html:has(.council-page) .cosmic-nebula{background:radial-gradient(ellipse at 35% 60%,#efc75b25,transparent 55%),radial-gradient(ellipse at 78% 20%,#d69a3320,transparent 50%)}
 html:has(.council-page) .cosmic-dust{filter:sepia(1);opacity:.45}
 html:has(.council-page) :is(.site-header,.mobile-nav,.footer){background:var(--surface)}
+html:has(.council-page) .footer :is(a,p,h3,strong,span,.footer-bottom){color:var(--accent)}
+html:has(.council-page) .footer .footer-signature{background:linear-gradient(180deg,#ffe599,#d6a43c);background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+html:has(.council-page) .footer a:hover{color:var(--ink)}
+html:has(.council-page) :is(.council-activity,.council-cta) :is(h2,h3,p){color:var(--accent)}
 .council-page{max-width:1320px}
 .council-intro{position:relative;isolation:isolate;display:grid;gap:0;padding:13px;overflow:hidden;border-radius:34px;background:radial-gradient(circle at 86% 88%,#e9a44e33,transparent 34%),radial-gradient(circle at 15% 95%,#ffcf6a1f,transparent 35%),linear-gradient(145deg,color-mix(in srgb,var(--card) 90%,#6a441b 10%),color-mix(in srgb,var(--card) 78%,#b76c24 22%));box-shadow:0 30px 90px color-mix(in srgb,#c77a2c 17%,transparent),inset 0 0 0 1px color-mix(in srgb,#ffc56d 22%,transparent)}
 .council-intro:before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(circle at 12% 22%,#fff2d5 0 1px,transparent 1.7px),radial-gradient(circle at 37% 76%,#ffc970 0 1px,transparent 1.8px),radial-gradient(circle at 72% 39%,#fff 0 .8px,transparent 1.6px);background-size:190px 170px,240px 210px,150px 130px;opacity:.24}
