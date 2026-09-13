@@ -170,11 +170,12 @@
   window.addEventListener('pageshow',event=>{if(event.persisted){showAll();scroll?.resize();syncScroll();}});
   window.addEventListener('load',()=>{scroll?.resize();syncScroll();});
   setupMotion();
-  // Three-card fan: specialties and home-page news keep a subtle five-percent overlap when open.
-  const decks=[...document.querySelectorAll('.program-grid,.home-page .news-grid')].map(grid=>{
+  // Three-card fan: specialties, home-page news and student council activities
+  // keep a subtle five-percent overlap when open.
+  const decks=[...document.querySelectorAll('.program-grid,.home-page .news-grid,.council-activity-grid')].map(grid=>{
     grid.classList.add('program-deck');
-    const cardSelector=grid.matches('.news-grid')?':scope>.news-card':':scope>.program-card';
-    const heading=grid.previousElementSibling?.matches('.section-heading')?grid.previousElementSibling:null;
+    const cardSelector=grid.matches('.news-grid')?':scope>.news-card':grid.matches('.council-activity-grid')?':scope>.council-activity-card':':scope>.program-card';
+    const heading=grid.previousElementSibling?.matches('.section-heading,.council-section-heading')?grid.previousElementSibling:null;
     heading?.classList.add('deck-heading');
     return {grid,cards:[...grid.querySelectorAll(cardSelector)],heading,visible:false};
   });
