@@ -123,6 +123,8 @@ ROUTES = {308:'/',625:'/',307:'/новини/',592:'/про-коледж/',593:'
 for p in PAGES + POSTS:
     ROUTES.setdefault(p['id'], p.get('route') or unquote(urlparse(p['link']).path))
 URLS = {unquote(urlparse(p['link']).path).rstrip('/') or '/':ROUTES[p['id']] for p in PAGES + POSTS}
+# Keep legacy links to the former empty duplicate pointed at the canonical page.
+URLS['/навчально-матеріальна-база'] = '/навчально-матеріальна-база-2/'
 URLS['/головна'] = '/'
 
 def clean_text(html):
@@ -733,7 +735,7 @@ def specialty(p):
     return page_heading(name,desc,('/спеціальності/','Спеціальності'))+f'<div class="container page-content content-columns"><section><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійна програма</p></div></div><div class="prose">{content}</div><h2 class="subheading">Програма та практична підготовка</h2>{doc_link("Презентація напряму «"+short+"»",original.get("url","/спеціальності/"))}{doc_link(title(BY_ID[related]),ROUTES[related])}{doc_link("Освітньо-професійні програми",ROUTES[820])}<div class="inline-cta"><h2>Готовий до наступного кроку?</h2><p>Переглянь умови вступу та звернися до приймальної комісії.</p>{button("/вступнику/","Як вступити")}</div></section>{sidebar("/спеціальності/")}</div>'
 
 def about():
-    material_target = ROUTES.get(814, '/навчально-матеріальна-база/') + '#material-base-gallery'
+    material_target = ROUTES.get(814, '/навчально-матеріальна-база-2/') + '#material-base-gallery'
     return page_heading('Про коледж','Освіта, творчість і професійний досвід у центрі Житомира.')+f'''<div class="container page-content"><div class="about-intro"><img src="{CAMPUS}" alt="{FULL_DISPLAY}" width="800" height="560"><div><p class="eyebrow">Знайомся з {ABBR}</p><h2>Відбудовувати.<br>Створювати.<br>Рухатися вперед.</h2><p>{FULL_DISPLAY} готує фахівців для будівельної галузі.</p><p>Історія закладу почалася 26 вересня 1945 року зі створення Житомирського будівельного технікуму. Сьогодні студентське містечко коледжу розташоване в центрі Житомира.</p>{link(ROUTES[1480],'Історія коледжу '+icon('arrow'),'text-link')}</div></div><div class="facts"><div>{link(ROUTES[1480],'<strong class="display-number">1945</strong>','fact-number-link')}<span>рік заснування</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>навчально-лабораторні корпуси</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>студентські гуртожитки</span></div></div><div class="content-columns"><section><h2 class="subheading">Познайомся з коледжем ближче</h2>{resource_groups(menu('ПРО КОЛЕДЖ'))}</section>{sidebar('/про-коледж/')}</div></div>'''
 
 def contacts():
