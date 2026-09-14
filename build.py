@@ -186,6 +186,16 @@ def asset(url):
             shutil.copy2(source, target)
             return url
         return url if target.is_file() else ''
+    # Decap can store an uploaded image as a bare filename in a markdown
+    # entry. Resolve it from the CMS media folder (or the entry folder) and
+    # publish it under /uploads so it works from every page depth.
+    if not url.startswith(('http://', 'https://', '/')):
+        for source in (ROOT / 'src' / 'uploads' / url, CONTENT / 'news' / url):
+            if source.is_file():
+                target = OUT / 'uploads' / source.name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+                return '/uploads/' + quote(source.name)
     m = ASSETS.get(norm(url))
     if not m: return ''
     source = LEGACY_EXPORT / m['local_file']
