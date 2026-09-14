@@ -811,17 +811,17 @@ def refund_policy():
     <h2>Законодавчі гарантії</h2><p>Якщо до конкретного платежу застосовуються правила захисту прав споживачів або інші обов’язкові норми, вони мають перевагу над будь-яким положенням цієї політики. Дивіться <a href="https://zakon.rada.gov.ua/go/1023-12" target="_blank" rel="noopener noreferrer">Закон України «Про захист прав споживачів»</a>.</p>''')
 
 COUNCIL = [
-    ('Голова студентської ради', [('Сівченко Віра', 'ІІ-9-42А')], 'leader'),
-    ('Заступник голови студентської ради відділення «Проєктування та дизайн»', [('Гуральська Анастасія', 'ІІІ-9/11-40А')], 'design'),
-    ('Заступник голови студентської ради відділення «Будівництво та цивільна інженерія»', [('Антонюк Артем', 'ІІІ-9/11-131')], 'build'),
-    ('Секретар студентської ради', [('Фіалковська Марія', 'ІІ-9-16ОД')], 'edit'),
+    ('Голова студентського самоврядування', [('Гуральська Анастасія', 'ІІІ-9/11-40А')], 'leader'),
+    
+    ('Заступник голови студентського самоврядування відділення «Будівництво та цивільна інженерія»', [('Антонюк Артем', 'ІІІ-9/11-131')], 'build'),
+    ('Секретар студентського самоврядування', [('Фіалковська Марія', 'ІІ-9-16ОД')], 'edit'),
     ('Сектор військово-патріотичного виховання в коледжі', [('Грибук Ігор', 'ІІІ-9/11-132'), ('Лапінський Вадим', 'ІІ-11-26С')], 'shield'),
-    ('Сектор культмасової роботи та дозвілля студентів і гурткової роботи', [('Кучмійчук Анна', 'IV-9/11-39А'), ('Башинський Назарій', 'І-9-134'), ('Сьомак Анастасія', 'ІІІ-9/11-15ОД'), ('Степура Анастасія', 'ІІ-9/11-17ОД')], 'music'),
-    ('Сектор роботи з молодіжними громадськими організаціями', [('Захарченко Аміна', 'IV-9/11-13ОД'), ('Бугаревич Поліна', 'ІІІ-9/11-14ОД')], 'users'),
+    ('Сектор культмасової роботи та дозвілля студентів і гурткової роботи', [('Башинський Назарій', 'І-9-134'), ('Сьомак Анастасія', 'ІІІ-9/11-15ОД'), ('Степура Анастасія', 'ІІ-9/11-17ОД')], 'music'),
+    ('Сектор роботи з молодіжними громадськими організаціями', [('Бугаревич Поліна', 'ІІІ-9/11-14ОД')], 'users'),
     ('Робота зі ЗМІ, фоторепортаж, статті та публікації', [('Олійник Марія', 'IІІ-9/11-41А'), ('Самолюк Антоніна', 'І-9-18ОД/2П')], 'camera'),
-    ('Сектор спорту та здоров’я', [('Суходольський Роман', 'ІV-9/11-130'), ('Харипончук Андрій', 'IV-11-25С'), ('Курдя Яна', 'ІІ-11-27С')], 'sport'),
-    ('Сектор волонтерської роботи', [('Свінцицький Павло', 'ІІ-9/11-133'), ('Сокорчук Ігнат', 'І-9-1П')], 'heart'),
-    ('Голова студради гуртожитку № 1, сектор роботи зі студпрофкомом', [('Симончук Ірина', 'IV-9/11-39А')], 'home'),
+    ('Сектор спорту та здоров’я', [], 'sport'),
+    ('Сектор волонтерської роботи', [('Свінцицький Павло', 'ІІ-9/11-133'), ], 'heart'),
+    ('Голова студентського самоврядування гуртожитку № 1, сектор роботи зі студпрофкомом', [('Міщенко Валерія', 'ІІ-9-16ОД')], 'home'),
 ]
 
 def council_members(members):
@@ -838,23 +838,23 @@ def council_board():
     </button>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
     mobile_panels=''.join(f'''<section class="council-panel council-tone-{(index%6)+1}" id="council-panel-{index}" role="tabpanel" aria-labelledby="council-tab-{index}" hidden>
       <div class="council-panel-mark"><span class="council-role-icon">{icon(role_icon)}</span><span>{index:02}</span></div>
-      <p class="eyebrow">Напрям студентської ради</p><h4>{escape(role)}</h4>{council_members(members)}
+      <p class="eyebrow">Напрям студентського самоврядування</p><h4>{escape(role)}</h4>{council_members(members)}
     </section>''' for index,(role,members,role_icon) in enumerate(COUNCIL,1))
     return f'''<div class="council-board">
-      <div class="council-board-heading"><div class="council-board-title"><img src="{COUNCIL_LOGO}" alt="Логотип студентської ради" width="82" height="81"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентської ради</h3></div></div></div>
+      <div class="council-board-heading"><div class="council-board-title"><img src="{COUNCIL_LOGO}" alt="Логотип студентського самоврядування" width="82" height="81"><div><p class="eyebrow">Команда студентів</p><h3>Склад студентського самоврядування</h3></div></div></div>
       <div class="council-desktop"><table class="council-table"><thead><tr><th scope="col">№</th><th scope="col">Посада та обов’язки</th><th scope="col">Студенти та групи</th></tr></thead><tbody>{desktop_rows}</tbody></table></div>
       <div class="council-mobile" data-council>
-        <div class="council-mobile-list"><p class="council-mobile-hint">Обери напрям, щоб переглянути склад</p><div class="council-tabs" role="tablist" aria-label="Склад студентської ради">{mobile_tabs}</div></div>
+        <div class="council-mobile-list"><p class="council-mobile-hint">Обери напрям, щоб переглянути склад</p><div class="council-tabs" role="tablist" aria-label="Склад студентського самоврядування">{mobile_tabs}</div></div>
         <div class="council-mobile-detail" hidden><button class="council-back" type="button" data-council-back>{icon('arrow')}<span>Усі напрями</span></button>{mobile_panels}</div>
       </div>
     </div>'''
 
 def student_government():
     intro=f'''<section class="council-intro">
-      <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентської ради коледжу" width="2200" height="1556"></figure>
-      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентська рада представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>спільний голос</span></div></div></div>
+      <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентського самоврядування коледжу" width="2200" height="1556"></figure>
+      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентське самоврядування представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>голова студентського самоврядування</span></div></div></div>
     </section>'''
-    activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентська рада</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
+    activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентське самоврядування</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
       <article class="council-activity-card"><span>{icon('users')}</span><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
       <article class="council-activity-card"><span>{icon('music')}</span><h3>Організовуємо</h3><p>Створюємо зустрічі, культурні, спортивні й волонтерські події.</p></article>
       <article class="council-activity-card"><span>{icon('heart')}</span><h3>Підтримуємо</h3><p>Перетворюємо студентські ініціативи на спільні проєкти та корисні зміни.</p></article>
