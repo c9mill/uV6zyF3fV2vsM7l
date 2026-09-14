@@ -1,4 +1,5 @@
 """Generate the college website from the supplied WordPress export. No WP runtime."""
+# Keep generated output deterministic for content-only deployments.
 from pathlib import Path
 from urllib.parse import urlparse, unquote, quote
 from html import escape, unescape
