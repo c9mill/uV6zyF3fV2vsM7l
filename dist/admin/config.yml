@@ -9,7 +9,6 @@ backend:
   auth_endpoint: /api/auth
   use_graphql: true
 
-local_backend: true
 publish_mode: simple
 site_url: https://fkbad.pages.dev
 display_url: https://fkbad.pages.dev
@@ -211,5 +210,6 @@ collections:
           - { label: Опис на головній, name: hero_description, widget: text }
           - { label: Великий підпис унизу, name: footer_signature, widget: string }
           - { label: Нижній підпис, name: footer_slogan, widget: string }
+
 
 
