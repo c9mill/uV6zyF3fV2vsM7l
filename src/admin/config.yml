@@ -102,12 +102,12 @@ collections:
             widget: object
             fields:
               - { label: Текст цитати, name: value, widget: text }
-      - label: Текст публікації
+      - label: Редактор публікації
         name: body
-        widget: richtext
+        widget: markdown
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
         required: false
-        hint: Додавай текст, заголовки та фото кнопками редактора. Блоки можна переміщати прямо у візуальному полі.
+        hint: Візуальний редактор: форматуй текст кнопками та додавай зображення через панель. Для нового матеріалу зручніше використовувати блоки вище.
         editor_components: [image]
 
   - name: pages
@@ -166,12 +166,12 @@ collections:
             widget: object
             fields:
               - { label: Текст цитати, name: value, widget: text }
-      - label: Вміст сторінки
+      - label: Візуальний редактор сторінки
         name: body
-        widget: richtext
+        widget: markdown
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
         required: false
-        hint: "Редагуй сторінку візуально: текст, заголовки, списки, посилання та зображення додаються кнопками."
+        hint: "Редагуй сторінку кнопками: текст, заголовки, списки, посилання та зображення. Код писати не потрібно."
         editor_components: [image]
 
   - name: documents
@@ -211,3 +211,4 @@ collections:
           - { label: Опис на головній, name: hero_description, widget: text }
           - { label: Великий підпис унизу, name: footer_signature, widget: string }
           - { label: Нижній підпис, name: footer_slogan, widget: string }
+
