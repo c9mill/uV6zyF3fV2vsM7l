@@ -30,11 +30,24 @@ def read_frontmatter(path):
         return {}, text
     return yaml.safe_load(match.group(1)) or {}, match.group(2)
 
+def canonical_date(value):
+    """Normalize dates written by Decap or imported content to ISO-8601."""
+    raw = str(value or '').strip()
+    try:
+        return datetime.fromisoformat(raw).isoformat(timespec='minutes')
+    except ValueError:
+        for pattern in ('%d.%m.%YT%H:%M', '%d.%m.%Y %H:%M', '%d.%m.%Y'):
+            try:
+                return datetime.strptime(raw, pattern).isoformat(timespec='minutes')
+            except ValueError:
+                pass
+    return '2000-01-01T00:00'
+
 def cms_record(path, kind):
     data, body = read_frontmatter(path)
     if not data.get('published', True):
         return None
-    date_value = str(data.get('date') or '2000-01-01T00:00:00')
+    date_value = canonical_date(data.get('date'))
     slug = str(data.get('slug') or re.sub(r'^\d{4}-\d{2}-\d{2}-', '', path.stem)).strip('/')
     if kind == 'post':
         route = str(data.get('route') or f'/{date_value[:4]}/{date_value[5:7]}/{date_value[8:10]}/{slug}/')
