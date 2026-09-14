@@ -99,7 +99,7 @@ def cms_record(path, kind):
     entry_id = int(legacy_id) if str(legacy_id or '').isdigit() else -int(hashlib.sha1(str(path).encode()).hexdigest()[:10], 16)
     rendered_body = render_content_blocks(data.get('content_blocks'))
     if not rendered_body:
-        rendered_body = markdown.markdown(body, extensions=['extra', 'sane_lists']) if body.strip() else ''
+        rendered_body = markdown.markdown(strip_wordpress_markers(body), extensions=['extra', 'sane_lists']) if body.strip() else ''
     return {
         'id': entry_id,
         'date': date_value,
@@ -168,6 +168,11 @@ URLS = {unquote(urlparse(p['link']).path).rstrip('/') or '/':ROUTES[p['id']] for
 # Keep legacy links to the former empty duplicate pointed at the canonical page.
 URLS['/навчально-матеріальна-база'] = '/навчально-матеріальна-база-2/'
 URLS['/головна'] = '/'
+
+def strip_wordpress_markers(text):
+    text = re.sub(r'<!--\s*/?wp:[\w-]+(?:\s*\{[^}]*\})?\s*-->', '', str(text or ''), flags=re.I)
+    text = re.sub(r'/?wp:[\w-]+(?:\s*\{[^}]*\})?', '', text, flags=re.I)
+    return re.sub(r'<p>\s*</p>', '', text, flags=re.I)
 
 def clean_text(html):
     s = BeautifulSoup(html, 'html.parser')
@@ -986,4 +991,5 @@ index_navigation(NAVIGATION)
 (OUT/'route-map.json').write_text(json.dumps({str(k):v for k,v in ROUTES.items()},ensure_ascii=False),encoding='utf-8')
 (OUT/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n',encoding='utf-8')
 print(f'Built {len(WRITTEN)} pages, {len(POSTS)} articles, {len(DOCUMENTS)} documents; {len(COPIED)} referenced images.')
+
 
