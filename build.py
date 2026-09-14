@@ -44,6 +44,46 @@ def canonical_date(value):
                 pass
     return '2000-01-01T00:00'
 
+def render_content_blocks(blocks):
+    """Render the visual Decap blocks while keeping legacy markdown content intact."""
+    if not isinstance(blocks, list) or not blocks:
+        return ''
+    rendered = []
+    for block in blocks:
+        if not isinstance(block, dict):
+            continue
+        kind = str(block.get('type') or '').strip().lower()
+        if kind == 'text':
+            value = str(block.get('value') or '').strip()
+            if value:
+                rendered.append(markdown.markdown(value, extensions=['extra', 'sane_lists']))
+        elif kind == 'heading':
+            value = escape(str(block.get('value') or '').strip())
+            if value:
+                level = str(block.get('level') or '2')
+                level = level if level in {'2', '3', '4'} else '2'
+                rendered.append(f'<h{level}>{value}</h{level}>')
+        elif kind == 'image':
+            src = escape(str(block.get('src') or '').strip(), quote=True)
+            if src:
+                caption = escape(str(block.get('caption') or '').strip())
+                rendered.append(f'<figure><img src="{src}" alt="{caption}">{f"<figcaption>{caption}</figcaption>" if caption else ""}</figure>')
+        elif kind == 'gallery':
+            images = block.get('images') or []
+            figures = []
+            for image in images:
+                src = image.get('src') if isinstance(image, dict) else image
+                src = escape(str(src or '').strip(), quote=True)
+                if src:
+                    figures.append(f'<figure><img src="{src}" alt=""></figure>')
+            if figures:
+                rendered.append('<div class="editorial-gallery photo-grid">' + ''.join(figures) + '</div>')
+        elif kind == 'quote':
+            value = str(block.get('value') or '').strip()
+            if value:
+                rendered.append(f'<blockquote>{markdown.markdown(value, extensions=["extra"])} </blockquote>')
+    return ''.join(rendered)
+
 def cms_record(path, kind):
     data, body = read_frontmatter(path)
     if not data.get('published', True):
@@ -57,7 +97,9 @@ def cms_record(path, kind):
     route = '/' + route.strip('/') + '/' if route.strip('/') else '/'
     legacy_id = data.get('legacy_id')
     entry_id = int(legacy_id) if str(legacy_id or '').isdigit() else -int(hashlib.sha1(str(path).encode()).hexdigest()[:10], 16)
-    rendered_body = markdown.markdown(body, extensions=['extra', 'sane_lists']) if body.strip() else ''
+    rendered_body = render_content_blocks(data.get('content_blocks'))
+    if not rendered_body:
+        rendered_body = markdown.markdown(body, extensions=['extra', 'sane_lists']) if body.strip() else ''
     return {
         'id': entry_id,
         'date': date_value,
