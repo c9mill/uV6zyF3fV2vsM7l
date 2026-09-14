@@ -87,14 +87,10 @@ const navigationTree=mobileNav?.querySelector('.navigation-tree');
 if(navigationTree){
  const collator=new Intl.Collator('uk',{sensitivity:'base',numeric:true});
  const label=el=>(el.querySelector(':scope > summary,:scope > span')||el).textContent.trim();
- for(const children of navigationTree.querySelectorAll('.navigation-children')){
-  const nodes=[...children.children];
-  nodes.sort((a,b)=>label(a)==='Огляд розділу'?-1:label(b)==='Огляд розділу'?1:collator.compare(label(a),label(b)));
-  children.append(...nodes);
- }
+ // Keep the navigation order from navigation.json so it matches the college menu.
  const shortcuts=navigationTree.querySelector('.navigation-shortcuts');
  if(shortcuts){navigationTree.append(...shortcuts.children);shortcuts.remove();}
- const entries=[...navigationTree.children].sort((a,b)=>collator.compare(label(a),label(b)));
+ const entries=[...navigationTree.children];
  navigationTree.append(...entries);
  const letterOf=el=>label(el).charAt(0).toLocaleUpperCase('uk');
  const desktopMenu=matchMedia('(min-width:1001px)');
