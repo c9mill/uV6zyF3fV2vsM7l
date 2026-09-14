@@ -235,7 +235,25 @@ def link(u,label,cls=''):
     return f'<a href="{escape(u,quote=True)}" class="{cls}"'+(' target="_blank" rel="noopener noreferrer"' if external else '')+f'>{label}</a>'
 def button(u,label,secondary=False): return link(u,escape(label)+icon('arrow'),'button'+(' secondary' if secondary else ''))
 def date(p):
-    d = datetime.fromisoformat(p['date'])
+    raw = str(p.get('date') or '').strip()
+    # Decap's datetime widget uses DD.MM.YYYYTHH:mm, while imported
+    # content and the API use ISO-8601. Accept both representations.
+    d = None
+    for parser in (datetime.fromisoformat,):
+        try:
+            d = parser(raw)
+            break
+        except ValueError:
+            pass
+    if d is None:
+        for pattern in ('%d.%m.%YT%H:%M', '%d.%m.%Y %H:%M', '%d.%m.%Y'):
+            try:
+                d = datetime.strptime(raw, pattern)
+                break
+            except ValueError:
+                pass
+    if d is None:
+        d = datetime.now()
     return f'{d.day} {MONTHS[d.month-1]} {d.year}'
 def menu(label): return next((x for x in MENUS if x['label'].upper()==label.upper()),{'children':[]})['children']
 def flatten(items):
