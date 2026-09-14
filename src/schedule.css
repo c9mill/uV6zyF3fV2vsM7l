@@ -21,6 +21,6 @@
  .alphabet-index button,.alphabet-index button:hover,.alphabet-index button[aria-selected=true]{transform:none;transition:color 160ms,background-color 160ms}
  .schedule-choice:hover{transform:none}
 }
-.schedule-week thead th.schedule-today{background:linear-gradient(135deg,var(--accent-solid,var(--accent)),color-mix(in srgb,var(--accent) 72%,var(--ink)));color:#fff;box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 65%,var(--ink)),0 0 22px color-mix(in srgb,var(--accent) 42%,var(--ink));position:relative}
+.schedule-week thead th.schedule-today{background:linear-gradient(135deg,var(--accent-solid,var(--accent)),color-mix(in srgb,var(--accent) 72%,var(--ink))) !important;color:#fff !important;border:1px solid color-mix(in srgb,var(--accent) 80%,white) !important;box-shadow:inset 0 0 18px color-mix(in srgb,var(--accent) 38%,white),0 0 0 2px color-mix(in srgb,var(--accent) 60%,var(--ink)),0 0 30px color-mix(in srgb,var(--accent) 58%,transparent) !important;position:relative}
 .schedule-today-label{display:block;margin-top:5px;font-size:.64rem;font-weight:600;letter-spacing:.02em;color:inherit}
-.schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{background:color-mix(in srgb,var(--accent) 16%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,var(--ink))}
+.schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,var(--ink)),inset 0 0 22px color-mix(in srgb,var(--accent) 12%,transparent)}
