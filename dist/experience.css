@@ -94,7 +94,17 @@ main .table-scroll tr>:only-child{border-radius:12px}
 main .table-scroll tr:focus-within>td{background:color-mix(in srgb,var(--accent) 11%,var(--card))}
 @media(hover:hover){
  main .table-scroll tbody tr:hover>td{background:color-mix(in srgb,var(--accent) 9%,var(--card))}
- main .table-scroll tbody td:hover{background:color-mix(in srgb,var(--accent) 15%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 38%,transparent),0 0 18px color-mix(in srgb,var(--accent) 12%,transparent)}
+main .table-scroll tbody td:hover{background:color-mix(in srgb,var(--accent) 15%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 38%,transparent),0 0 18px color-mix(in srgb,var(--accent) 12%,transparent)}
+
+/* Social support: calm blue and teal table with a clean reading rhythm. */
+.social-support-page main .table-scroll{padding:0;background:transparent;border:0;border-radius:18px;box-shadow:none;overflow-x:auto}
+.social-support-page main .table-scroll table{border-collapse:separate;border-spacing:0 8px;min-width:640px}
+.social-support-page main .table-scroll td{padding:16px 20px;background:#102947;color:#e8f3ff;border:0;box-shadow:none;line-height:1.55}
+.social-support-page main .table-scroll tr:nth-child(even) td{background:#123451}
+.social-support-page main .table-scroll tr:first-child td{background:#1b4660;color:#b9ecf0;font-weight:700}
+.social-support-page main .table-scroll tr td:first-child{border-radius:14px 0 0 14px;font-weight:650;color:#72d8df}
+.social-support-page main .table-scroll tr td:last-child{border-radius:0 14px 14px 0;color:#d4f0ff;font-variant-numeric:tabular-nums}
+.social-support-page main .table-scroll tbody tr:hover td,.social-support-page main .table-scroll tbody td:hover{background:#18546a;box-shadow:none}
  main .schedule-mobile-lesson:hover{background:color-mix(in srgb,var(--accent) 10%,var(--card))}
 }
 main .schedule-day{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent),0 7px 22px color-mix(in srgb,var(--accent) 5%,transparent)}
