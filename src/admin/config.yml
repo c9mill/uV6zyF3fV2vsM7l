@@ -31,7 +31,7 @@ collections:
     delete: true
     extension: md
     format: yaml-frontmatter
-    path: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     identifier_field: title
     summary: "{{date | date('DD.MM.YYYY')}} — {{title}}"
     sortable_fields: [date, title, category]
