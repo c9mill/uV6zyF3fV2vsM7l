@@ -255,6 +255,18 @@ def date(p):
     if d is None:
         d = datetime.now()
     return f'{d.day} {MONTHS[d.month-1]} {d.year}'
+def iso_date(p):
+    """Return a valid ISO date for HTML datetime attributes and search data."""
+    raw = str(p.get('date') or '').strip()
+    for pattern in ('%d.%m.%YT%H:%M', '%d.%m.%Y %H:%M', '%d.%m.%Y'):
+        try:
+            return datetime.strptime(raw, pattern).date().isoformat()
+        except ValueError:
+            pass
+    try:
+        return datetime.fromisoformat(raw).date().isoformat()
+    except ValueError:
+        return datetime.now().date().isoformat()
 def menu(label): return next((x for x in MENUS if x['label'].upper()==label.upper()),{'children':[]})['children']
 def flatten(items):
     for item in items:
@@ -447,7 +459,7 @@ def news_card(p):
     excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
     excerpt = re.sub(r'\s+', ' ', excerpt).strip()
     category = p.get('category', 'Життя коледжу')
-    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><a href="{ROUTES[p["id"]]}" class="news-image">{visual}</a><div class="news-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
+    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><a href="{ROUTES[p["id"]]}" class="news-image">{visual}</a><div class="news-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
 PROGRAMS = [
     ('будівництво','Будівництво та експлуатація будівель та споруд','Від креслення до реальної будівлі. Теорія, навчальні майстерні та практика на будівельних майданчиках.','Будівництво','БУДІВЕЛЬНИК'),
     ('проєктування','Проєктування будівель та інтер’єрів','Простір починається з ідеї. Знайомся з освітньою програмою та роботами студентів коледжу.','Проєктування','ПРОЄКТУВАЛЬНИК'),
@@ -716,7 +728,7 @@ def documents():
 SEARCH=[]
 for p in PAGES + POSTS:
     if p['id'] in [308,625]: continue
-    SEARCH.append({'title':normalize_name_text(title(p)),'url':ROUTES[p['id']],'type':'Новина' if p.get('type')=='post' else 'Розділ','text':normalize_name_text(clean_text(p['content']['rendered'])[:2200]), 'date':date(p),'iso':p['date'][:10],'image':featured(p) if p.get('type')=='post' else ''})
+    SEARCH.append({'title':normalize_name_text(title(p)),'url':ROUTES[p['id']],'type':'Новина' if p.get('type')=='post' else 'Розділ','text':normalize_name_text(clean_text(p['content']['rendered'])[:2200]), 'date':date(p),'iso':iso_date(p),'image':featured(p) if p.get('type')=='post' else ''})
 for d in DOCUMENTS:SEARCH.append({'title':d['title'],'url':d['url'],'type':'Документ','text':d['category']})
 for t,u in [('Спеціальності','/спеціальності/'),('Документи','/документи/'),('Контакти','/контакти/'),('Розклад занять',SCHEDULE)]:SEARCH.append({'title':t,'url':u,'type':'Розділ','text':FULL_DISPLAY})
 
@@ -854,7 +866,7 @@ for p in POSTS:
     # Avoid duplicating a featured photograph already present in the article.
     image=f'<img class="article-hero" src="{hero}" alt="{escape(t,quote=True)}" width="1200" height="760">' if hero and hero not in content else ''
     others=[x for x in POSTS if x['id']!=p['id']][:3]
-    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{p["date"][:10]}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
+    body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
 
 # Preserve original important WordPress page paths with static forwarding pages.
