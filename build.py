@@ -1,4 +1,4 @@
-"""Generate the college website from the supplied WordPress export. No WP runtime."""
+"""Generate the college website from the supplied content export."""
 # Keep generated output deterministic for content-only deployments.
 from pathlib import Path
 from urllib.parse import urlparse, unquote, quote
@@ -367,7 +367,7 @@ def header(active=''):
 def footer():
     socials = ''.join(link(url, label+' ↗') for url,label in [(FACEBOOK,'Фейсбук'),(TELEGRAM,'Телеграм'),(INSTAGRAM,'Інстаграм')] if url)
     address = escape(ADDRESS).replace('\n', '<br>')
-    return f'''<footer class="footer"><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials">{socials}</div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>{address}</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{escape(EMAIL)}</a></div></div><div class="container footer-signature" aria-hidden="true">{escape(FOOTER_SIGNATURE)}</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><span>{escape(FOOTER_SLOGAN)}</span></div></footer>'''
+    return f'''<footer class="footer"><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials">{socials}</div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>{address}</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{escape(EMAIL)}</a></div></div><div class="container footer-signature" aria-hidden="true">{escape(FOOTER_SIGNATURE)}</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><a href="/admin/" aria-label="Відкрити редактор сайту">uV6zyF3fV2vsM7l</a><span>{escape(FOOTER_SLOGAN)}</span></div></footer>'''
 THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'})()"
 
 def shell(title_text,body,path='/',description='',article=False):
@@ -893,7 +893,7 @@ for p in POSTS:
     body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
 
-# Preserve original important WordPress page paths with static forwarding pages.
+# Preserve important legacy page paths with static forwarding pages.
 for p in PAGES:
     old=unquote(urlparse(p['link']).path);new=ROUTES[p['id']]
     if old!=new and old not in WRITTEN:

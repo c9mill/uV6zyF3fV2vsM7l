@@ -397,6 +397,6 @@ document.querySelectorAll('[data-council]').forEach(council=>{
  back?.addEventListener('click',close);
 });
 
-// Support old WordPress ID links while serving ordinary static HTML everywhere else.
+// Support old numeric links while serving ordinary static HTML everywhere else.
 const legacyParams=new URLSearchParams(location.search);const legacyId=legacyParams.get('page_id')||legacyParams.get('p');
 if(legacyId&&/^\d+$/.test(legacyId)){fetch('/route-map.json').then(r=>r.ok?r.json():{}).then(routes=>{if(routes[legacyId])location.replace(routes[legacyId]);}).catch(()=>{});}

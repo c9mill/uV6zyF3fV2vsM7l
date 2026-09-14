@@ -163,7 +163,7 @@ def migrate_menu() -> None:
 
 def main() -> None:
     if not EXPORT.is_dir():
-        raise SystemExit(f"WordPress export was not found: {EXPORT}")
+        raise SystemExit(f"Content export was not found: {EXPORT}")
     migrate_news(read_json("posts.json"))
     migrate_pages(read_json("pages.json"))
     migrate_menu()
