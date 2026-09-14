@@ -890,14 +890,19 @@ for p in PAGES:
     if path in CUSTOM or path in ('/','/новини/'):continue
     t=title(p)
     content=sanitize(p['content']['rendered'],t)
+    if p['id'] == 814:
+        content_soup = BeautifulSoup(content, 'html.parser')
+        material_images = content_soup.select('img')
+        if material_images:
+            material_images[-1]['id'] = 'material-base-gallery'
+        content = str(content_soup)
     additional=''
     matching=menu(t)
     if p['id']==368:matching=menu('ОСВІТНІЙ ПРОЦЕС')
     if matching:additional=resource_groups(matching)
     if not clean_text(content) and not BeautifulSoup(content,'html.parser').find('img') and not additional:
         additional=f'<div class="empty-state"><h2>Матеріали розділу</h2><p>Інформацію можна уточнити в коледжі або знайти серед опублікованих документів.</p><div class="button-row">{button("/документи/","Переглянути документи")}{button("/контакти/","Звернутися до коледжу",True)}</div></div>'
-    section_id = ' id="material-base-gallery"' if p['id'] == 814 else ''
-    body=page_heading(t)+f'<div class="container page-content content-columns"><section{section_id}><div class="prose">{content}</div><div class="resource-list">{additional}</div></section>{sidebar(path)}</div>'
+    body=page_heading(t)+f'<div class="container page-content content-columns"><section><div class="prose">{content}</div><div class="resource-list">{additional}</div></section>{sidebar(path)}</div>'
     write(path,shell(t,body,path,clean_text(content)))
 for p in POSTS:
     t=title(p);path=ROUTES[p['id']]
