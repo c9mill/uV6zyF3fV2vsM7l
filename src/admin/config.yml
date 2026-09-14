@@ -34,7 +34,10 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     identifier_field: title
     summary: "{{date | date('DD.MM.YYYY')}} — {{title}}"
-    sortable_fields: [date, title, category]
+    sortable_fields:
+      - { field: date, default_sort: desc }
+      - title
+      - category
     view_filters:
       - { label: Оголошення, field: category, pattern: Оголошення }
       - { label: Студентське життя, field: category, pattern: Студентське життя }
