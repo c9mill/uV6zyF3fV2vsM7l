@@ -914,6 +914,8 @@ for p in PAGES:
     old=unquote(urlparse(p['link']).path);new=ROUTES[p['id']]
     if old!=new and old not in WRITTEN:
         write(old,f'<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={new}"><title>Перехід — {ABBR}</title><link rel="canonical" href="{new}"></head><body><a href="{new}">Перейти до розділу</a></body></html>')
+# The former unsuffixed page was empty; forward it to the populated canonical route.
+write('/навчально-матеріальна-база/', '<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/навчально-матеріальна-база-2/"><link rel="canonical" href="/навчально-матеріальна-база-2/"></head><body><a href="/навчально-матеріальна-база-2/">Перейти до навчально-матеріальної бази</a></body></html>')
 
 not_found=page_heading('Сторінку не знайдено','Можливо, посилання змінилося. Скористайся пошуком або повернися на головну.')+f'<div class="container page-content button-row">{button("/пошук/","Знайти на сайті")}{button("/","На головну",True)}</div>'
 write('/404.html',shell('Сторінку не знайдено',not_found,'/404.html'),standalone=True)
