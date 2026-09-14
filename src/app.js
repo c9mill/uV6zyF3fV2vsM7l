@@ -86,6 +86,9 @@ const mobileNav=document.querySelector('#mobile-nav');
 const navigationTree=mobileNav?.querySelector('.navigation-tree');
 if(navigationTree){
  const collator=new Intl.Collator('uk',{sensitivity:'base',numeric:true});
+ const ukrainianAlphabet=[...'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'];
+ const alphabetRank=new Map(ukrainianAlphabet.map((letter,index)=>[letter,index]));
+ const sortLetters=(letters)=>[...new Set(letters)].sort((a,b)=>(alphabetRank.get(a)??999)-(alphabetRank.get(b)??999));
  const label=el=>(el.querySelector(':scope > summary,:scope > span')||el).textContent.trim();
  // Keep the navigation order from navigation.json so it matches the college menu.
  const shortcuts=navigationTree.querySelector('.navigation-shortcuts');
@@ -104,8 +107,8 @@ if(navigationTree){
  }
  flatEntries.sort((a,b)=>collator.compare(label(a),label(b)));flatCatalog.append(...flatEntries);
  const flatLetter=el=>/^\d/.test(label(el))?'#':letterOf(el);
- const topLetters=[...new Set(entries.map(letterOf))];
- const allLetters=[...new Set(flatEntries.map(flatLetter))].sort(collator.compare);
+ const topLetters=sortLetters(entries.map(letterOf));
+ const allLetters=sortLetters(flatEntries.map(flatLetter));
 
  const shell=document.createElement('div');shell.className='navigation-browser';
  const toolbar=document.createElement('div');toolbar.className='navigation-toolbar';
