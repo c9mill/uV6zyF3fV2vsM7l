@@ -43,7 +43,7 @@ collections:
       preview: true
     fields:
       - { label: Заголовок, name: title, widget: string, hint: Коротко опиши головну подію }
-      - { label: Дата і час публікації, name: date, widget: datetime, date_format: DD.MM.YYYY, time_format: HH:mm }
+      - { label: Дата і час публікації, name: date, widget: datetime, format: YYYY-MM-DDTHH:mm }
       - label: Розділ
         name: category
         widget: select
@@ -74,7 +74,7 @@ collections:
     label_singular: Сторінка
     folder: src/content/pages
     create: false
-    delete: false
+    delete: true
     extension: md
     format: yaml-frontmatter
     identifier_field: title
