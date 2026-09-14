@@ -65,12 +65,49 @@ collections:
       - { label: Адреса сторінки, name: route, widget: hidden, required: false }
       - { label: Стара адреса, name: legacy_url, widget: hidden, required: false }
       - { label: Номер старого матеріалу, name: legacy_id, widget: hidden, required: false }
+      - label: Візуальні блоки
+        name: content_blocks
+        widget: list
+        required: false
+        summary: '{{type}}'
+        hint: Додавай готові блоки та змінюй їх порядок кнопками. Код писати не потрібно.
+        types:
+          - label: Текст
+            name: text
+            widget: object
+            fields:
+              - { label: Текст, name: value, widget: text }
+          - label: Заголовок
+            name: heading
+            widget: object
+            fields:
+              - { label: Заголовок, name: value, widget: string }
+              - { label: Рівень, name: level, widget: select, options: [2, 3, 4], default: 2 }
+          - label: Зображення
+            name: image
+            widget: object
+            fields:
+              - { label: Зображення, name: src, widget: image }
+              - { label: Підпис, name: caption, widget: string, required: false }
+          - label: Галерея
+            name: gallery
+            widget: object
+            fields:
+              - label: Фотографії
+                name: images
+                widget: list
+                field: { label: Фото, name: src, widget: image }
+          - label: Цитата
+            name: quote
+            widget: object
+            fields:
+              - { label: Текст цитати, name: value, widget: text }
       - label: Текст публікації
         name: body
         widget: richtext
-        modes: [rich_text, raw]
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
-        hint: Заголовки H1–H4 можна додавати та переставляти прямо в тексті; зображення вставляються кнопкою Image і перетягуються у потрібне місце.
+        required: false
+        hint: Додавай текст, заголовки та фото кнопками редактора. Блоки можна переміщати прямо у візуальному полі.
         editor_components: [image]
 
   - name: pages
@@ -92,11 +129,49 @@ collections:
       - { label: Стара адреса, name: legacy_url, widget: hidden, required: false }
       - { label: Номер старої сторінки, name: legacy_id, widget: hidden }
       - { label: Опубліковано, name: published, widget: boolean, default: true }
+      - label: Візуальні блоки
+        name: content_blocks
+        widget: list
+        required: false
+        summary: '{{type}}'
+        hint: Додавай блоки та переміщай їх кнопками. Весь вміст редагується без коду.
+        types:
+          - label: Текст
+            name: text
+            widget: object
+            fields:
+              - { label: Текст, name: value, widget: text }
+          - label: Заголовок
+            name: heading
+            widget: object
+            fields:
+              - { label: Заголовок, name: value, widget: string }
+              - { label: Рівень, name: level, widget: select, options: [2, 3, 4], default: 2 }
+          - label: Зображення
+            name: image
+            widget: object
+            fields:
+              - { label: Зображення, name: src, widget: image }
+              - { label: Підпис, name: caption, widget: string, required: false }
+          - label: Галерея
+            name: gallery
+            widget: object
+            fields:
+              - label: Фотографії
+                name: images
+                widget: list
+                field: { label: Фото, name: src, widget: image }
+          - label: Цитата
+            name: quote
+            widget: object
+            fields:
+              - { label: Текст цитати, name: value, widget: text }
       - label: Вміст сторінки
         name: body
         widget: richtext
-        modes: [rich_text, raw]
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
+        required: false
+        hint: "Редагуй сторінку візуально: текст, заголовки, списки, посилання та зображення додаються кнопками."
         editor_components: [image]
 
   - name: documents
