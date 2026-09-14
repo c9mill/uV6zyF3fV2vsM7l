@@ -812,7 +812,7 @@ def refund_policy():
 
 COUNCIL = [
     ('Голова студентського самоврядування', [('Гуральська Анастасія', 'ІІІ-9/11-40А')], 'leader'),
-    
+    ('Заступник голови студентського самоврядування відділення «Проєктування та дизайн»', [('Гуральська Анастасія', 'ІІІ-9/11-40А')], 'design'),
     ('Заступник голови студентського самоврядування відділення «Будівництво та цивільна інженерія»', [('Антонюк Артем', 'ІІІ-9/11-131')], 'build'),
     ('Секретар студентського самоврядування', [('Фіалковська Марія', 'ІІ-9-16ОД')], 'edit'),
     ('Сектор військово-патріотичного виховання в коледжі', [('Грибук Ігор', 'ІІІ-9/11-132'), ('Лапінський Вадим', 'ІІ-11-26С')], 'shield'),
@@ -852,7 +852,7 @@ def council_board():
 def student_government():
     intro=f'''<section class="council-intro">
       <figure class="council-intro-media"><img src="{COUNCIL_HERO}" alt="Події та команда студентського самоврядування коледжу" width="2200" height="1556"></figure>
-      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентське самоврядування представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>20</strong><span>студентів у команді</span></div><div><strong>1</strong><span>голова студентського самоврядування</span></div></div></div>
+      <div class="council-intro-copy"><div><p class="eyebrow">Твій голос у коледжі</p><h2>Ідеї студентів<br>стають діями</h2><p>Студентське самоврядування представляє інтереси студентів, підтримує ініціативи та створює події, які об’єднують коледж.</p></div><div class="council-stats"><div><strong>11</strong><span>напрямів роботи</span></div><div><strong>13</strong><span>студентів у команді</span></div><div><strong>1</strong><span>голова студентського самоврядування</span></div></div></div>
     </section>'''
     activity=f'''<section class="council-activity"><div class="council-section-heading"><p class="eyebrow">Що робить студентське самоврядування</p><h2>Від ідеї до результату</h2></div><div class="council-activity-grid">
       <article class="council-activity-card"><span>{icon('users')}</span><h3>Представляємо</h3><p>Допомагаємо студентам бути почутими та долучатися до рішень у коледжі.</p></article>
