@@ -56,6 +56,9 @@ main:after{content:"";position:fixed;left:-18%;right:-18%;bottom:-27vh;height:48
 
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-card{animation-name:card-soft-in;animation-duration:900ms;animation-timing-function:cubic-bezier(.2,.72,.28,1)}}
 
+/* Visible, lightweight warp ring at the bottom of the viewport. */
+main:after{left:-10%;right:-10%;bottom:-8vh;height:42vh;background:radial-gradient(ellipse at 50% 108%,#050813d9 0 18%,#101831aa 25%,transparent 47%),radial-gradient(ellipse at 50% 106%,transparent 20%,#60a5fa55 26%,#a855f744 32%,transparent 49%),conic-gradient(from 205deg at 50% 108%,transparent 0 17%,#22d3ee38 26%,transparent 38%,#f472b633 54%,transparent 69%,#facc1530 79%,transparent 88%);filter:blur(12px);opacity:.68;animation:page-warp-drift 21s ease-in-out infinite alternate;will-change:transform}
+
 /* A slow, layered nebula for the homepage. */
 @keyframes homepage-nebula-float{0%{transform:translate3d(-3%,-2%,0) scale(1)}30%{transform:translate3d(4%,2%,0) scale(1.08)}62%{transform:translate3d(1%,-4%,0) scale(1.03)}100%{transform:translate3d(-4%,3%,0) scale(1.1)}}
 @keyframes homepage-nebula-glow{0%{transform:translate3d(3%,2%,0) scale(1.04) rotate(0deg);opacity:.55}50%{transform:translate3d(-4%,-2%,0) scale(1.14) rotate(5deg);opacity:.82}100%{transform:translate3d(2%,-4%,0) scale(1.06) rotate(-4deg);opacity:.62}}
