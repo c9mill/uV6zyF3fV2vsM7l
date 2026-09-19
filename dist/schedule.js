@@ -148,7 +148,7 @@
   function mergeLessons(items) {
     const merged = new Map();
     items.forEach(lesson => {
-      const key = `${String(lesson.subject || '').trim().toLocaleLowerCase('uk-UA')}|${lesson.week || ''}`;
+      const key = String(lesson.subject || '').trim().toLocaleLowerCase('uk-UA');
       if (!merged.has(key)) merged.set(key, {...lesson, variants:[lesson]});
       else merged.get(key).variants.push(lesson);
     });
@@ -156,7 +156,7 @@
   }
   function lessons(items, splitWeeks) {
     if (!items.length) return '<span class="schedule-free">Немає занять</span>';
-    return mergeLessons(items).map(l => `<div class="schedule-lesson" style="--lesson-color:${subjectColor(l.subject)}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3><div class="schedule-variants">${mode === 'teacher' ? (() => { const groups = [...new Set(l.variants.flatMap(item => item.groups || []))]; return `<span class="schedule-groups">${groups.length ? `Група ${groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>`; })() : l.variants.map(item => `<div class="schedule-variant"><span class="schedule-teacher">${dot(item.teacherId)}<span>${escape(item.teacher || 'Викладача не вказано')}</span></span><span class="schedule-room">${item.room ? `Кабінет · ${escape(item.room)}` : 'Кабінет не вказано'}</span></div>`).join('')}</div>${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}</div>`).join('');
+    return mergeLessons(items).map(l => `<div class="schedule-lesson" style="--lesson-color:${subjectColor(l.subject)}"><h3>${escape(l.subject)}</h3><div class="schedule-variants">${mode === 'teacher' ? (() => { const groups = [...new Set(l.variants.flatMap(item => item.groups || []))]; return `<span class="schedule-groups">${groups.length ? `Група ${groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>`; })() : l.variants.map(item => `<div class="schedule-variant">${splitWeeks ? `<span class="schedule-week-note">${item.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<span class="schedule-teacher">${dot(item.teacherId)}<span>${escape(item.teacher || 'Викладача не вказано')}</span></span><span class="schedule-room">${item.room ? `Кабінет · ${escape(item.room)}` : 'Кабінет не вказано'}</span></div>`).join('')}</div>${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}</div>`).join('');
   }
   function render(data) {
     el('source').href = data.source;
