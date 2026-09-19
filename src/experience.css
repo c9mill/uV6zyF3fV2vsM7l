@@ -32,6 +32,13 @@ html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:var(--canva
 html:has(.home-page) body{background:radial-gradient(ellipse 34% 42% at 0% 12%,#a855f766,transparent 72%),radial-gradient(ellipse 40% 36% at 100% 8%,#ec489963,transparent 72%),radial-gradient(ellipse 38% 44% at 92% 92%,#22c55e5c,transparent 74%),radial-gradient(ellipse 34% 40% at 8% 88%,#facc1558,transparent 72%),radial-gradient(ellipse 52% 46% at 50% 48%,#3b82f65c,transparent 76%),var(--canvas);background-size:220% 220%;animation:homepage-nebula-surge 22s ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){html:has(.home-page) body{animation:none;background-position:50% 50%}}
 
+/* The base stays dark; only luminous nebula clouds move above it. */
+html:has(.home-page) body{background:var(--canvas)!important;animation:none!important}
+html:has(.home-page) body:before,html:has(.home-page) body:after{z-index:0;mix-blend-mode:screen;pointer-events:none}
+html:has(.home-page) body:before{filter:blur(24px);opacity:.96;animation:homepage-nebula-float 24s ease-in-out infinite alternate}
+html:has(.home-page) body:after{filter:blur(36px);opacity:.9;animation:homepage-nebula-glow 31s ease-in-out infinite alternate}
+html:has(.home-page) body>*{position:relative;z-index:1}
+
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-line{animation-name:line-in}.reveal-in.reveal-card{animation-name:card-in}@keyframes line-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}}
 
 /* A slow, layered nebula for the homepage. */
