@@ -38,6 +38,7 @@ html:has(.home-page) body:before,html:has(.home-page) body:after{z-index:0;mix-b
 html:has(.home-page) body:before{filter:blur(24px);opacity:.96;animation:homepage-nebula-float 24s ease-in-out infinite alternate}
 html:has(.home-page) body:after{filter:blur(36px);opacity:.9;animation:homepage-nebula-glow 31s ease-in-out infinite alternate}
 html:has(.home-page) body>*{position:relative;z-index:1}
+@media(max-width:1000px){.site-header .mobile-nav,.menu-open .site-header .mobile-nav{background-color:var(--card)!important;background-image:none!important;opacity:1;z-index:40;isolation:isolate}.menu-open .site-header{background-color:var(--card)!important}}
 
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-line{animation-name:line-in}.reveal-in.reveal-card{animation-name:card-in}@keyframes line-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}}
 
