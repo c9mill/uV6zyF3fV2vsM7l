@@ -415,7 +415,7 @@ def header(active=''):
     <nav id="mobile-nav" class="mobile-nav container" aria-label="Головна навігація" hidden>{search}<div class="navigation-tree">{full_navigation(NAVIGATION,active)}<div class="navigation-shortcuts"><a href="/спеціальності/">Спеціальності</a><a href="/розклад/">Розклад занять</a><a href="/контакти/">Контакти</a><a href="/документи/">Документи</a><a href="/викладачу/">Викладачу</a><a href="/пошук/">Пошук на сайті</a></div></div></nav></header>'''
 PARTNERS = (
     ('https://mon.gov.ua/', 'Міністерство освіти і науки України', '/assets/partners/mon.png'),
-    ('https://nmc.zt.ua/', 'Науково-методичний центр Житомирської міської ради', '/assets/partners/nmc.png'),
+    ('https://nmcbook.com.ua/', 'Науково-методичний центр Житомирської міської ради', '/assets/partners/nmcbook.png'),
     ('https://zt-rada.gov.ua/', 'Житомирська міська рада', '/assets/partners/city.png'),
     ('https://zt.gov.ua/', 'Житомирська обласна рада', '/assets/partners/region.ico'),
     ('https://polissiauniver.edu.ua/', 'Поліський національний університет', '/assets/partners/university.png'),
