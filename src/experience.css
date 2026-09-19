@@ -25,6 +25,9 @@ html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:var(--canva
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal-pending{opacity:1!important;transform:none!important;clip-path:none!important}*,*:before,*:after{animation:none!important;transition:none!important}.hero-photo{transform:none}.hero-note{transform:none}::view-transition-group(*),::view-transition-new(*),::view-transition-old(*){animation:none!important}}
 @media print{.site-header,.utility,.back-top,.footer,.page-sidebar{display:none!important}body{background:white;color:black}.reveal-pending{opacity:1!important;transform:none!important}.container{width:100%}.content-columns{display:block}}
 
+/* Keep the homepage transparent so the floating nebula remains the only background layer. */
+.home-page main{background:transparent!important;animation:none!important}
+
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-line{animation-name:line-in}.reveal-in.reveal-card{animation-name:card-in}@keyframes line-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}}
 
 /* A slow, layered nebula for the homepage. */
