@@ -48,7 +48,13 @@ html:has(.home-page) body>*{position:relative;z-index:1}
 main:after{content:"";position:fixed;left:-18%;right:-18%;bottom:-27vh;height:48vh;z-index:0;pointer-events:none;border-radius:50% 50% 0 0;background:radial-gradient(ellipse at 50% 72%,#000000cf 0 19%,#00000088 31%,transparent 57%),conic-gradient(from 210deg at 50% 72%,transparent 0 18%,color-mix(in srgb,var(--accent) 20%,transparent) 28%,color-mix(in srgb,var(--secondary) 18%,transparent) 38%,transparent 51%,color-mix(in srgb,#8b5cf6 16%,transparent) 67%,transparent 80%);filter:blur(22px);mix-blend-mode:screen;opacity:.5;transform-origin:50% 75%;animation:page-warp-drift 18s ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){main:after{animation:none}}
 
+/* Softer card reveals: a short lift instead of a full pop-in. */
+@keyframes card-soft-in{from{opacity:0;transform:translate3d(0,12px,0) scale(.995)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@media(prefers-reduced-motion:no-preference){.reveal-in.reveal-card{animation:card-soft-in 900ms cubic-bezier(.2,.72,.28,1) both;animation-delay:var(--stagger,0ms)}.program-card,.news-card,.resource-tile,.document-link,.search-result{transition-duration:650ms}.program-card:hover,.resource-tile:hover{transform:translateY(-3px)}.news-card:hover{transform:translateY(-3px)}}
+
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-line{animation-name:line-in}.reveal-in.reveal-card{animation-name:card-in}@keyframes line-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}}
+
+@media(prefers-reduced-motion:no-preference){.reveal-in.reveal-card{animation-name:card-soft-in;animation-duration:900ms;animation-timing-function:cubic-bezier(.2,.72,.28,1)}}
 
 /* A slow, layered nebula for the homepage. */
 @keyframes homepage-nebula-float{0%{transform:translate3d(-3%,-2%,0) scale(1)}30%{transform:translate3d(4%,2%,0) scale(1.08)}62%{transform:translate3d(1%,-4%,0) scale(1.03)}100%{transform:translate3d(-4%,3%,0) scale(1.1)}}
