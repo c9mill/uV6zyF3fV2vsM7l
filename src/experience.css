@@ -61,6 +61,7 @@ main:after{left:-10%;right:-10%;bottom:-8vh;height:42vh;background:radial-gradie
 main:after{display:none}
 .footer:after{content:"";position:absolute;left:-10%;right:-10%;bottom:-15vh;height:48vh;pointer-events:none;border-radius:50% 50% 0 0;background:radial-gradient(ellipse at 50% 108%,#050813d9 0 18%,#101831aa 25%,transparent 47%),radial-gradient(ellipse at 50% 106%,transparent 20%,#60a5fa55 26%,#a855f744 32%,transparent 49%),conic-gradient(from 205deg at 50% 108%,transparent 0 17%,#22d3ee38 26%,transparent 38%,#f472b633 54%,transparent 69%,#facc1530 79%,transparent 88%);filter:blur(12px);opacity:.52;animation:page-warp-drift 21s ease-in-out infinite alternate;will-change:transform}
 .footer>*{position:relative;z-index:1}
+@media(max-width:720px){.council-stats strong{height:1.04em;display:flex;align-items:flex-end;justify-content:center;line-height:1;overflow:visible}.council-stats span{display:flex;align-items:flex-start;justify-content:center}}
 
 /* A slow, layered nebula for the homepage. */
 @keyframes homepage-nebula-float{0%{transform:translate3d(-3%,-2%,0) scale(1)}30%{transform:translate3d(4%,2%,0) scale(1.08)}62%{transform:translate3d(1%,-4%,0) scale(1.03)}100%{transform:translate3d(-4%,3%,0) scale(1.1)}}
