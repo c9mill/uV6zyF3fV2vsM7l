@@ -148,7 +148,7 @@
   function mergeLessons(items) {
     const merged = new Map();
     items.forEach(lesson => {
-      const key = `${String(lesson.subject || '').trim().toLocaleLowerCase('uk-UA')}|${lesson.week || ''}|${lesson.note || ''}`;
+      const key = `${String(lesson.subject || '').trim().toLocaleLowerCase('uk-UA')}|${lesson.week || ''}`;
       if (!merged.has(key)) merged.set(key, {...lesson, variants:[lesson]});
       else merged.get(key).variants.push(lesson);
     });

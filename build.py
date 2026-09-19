@@ -44,6 +44,11 @@ def canonical_date(value):
                 pass
     return '2000-01-01T00:00'
 
+def strip_wordpress_markers(text):
+    text = re.sub(r'<!--\s*/?wp:[\w-]+(?:\s*\{[^}]*\})?\s*-->', '', str(text or ''), flags=re.I)
+    text = re.sub(r'/?wp:[\w-]+(?:\s*\{[^}]*\})?', '', text, flags=re.I)
+    return re.sub(r'<p>\s*</p>', '', text, flags=re.I)
+
 def render_content_blocks(blocks):
     """Render the visual Decap blocks while keeping legacy markdown content intact."""
     if not isinstance(blocks, list) or not blocks:
@@ -168,11 +173,6 @@ URLS = {unquote(urlparse(p['link']).path).rstrip('/') or '/':ROUTES[p['id']] for
 # Keep legacy links to the former empty duplicate pointed at the canonical page.
 URLS['/навчально-матеріальна-база'] = '/навчально-матеріальна-база-2/'
 URLS['/головна'] = '/'
-
-def strip_wordpress_markers(text):
-    text = re.sub(r'<!--\s*/?wp:[\w-]+(?:\s*\{[^}]*\})?\s*-->', '', str(text or ''), flags=re.I)
-    text = re.sub(r'/?wp:[\w-]+(?:\s*\{[^}]*\})?', '', text, flags=re.I)
-    return re.sub(r'<p>\s*</p>', '', text, flags=re.I)
 
 def clean_text(html):
     s = BeautifulSoup(html, 'html.parser')

@@ -145,24 +145,36 @@
     const key = String(subject || '').trim().toLocaleLowerCase('uk-UA');
     return `hsl(${hue(key).toFixed(2)} 72% 58%)`;
   }
+  function mergeLessons(items) {
+    const merged = new Map();
+    items.forEach(lesson => {
+      const key = `${String(lesson.subject || '').trim().toLocaleLowerCase('uk-UA')}|${lesson.week || ''}`;
+      if (!merged.has(key)) merged.set(key, {...lesson, variants:[lesson]});
+      else merged.get(key).variants.push(lesson);
+    });
+    return [...merged.values()];
+  }
   function lessons(items, splitWeeks) {
     if (!items.length) return '<span class="schedule-free">Немає занять</span>';
-    return items.map(l => `<div class="schedule-lesson" style="--lesson-color:${subjectColor(l.subject)}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3>${mode === 'teacher' ? `<span class="schedule-groups">${l.groups.length ? `Група ${l.groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>` : `<span class="schedule-teacher">${dot(l.teacherId)}<span>${escape(l.teacher || 'Викладача не вказано')}</span></span>`}${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}<span class="schedule-room">${l.room ? `Кабінет · ${escape(l.room)}` : 'Кабінет не вказано'}</span></div>`).join('');
+    return mergeLessons(items).map(l => `<div class="schedule-lesson" style="--lesson-color:${subjectColor(l.subject)}">${splitWeeks ? `<span class="schedule-week-note">${l.week === 'denominator' ? 'Знаменник' : 'Чисельник'}</span>` : ''}<h3>${escape(l.subject)}</h3><div class="schedule-variants">${mode === 'teacher' ? (() => { const groups = [...new Set(l.variants.flatMap(item => item.groups || []))]; return `<span class="schedule-groups">${groups.length ? `Група ${groups.map(escape).join(', ')}` : 'Групу не вказано'}</span>`; })() : l.variants.map(item => `<div class="schedule-variant"><span class="schedule-teacher">${dot(item.teacherId)}<span>${escape(item.teacher || 'Викладача не вказано')}</span></span><span class="schedule-room">${item.room ? `Кабінет · ${escape(item.room)}` : 'Кабінет не вказано'}</span></div>`).join('')}</div>${l.note ? `<span class="schedule-week-note">${escape(l.note)}</span>` : ''}</div>`).join('');
   }
   function render(data) {
     el('source').href = data.source;
     el('checked').textContent = `Перевірено ${date(data.checkedAt)}`;
     const periodEnd = new Date(`${data.semester.end}T23:59:59+02:00`);
     el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
-    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map(d => `<th scope="col">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map((d, i) => `<th scope="col" data-weekday="${i + 1}">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   function markToday() {
     const normalize = value => String(value).toLocaleLowerCase('uk-UA').replace(/[^а-яіїєґ]/g, '');
-    const today = normalize(new Intl.DateTimeFormat('uk-UA', {weekday:'long', timeZone:'Europe/Kyiv'}).format(new Date()));
+    const now = new Date();
+    const weekdayShort = new Intl.DateTimeFormat('en-US', {weekday:'short', timeZone:'Europe/Kyiv'}).format(now);
+    const kyivDay = ({Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6})[weekdayShort];
+    const today = normalize(new Intl.DateTimeFormat('uk-UA', {weekday:'long', timeZone:'Europe/Kyiv'}).format(now));
     let column = -1;
     el('table').querySelectorAll('thead th').forEach((header, index) => {
       header.querySelector('.schedule-today-label')?.remove();
-      const active = index > 0 && normalize(header.textContent) === today;
+      const active = index > 0 && (Number(header.dataset.weekday) === kyivDay || normalize(header.textContent) === today);
       header.classList.toggle('schedule-today', active); header.removeAttribute('aria-current');
       if (active) {
         column = index; header.setAttribute('aria-current', 'date');
