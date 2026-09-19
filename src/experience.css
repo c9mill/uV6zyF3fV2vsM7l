@@ -28,6 +28,10 @@ html{scroll-behavior:smooth;scroll-padding-top:110px}body{background:var(--canva
 /* Keep the homepage transparent so the floating nebula remains the only background layer. */
 .home-page main{background:transparent!important;animation:none!important}
 
+@keyframes homepage-nebula-surge{0%{background-position:0% 15%,100% 0%,80% 100%,15% 85%,50% 45%}25%{background-position:25% 0%,78% 22%,100% 72%,0% 62%,62% 30%}55%{background-position:72% 18%,100% 64%,70% 100%,22% 100%,35% 66%}80%{background-position:100% 58%,56% 100%,18% 82%,0% 28%,70% 48%}100%{background-position:78% 100%,8% 72%,0% 35%,32% 0%,45% 78%}}
+html:has(.home-page) body{background:radial-gradient(ellipse 34% 42% at 0% 12%,#a855f766,transparent 72%),radial-gradient(ellipse 40% 36% at 100% 8%,#ec489963,transparent 72%),radial-gradient(ellipse 38% 44% at 92% 92%,#22c55e5c,transparent 74%),radial-gradient(ellipse 34% 40% at 8% 88%,#facc1558,transparent 72%),radial-gradient(ellipse 52% 46% at 50% 48%,#3b82f65c,transparent 76%),var(--canvas);background-size:220% 220%;animation:homepage-nebula-surge 22s ease-in-out infinite alternate}
+@media(prefers-reduced-motion:reduce){html:has(.home-page) body{animation:none;background-position:50% 50%}}
+
 @media(prefers-reduced-motion:no-preference){.reveal-in.reveal-line{animation-name:line-in}.reveal-in.reveal-card{animation-name:card-in}@keyframes line-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}}
 
 /* A slow, layered nebula for the homepage. */
