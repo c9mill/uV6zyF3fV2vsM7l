@@ -21,15 +21,12 @@
  .alphabet-index button,.alphabet-index button:hover,.alphabet-index button[aria-selected=true]{transform:none;transition:color 160ms,background-color 160ms}
  .schedule-choice:hover{transform:none}
 }
-.schedule-week thead th.schedule-today{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 88%,white),color-mix(in srgb,var(--accent) 58%,var(--surface))) !important;color:var(--ink) !important;border:1px solid color-mix(in srgb,var(--accent) 85%,white) !important;box-shadow:inset 0 0 18px color-mix(in srgb,var(--accent) 34%,white),0 0 0 2px color-mix(in srgb,var(--accent) 62%,var(--ink)),0 0 30px color-mix(in srgb,var(--accent) 65%,transparent) !important;position:relative}
+/* Highlight the lesson itself, never the full-height table cell or an empty slot. */
+.schedule-week thead th.schedule-today{background:color-mix(in srgb,var(--accent) 28%,var(--surface))!important;color:var(--ink)!important;border:0!important;box-shadow:0 0 18px color-mix(in srgb,var(--accent) 32%,transparent)!important}
+.schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{background:transparent!important;border:0!important;box-shadow:none!important}
+.schedule-week td.schedule-today-cell::before{content:none!important}
+.schedule-week td.schedule-today-cell .schedule-lesson{position:relative;isolation:isolate;background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 58%,transparent),color-mix(in srgb,var(--lesson-color) 20%,transparent));border:0;box-shadow:0 0 20px color-mix(in srgb,var(--accent) 38%,transparent);color:var(--ink)}
+.schedule-week td.schedule-today-cell .schedule-lesson::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:radial-gradient(ellipse at 50% 100%,color-mix(in srgb,var(--accent) 32%,transparent),color-mix(in srgb,var(--accent) 12%,transparent) 75%);pointer-events:none}
 .schedule-today-label{display:block;margin-top:5px;font-size:.64rem;font-weight:600;letter-spacing:.02em;color:inherit}
-.schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,var(--ink)),inset 0 0 22px color-mix(in srgb,var(--accent) 12%,transparent)}
 .schedule-variants{display:flex;flex-direction:column;gap:7px}.schedule-variant{display:flex;flex-direction:column;gap:2px}.schedule-variant+.schedule-variant{padding-top:7px;border-top:1px solid color-mix(in srgb,var(--lesson-color) 24%,transparent)}
 .schedule-week{border-spacing:3px}.schedule-lesson+.schedule-lesson{margin-top:3px}.schedule-free{height:0;padding:0;overflow:hidden;line-height:0}
-@media(max-width:900px),(hover:none) and (pointer:coarse){
- .schedule-week thead th.schedule-today{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 48%,var(--surface)),color-mix(in srgb,var(--accent) 24%,var(--card)))!important;border:0!important;box-shadow:inset 0 0 20px color-mix(in srgb,var(--accent) 18%,transparent),0 0 22px color-mix(in srgb,var(--accent) 42%,transparent)!important}
- .schedule-week td.schedule-today-cell,.schedule-week td.schedule-today-cell:hover{position:relative;isolation:isolate;overflow:visible;background:transparent;box-shadow:none!important}
- .schedule-week td.schedule-today-cell:before{content:"";position:absolute;z-index:0;inset:-4px -2px;border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 16%,var(--surface)));box-shadow:0 0 25px color-mix(in srgb,var(--accent) 48%,transparent),inset 0 0 22px color-mix(in srgb,var(--accent) 18%,transparent);pointer-events:none}
- .schedule-week td.schedule-today-cell>.schedule-lesson,.schedule-week td.schedule-today-cell>.schedule-free{position:relative;z-index:1}
- .schedule-week td.schedule-today-cell .schedule-lesson{background:linear-gradient(145deg,color-mix(in srgb,var(--lesson-color) 24%,transparent),color-mix(in srgb,var(--surface) 68%,transparent));border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 13%,transparent);backdrop-filter:blur(13px) saturate(1.08);-webkit-backdrop-filter:blur(13px) saturate(1.08)}
-}
