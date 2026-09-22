@@ -163,7 +163,8 @@
     el('checked').textContent = `Перевірено ${date(data.checkedAt)}`;
     const periodEnd = new Date(`${data.semester.end}T23:59:59+02:00`);
     el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
-    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><table class="schedule-week"><caption>Розклад · ${escape(data.selected.name)}</caption><thead><tr><th scope="col">Пара</th>${data.days.map((d, i) => `<th scope="col" data-weekday="${i + 1}">${escape(d)}</th>`).join('')}</tr></thead><tbody>${data.rows.map(row => `<tr><th scope="row">${escape(row.number)}</th>${row.cells.map(cell => `<td>${lessons(cell, data.splitWeeks)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const columns = data.days.map((day, dayIndex) => `<section class="schedule-day-column" data-weekday="${dayIndex + 1}"><h3>${escape(day)}</h3>${data.rows.map(row => `<div class="schedule-masonry-slot" data-period="${escape(row.number)}"><span class="schedule-period">${escape(row.number)}</span>${lessons(row.cells[dayIndex], data.splitWeeks)}</div>`).join('')}</section>`).join('');
+    el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><div class="schedule-masonry" data-schedule-name="${escape(data.selected.name)}">${columns}</div></div>`;
   }
   function markToday() {
     const normalize = value => String(value).toLocaleLowerCase('uk-UA').replace(/[^а-яіїєґ]/g, '');
@@ -172,16 +173,17 @@
     const kyivDay = ({Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6})[weekdayShort];
     const today = normalize(new Intl.DateTimeFormat('uk-UA', {weekday:'long', timeZone:'Europe/Kyiv'}).format(now));
     let column = -1;
-    el('table').querySelectorAll('thead th').forEach((header, index) => {
+    el('table').querySelectorAll('.schedule-day-column').forEach((header, index) => {
       header.querySelector('.schedule-today-label')?.remove();
-      const active = index > 0 && (Number(header.dataset.weekday) === kyivDay || normalize(header.textContent) === today);
+      const dayName = header.querySelector(':scope>h3')?.textContent || '';
+      const active = Number(header.dataset.weekday) === kyivDay || normalize(dayName) === today;
       header.classList.toggle('schedule-today', active); header.removeAttribute('aria-current');
       if (active) {
         column = index; header.setAttribute('aria-current', 'date');
-        const label = document.createElement('span'); label.className = 'schedule-today-label'; label.textContent = 'Сьогодні'; header.append(label);
+        const label = document.createElement('span'); label.className = 'schedule-today-label'; label.textContent = 'Сьогодні'; header.querySelector(':scope>h3')?.append(label);
       }
     });
-    el('table').querySelectorAll('tbody tr').forEach(row => [...row.children].forEach((cell, index) => cell.classList.toggle('schedule-today-cell', index === column)));
+    el('table').querySelectorAll('.schedule-day-column').forEach((day, index) => day.querySelectorAll('.schedule-masonry-slot').forEach(slot => slot.classList.toggle('schedule-today-cell', index === column)));
   }
   async function load(force = false) {
     if (!catalog) return boot();

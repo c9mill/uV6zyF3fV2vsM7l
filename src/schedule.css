@@ -32,3 +32,17 @@
 .schedule-week{border-spacing:3px}.schedule-lesson+.schedule-lesson{margin-top:3px}
 .schedule-week td:has(>.schedule-free),.schedule-week td:has(>.schedule-free):hover{background:color-mix(in srgb,var(--surface) 20%,transparent)!important;vertical-align:middle;border:0!important;border-radius:12px;box-shadow:none!important}
 .schedule-week .schedule-free{display:flex;align-items:center;justify-content:center;min-height:44px;height:auto;padding:9px 10px;line-height:1.2;text-align:center;color:color-mix(in srgb,var(--muted) 78%,transparent);font-size:.7rem;font-weight:550;opacity:.72;overflow:visible}
+
+/* Compact day columns keep each day flowing without row-sized empty gaps. */
+.schedule-masonry{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;min-width:900px}
+.schedule-day-column{display:flex;flex-direction:column;gap:5px;min-width:0}
+.schedule-day-column>h3{position:sticky;top:0;z-index:3;margin:0;padding:11px 10px;border-radius:12px;background:color-mix(in srgb,var(--surface) 86%,var(--card));color:var(--ink);font-size:.8rem;line-height:1.25}
+.schedule-day-column.schedule-today>h3{background:color-mix(in srgb,var(--accent) 28%,var(--surface));box-shadow:0 0 18px color-mix(in srgb,var(--accent) 32%,transparent)}
+.schedule-day-column .schedule-today-label{display:block;margin-top:4px}
+.schedule-masonry-slot{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
+.schedule-period{position:absolute;left:6px;top:7px;z-index:2;color:color-mix(in srgb,var(--accent) 72%,var(--muted));font-size:.64rem;font-weight:800;pointer-events:none}
+.schedule-masonry-slot .schedule-lesson{padding:14px 12px 14px 27px;width:100%;box-sizing:border-box}
+.schedule-masonry-slot .schedule-free{min-height:38px;padding:10px 10px 10px 27px}
+.schedule-masonry-slot.schedule-today-cell .schedule-lesson{background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 58%,transparent),color-mix(in srgb,var(--lesson-color) 20%,transparent));box-shadow:0 0 20px color-mix(in srgb,var(--accent) 38%,transparent)}
+.schedule-masonry-slot.schedule-today-cell .schedule-free{background:color-mix(in srgb,var(--surface) 14%,transparent);opacity:.55}
+@media(max-width:900px),(hover:none) and (pointer:coarse){.schedule-masonry{gap:5px}.schedule-day-column>h3{font-size:.72rem;padding:9px 8px}.schedule-masonry-slot .schedule-lesson{padding:12px 10px 12px 24px}.schedule-period{left:5px;top:6px;font-size:.58rem}.schedule-masonry-slot .schedule-free{min-height:34px;padding:8px 8px 8px 24px;font-size:.66rem}}
