@@ -30,7 +30,5 @@
 .schedule-today-label{display:block;margin-top:5px;font-size:.64rem;font-weight:600;letter-spacing:.02em;color:inherit}
 .schedule-variants{display:flex;flex-direction:column;gap:7px}.schedule-variant{display:flex;flex-direction:column;gap:2px}.schedule-variant+.schedule-variant{padding-top:7px;border-top:1px solid color-mix(in srgb,var(--lesson-color) 24%,transparent)}
 .schedule-week{border-spacing:3px}.schedule-lesson+.schedule-lesson{margin-top:3px}
-.schedule-week td:has(>.schedule-free),.schedule-week td:has(>.schedule-free):hover{background:#e1e3e6!important;vertical-align:middle;border:0!important;border-radius:15px;box-shadow:none!important}
-.schedule-week .schedule-free{display:flex;align-items:center;justify-content:center;min-height:96px;height:auto;padding:18px 12px;line-height:1.4;text-align:center;color:#555b64;font-size:.8rem;font-weight:600;overflow:visible}
-[data-theme="dark"] .schedule-week td:has(>.schedule-free),[data-theme="dark"] .schedule-week td:has(>.schedule-free):hover{background:#202125!important}
-[data-theme="dark"] .schedule-week .schedule-free{color:#a9adb5}
+.schedule-week td:has(>.schedule-free),.schedule-week td:has(>.schedule-free):hover{background:color-mix(in srgb,var(--surface) 20%,transparent)!important;vertical-align:middle;border:0!important;border-radius:12px;box-shadow:none!important}
+.schedule-week .schedule-free{display:flex;align-items:center;justify-content:center;min-height:44px;height:auto;padding:9px 10px;line-height:1.2;text-align:center;color:color-mix(in srgb,var(--muted) 78%,transparent);font-size:.7rem;font-weight:550;opacity:.72;overflow:visible}
