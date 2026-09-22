@@ -41,7 +41,7 @@
 .schedule-day-column .schedule-today-label{display:block;margin-top:4px}
 .schedule-masonry-slot{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
 .schedule-period{position:absolute;left:6px;top:7px;z-index:2;color:color-mix(in srgb,var(--accent) 72%,var(--muted));font-size:.64rem;font-weight:800;pointer-events:none}
-.schedule-masonry-slot .schedule-lesson{padding:14px 12px 14px 27px;width:100%;box-sizing:border-box}
+.schedule-masonry-slot .schedule-lesson{padding:14px 12px 14px 27px;width:100%;box-sizing:border-box;box-shadow:inset 3px 0 0 var(--lesson-color),0 7px 20px color-mix(in srgb,var(--lesson-color) 14%,transparent),0 0 14px color-mix(in srgb,var(--lesson-color) 8%,transparent)}
 .schedule-masonry-slot .schedule-free{min-height:38px;padding:10px 10px 10px 27px}
 .schedule-masonry-slot.schedule-today-cell .schedule-lesson{background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 58%,transparent),color-mix(in srgb,var(--lesson-color) 20%,transparent));box-shadow:0 0 20px color-mix(in srgb,var(--accent) 38%,transparent)}
 .schedule-masonry-slot.schedule-today-cell .schedule-free{background:color-mix(in srgb,var(--surface) 14%,transparent);opacity:.55}
