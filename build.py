@@ -1011,7 +1011,9 @@ def library_page():
             description = ' '.join(part for part in item[1:] if part != citation)
             cover = covers[len(cards)] if len(cards) < len(covers) else None
             cover_html = f'<img src="{esc(cover["src"])}" alt="{esc(title)}" loading="lazy">' if cover else ''
-            cards.append(f'<article class="library-book">{cover_html}<small>{esc(code)}</small><h3>{esc(title)}</h3><p>{esc(citation)}</p>{f"<p>{esc(description)}</p>" if description else ""}<span>Бібліографічний опис · повного тексту у джерелі немає</span></article>')
+            teaser = description or citation
+            if len(teaser) > 190: teaser = teaser[:187].rsplit(' ', 1)[0]+'…'
+            cards.append(f'<article class="library-book">{cover_html}<div class="library-book-info"><small>{esc(code)}</small><h3>{esc(title)}</h3><p class="library-book-teaser">{esc(teaser)}</p><details class="library-book-record"><summary>Переглянути <span aria-hidden="true">↗</span></summary><div><p>{esc(citation)}</p>{f"<p>{esc(description)}</p>" if description else ""}<small>У джерелі доступний бібліографічний опис, повного тексту цієї книги немає.</small></div></details></div></article>')
         return cards
     arrivals = book_records('arrivals')
     exhibition = book_records('exhibition')
