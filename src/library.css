@@ -112,3 +112,13 @@
 .library-intro-stat .display-number{line-height:1.12;padding:.04em .06em .12em;overflow:visible}
 @media(max-width:720px){.library-intro-stat .display-number{line-height:1.12;padding:.05em .04em .14em}}
 .library-intro-stat .display-number,.library-portfolio-index{filter:drop-shadow(0 0 8px #79f6a18c) drop-shadow(0 0 22px #3abf6a55)}
+/* A single green glow glides beneath the active library tab. */
+.library-sections{position:relative;isolation:isolate}
+.library-sections::before{content:"";position:absolute;z-index:0;left:0;top:0;width:var(--tab-glow-width,0px);height:var(--tab-glow-height,0px);border-radius:999px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 88%,#b5ffca),var(--accent));box-shadow:0 0 18px color-mix(in srgb,var(--accent) 46%,transparent),0 0 38px color-mix(in srgb,var(--accent) 25%,transparent);opacity:0;transform:translate3d(var(--tab-glow-x,0px),var(--tab-glow-y,0px),0);transition:transform 520ms cubic-bezier(.2,.78,.2,1),width 420ms cubic-bezier(.2,.78,.2,1),height 420ms cubic-bezier(.2,.78,.2,1),opacity 220ms ease;pointer-events:none}
+.library-sections[data-glow-ready="true"]::before{opacity:1}
+.library-sections>button{position:relative;z-index:1;transition:color 420ms ease,background-color 420ms ease,box-shadow 420ms ease,transform 260ms cubic-bezier(.2,.78,.2,1)}
+.library-sections>button[aria-selected="true"]{background:transparent;color:#fff;box-shadow:none}
+.library-sections>button:hover{transform:translateY(-1px)}
+/* Keep other selectable controls' light and text transitions equally soft. */
+.council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:420ms;transition-timing-function:cubic-bezier(.2,.78,.2,1)}
+@media(prefers-reduced-motion:reduce){.library-sections::before,.library-sections>button,.council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:.01ms}}
