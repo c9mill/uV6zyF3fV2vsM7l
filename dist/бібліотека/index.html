@@ -120,6 +120,8 @@
 /* Keep other selectable controls' light and text transitions equally soft. */
 .council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:420ms;transition-timing-function:cubic-bezier(.2,.78,.2,1)}
 @media(prefers-reduced-motion:reduce){.library-sections::before,.library-sections>button,.council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:.01ms}}
+.library-sections>button{background:color-mix(in srgb,var(--surface) 18%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.library-sections>button:hover{background:color-mix(in srgb,var(--surface) 32%,transparent)}
 /* The library follows its green page palette in both light and dark modes. */
 .library-page{--accent:inherit;--surface:inherit;--ink:inherit;--muted:inherit;--soft:inherit}
 .library-intro-stat .display-number{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 58%,white) 4%,color-mix(in srgb,var(--accent) 92%,white) 58%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
