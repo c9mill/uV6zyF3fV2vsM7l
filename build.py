@@ -479,6 +479,7 @@ def shell(title_text,body,path='/',description='',article=False):
 WRITTEN = []
 PAGE_PALETTES = {}
 def write(path,content,standalone=False):
+    is_library_page = unquote(path).rstrip('/') in ('/бібліотека', '/library')
     # Give each internal route its own stable palette; preserve the two bespoke pages.
     if path != '/' and 'council-page-heading' not in content and '<html lang="uk"' in content:
         palette_groups = [
@@ -514,7 +515,7 @@ def write(path,content,standalone=False):
         page = BeautifulSoup(content, 'html.parser')
         main = page.select_one('main')
         page_heading = page.select_one('.page-heading')
-        if main and page_heading and path != '/бібліотека/':
+        if main and page_heading and not is_library_page:
             headings = [h for h in main.select('h2,h3')
                         if h.get_text(strip=True) and not h.find_parent(['aside','table','details'])
                         and not h.find_parent(class_=re.compile(r'news-card|program-card|resource-tile|page-sidebar|empty-state|schedule|map-consent'))]
@@ -530,7 +531,7 @@ def write(path,content,standalone=False):
                     nav.append(link_tag)
                 page_heading.insert_after(nav)
                 content = str(page)
-    if path == '/бібліотека/' and '<head>' in content:
+    if is_library_page and '<head>' in content:
         library_styles = (ROOT/'src/library.css').read_text(encoding='utf-8')
         content = content.replace('</head>', '<style>'+library_styles+'</style></head>', 1)
     for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
