@@ -117,15 +117,25 @@ if(navigationTree){
  toolbar.append(heading,reset);
  const rail=document.createElement('div');rail.className='navigation-alphabet';rail.setAttribute('role','group');rail.setAttribute('aria-label','Розділи за абеткою');
  const bubble=document.createElement('span');bubble.className='navigation-letter-preview';bubble.setAttribute('aria-hidden','true');
- const buttons=[];let selected='*';
+ const buttons=[];let selected='*';const filterTimers=new WeakMap();
+ function setFilteredEntry(entry,visible){
+  clearTimeout(filterTimers.get(entry));
+  if(visible){
+   const entering=entry.hidden||entry.classList.contains('navigation-filter-exit');entry.hidden=false;entry.classList.remove('navigation-filter-exit');if(entering)entry.classList.add('navigation-filter-enter');
+   filterTimers.set(entry,setTimeout(()=>entry.classList.remove('navigation-filter-enter'),280));
+  }else if(!entry.hidden){
+   entry.classList.remove('navigation-filter-enter');entry.classList.add('navigation-filter-exit');
+   filterTimers.set(entry,setTimeout(()=>{entry.hidden=true;entry.classList.remove('navigation-filter-exit');},180));
+  }
+ }
  function selectLetter(value){
   selected=value;
   const flatMode=!desktopMenu.matches&&value!=='*';
   catalog.hidden=flatMode;flatCatalog.hidden=!flatMode;
-  for(const entry of entries)entry.hidden=!flatMode&&value!=='*'&&letterOf(entry)!==value;
-  for(const entry of flatEntries)entry.hidden=flatMode&&flatLetter(entry)!==value;
+  for(const entry of entries)setFilteredEntry(entry,!(!flatMode&&value!=='*'&&letterOf(entry)!==value));
+  for(const entry of flatEntries)setFilteredEntry(entry,!(flatMode&&flatLetter(entry)!==value));
   for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.letter===value));
-  heading.textContent=value==='*'?'Усі розділи':`${flatMode?'Усі пункти':'Розділи'} на «${value}»`;
+  heading.classList.remove('navigation-heading-change');void heading.offsetWidth;heading.textContent=value==='*'?'Усі розділи':`${flatMode?'Усі пункти':'Розділи'} на «${value}»`;heading.classList.add('navigation-heading-change');
   reset.hidden=value==='*';navigationTree.scrollTop=0;
   bubble.textContent=value==='*'?'Усі':value;
  }
@@ -158,7 +168,7 @@ if(navigationTree){
  rail.addEventListener('pointerup',finish);rail.addEventListener('pointercancel',finish);rail.addEventListener('lostpointercapture',()=>shell.classList.remove('is-browsing'));
  navigationTree.id='navigation-sections';navigationTree.before(toolbar,shell);shell.append(navigationTree,rail,bubble);mobileNav.classList.add('has-alphabet');
  const catalog=document.createElement('div');catalog.className='navigation-catalog';catalog.append(...entries);navigationTree.append(catalog,flatCatalog);
- const pane=document.createElement('section');pane.className='navigation-detail';pane.id='navigation-detail';pane.setAttribute('aria-label','Підрозділи обраної категорії');
+ const pane=document.createElement('section');pane.className='navigation-detail navigation-detail-animated';pane.id='navigation-detail';pane.setAttribute('aria-label','Підрозділи обраної категорії');
  const sidebar=document.createElement('div');sidebar.className='navigation-master';shell.prepend(sidebar);sidebar.append(navigationTree,rail,bubble);shell.append(pane);
  let activeGroup=null,movedChildren=null;
  const restore=()=>{if(activeGroup&&movedChildren)activeGroup.append(movedChildren);activeGroup=null;movedChildren=null;};
@@ -177,7 +187,7 @@ if(navigationTree){
   for(const parent of lineage.slice(0,-1)){const back=document.createElement('button');back.type='button';back.textContent=label(parent);back.addEventListener('click',()=>openGroup(parent));trail.append(back);}
   const title=document.createElement('h2');title.textContent=label(group);title.tabIndex=-1;
   pane.append(trail,title);activeGroup=group;movedChildren=group.querySelector(':scope > .navigation-children');if(movedChildren)pane.append(movedChildren);
-  pane.scrollTop=0;
+  pane.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});
  };
  mobileNav.addEventListener('click',event=>{const summary=event.target.closest('summary');if(!summary||!desktopMenu.matches)return;event.preventDefault();openGroup(summary.parentElement);});
  mobileNav.openDirectoryGroup=openGroup;mobileNav.resetDirectory=resetDirectory;

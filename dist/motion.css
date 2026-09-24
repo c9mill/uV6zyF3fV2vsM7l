@@ -251,6 +251,21 @@ html:has(.home-page) .cosmic-backdrop.scroll-wave-active::after{opacity:.9}
  .navigation-detail .navigation-unavailable{padding:14px}
 }
 
+/* Keep directory changes legible while the selected section and letter update. */
+.navigation-tree a,.navigation-tree summary,.navigation-catalog details>summary:after,.navigation-alphabet button,.navigation-toolbar button{transition:color 360ms cubic-bezier(.22,1,.36,1),background-color 360ms cubic-bezier(.22,1,.36,1),transform 360ms cubic-bezier(.22,1,.36,1),opacity 220ms ease}
+.navigation-catalog details>summary:after{display:inline-block;transform-origin:center}
+.navigation-catalog details:is([open],[data-selected])>summary:after{transform:rotate(45deg)}
+.navigation-detail-animated>*{animation:navigation-panel-enter 420ms cubic-bezier(.22,1,.36,1) both}
+.navigation-filter-enter{animation:navigation-filter-enter 280ms cubic-bezier(.22,1,.36,1) both}
+.navigation-filter-exit{animation:navigation-filter-exit 180ms ease both;pointer-events:none}
+.navigation-heading-change{animation:navigation-heading-enter 300ms cubic-bezier(.22,1,.36,1) both}
+.site-header .mobile-nav.has-alphabet .navigation-flat[hidden],.site-header .mobile-nav.has-alphabet .navigation-catalog[hidden],.site-header .mobile-nav.has-alphabet .navigation-catalog>[hidden]{display:none!important}
+@keyframes navigation-panel-enter{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes navigation-filter-enter{from{opacity:0;transform:translate3d(0,7px,0) scale(.985)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes navigation-filter-exit{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(0,-5px,0)}}
+@keyframes navigation-heading-enter{from{opacity:.25;transform:translate3d(0,5px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@media(prefers-reduced-motion:reduce){.navigation-detail-animated>*,.navigation-filter-enter,.navigation-filter-exit,.navigation-heading-change{animation:none!important}.navigation-tree a,.navigation-tree summary,.navigation-catalog details>summary:after,.navigation-alphabet button,.navigation-toolbar button{transition:none!important}}
+
 .navigation-flat{display:flex;flex-direction:column;gap:2px;min-width:0}
 @media(max-width:1000px){
  .navigation-alphabet button{height:clamp(16px,calc((100dvh - 300px)/var(--letter-count,12)),28px);font-size:.72rem}
