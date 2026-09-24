@@ -3,7 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
 import re
+import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import quote, urljoin
 
@@ -33,6 +36,59 @@ DOCS = {
     'Положення про бібліотеку': '1GLZauRWW1N6EAO3imYhGcxwLQiTa_h2i',
     'Правила користування бібліотекою': '1jRMJPdkMCu-jlKMbU9fP7zEc_74PhqB7',
 }
+PORTFOLIO_ID = '16QKDpGZ9EcEy9f6HGpQLxlPc-kuPqK71'
+
+
+def import_portfolio(session: requests.Session) -> list[dict]:
+    """Extract the public slide deck as readable text plus optimized local photos."""
+    response = session.get(f'https://drive.google.com/uc?export=download&id={PORTFOLIO_ID}', timeout=120)
+    response.raise_for_status()
+    if not response.content.startswith(b'PK'):
+        return []
+    from io import BytesIO
+    deck = zipfile.ZipFile(BytesIO(response.content))
+    media_dir = ASSET_DIR / 'portfolio'
+    media_dir.mkdir(parents=True, exist_ok=True)
+    ns = {'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
+          'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+          'rel': 'http://schemas.openxmlformats.org/package/2006/relationships'}
+    slides = sorted((name for name in deck.namelist()
+                     if re.fullmatch(r'ppt/slides/slide\d+\.xml', name)),
+                   key=lambda name: int(re.search(r'slide(\d+)', name).group(1)))
+    saved: dict[str, str] = {}
+    result = []
+    for slide_name in slides:
+        number = int(re.search(r'slide(\d+)', slide_name).group(1))
+        root = ET.fromstring(deck.read(slide_name))
+        text = ' '.join(' '.join((node.text or '').split()) for node in root.findall('.//a:t', ns)).strip()
+        images = []
+        rel_name = f'ppt/slides/_rels/slide{number}.xml.rels'
+        if rel_name in deck.namelist():
+            rels = {node.attrib['Id']: node.attrib['Target'] for node in ET.fromstring(deck.read(rel_name))
+                    if node.attrib.get('Type', '').endswith('/image')}
+            for blip in root.findall('.//a:blip', ns):
+                target = rels.get(blip.attrib.get(f'{{{ns["r"]}}}embed', ''))
+                if not target:
+                    continue
+                media_name = posixpath.normpath(posixpath.join('ppt/slides', target))
+                if media_name not in saved:
+                    from PIL import Image
+                    from io import BytesIO
+                    try:
+                        photo = Image.open(BytesIO(deck.read(media_name)))
+                        if photo.width > 1600:
+                            height = round(photo.height * 1600 / photo.width)
+                            photo = photo.resize((1600, height), Image.Resampling.LANCZOS)
+                        filename = hashlib.sha1(media_name.encode()).hexdigest()[:14] + '.jpg'
+                        photo.convert('RGB').save(media_dir / filename, 'JPEG', quality=80, optimize=True)
+                        saved[media_name] = '/assets/library/portfolio/' + filename
+                    except (OSError, KeyError):
+                        continue
+                if media_name in saved:
+                    images.append(saved[media_name])
+        result.append({'number': number, 'text': text, 'images': list(dict.fromkeys(images))})
+    deck.close()
+    return result
 
 
 def local_image(session: requests.Session, url: str, page: str) -> str | None:
@@ -100,13 +156,16 @@ def main() -> None:
     for stale_name in ('.pdf', '10.pdf', '2026.pdf'):
         (ASSET_DIR / stale_name).unlink(missing_ok=True)
 
+    portfolio_slides = import_portfolio(session)
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
     DATA_FILE.write_text(json.dumps({'source': BASE.rstrip('/'), 'pages': pages,
                                      'documents': documents, 'word_documents': DOCS,
-                                     'portfolio': 'https://drive.google.com/file/d/16QKDpGZ9EcEy9f6HGpQLxlPc-kuPqK71/preview'},
+                                     'portfolio': 'https://drive.google.com/file/d/16QKDpGZ9EcEy9f6HGpQLxlPc-kuPqK71/preview',
+                                     'portfolio_slides': portfolio_slides},
                                     ensure_ascii=False, indent=2), encoding='utf-8')
     print(f"Saved {len(pages)} sections, {sum(len(p['blocks']) for p in pages.values())} text blocks, "
-          f"{sum(len(p['images']) for p in pages.values())} images and {len(documents)} PDFs.")
+          f"{sum(len(p['images']) for p in pages.values())} images, {len(documents)} PDFs and "
+          f"{len(portfolio_slides)} portfolio slides.")
 
 
 if __name__ == '__main__':

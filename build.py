@@ -514,7 +514,7 @@ def write(path,content,standalone=False):
         page = BeautifulSoup(content, 'html.parser')
         main = page.select_one('main')
         page_heading = page.select_one('.page-heading')
-        if main and page_heading:
+        if main and page_heading and path != '/бібліотека/':
             headings = [h for h in main.select('h2,h3')
                         if h.get_text(strip=True) and not h.find_parent(['aside','table','details'])
                         and not h.find_parent(class_=re.compile(r'news-card|program-card|resource-tile|page-sidebar|empty-state|schedule|map-consent'))]
@@ -1033,17 +1033,47 @@ def library_page():
     docs = data.get('word_documents', {})
     word_ids = {'Положення про бібліотеку':'1GLZauRWW1N6EAO3imYhGcxwLQiTa_h2i','Правила користування бібліотекою':'1jRMJPdkMCu-jlKMbU9fP7zEc_74PhqB7'}
     word_cards = ''.join(f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(label)}</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="{esc(label)}" src="https://drive.google.com/file/d/{word_ids[label]}/preview" loading="lazy"></iframe><p>Цей вихідний документ опублікований у форматі Word; для перегляду він вбудований з бібліотечного сховища.</p></div></details>' for label in docs if label in word_ids)
-    portfolio = data.get('portfolio', '')
+    portfolio_slides = data.get('portfolio_slides', [])
+    portfolio_titles = {
+        1:'Портфоліо бібліотеки', 2:'Бібліотека — простір знань',
+        3:'Історія бібліотеки', 4:'Команда бібліотеки: історичний зріз',
+        5:'Структура бібліотеки', 6:'Як працює бібліотека',
+        7:'Бібліотечний фонд: дані портфоліо 2017 року',
+        8:'Функції бібліотеки', 9:'Поповнення фонду', 10:'Поповнення фонду: фотоматеріали',
+        11:'Послуги бібліотеки', 12:'Професійний розвиток бібліотекарів',
+        13:'Культурно-просвітницька робота', 14:'Професійні зустрічі',
+        15:'Зустрічі з випускниками', 16:'День української писемності та мови',
+        17:'Конкурси', 18:'Вшанування Максима Рильського',
+        19:'Місячник першокурсника', 20:'Знайомство з природою Житомирщини',
+        21:'Події бібліотеки', 22:'Зустрічі з випускниками',
+        23:'Лекції та дискусії', 24:'Всесвітній день охорони праці',
+        25:'Бібліотечні виставки', 26:'Книжкові виставки', 27:'Книжкові виставки',
+        28:'Книжкові виставки', 29:'Оформлення бібліотечного простору',
+        30:'Фітодизайн бібліотеки', 31:'Фітодизайн бібліотеки',
+        32:'Фітодизайн бібліотеки', 33:'Відзнаки бібліотеки',
+        34:'Нагороди', 35:'Нагороди', 36:'Контактні відомості в портфоліо 2017 року',
+    }
+    def portfolio_slide_html(item):
+        title = portfolio_titles.get(item['number'], 'Матеріали бібліотеки')
+        text = f'<p>{esc(item["text"])}</p>' if item.get('text') else ''
+        photos = ''.join(f'<figure><img src="{esc(src)}" alt="{esc(title)}" loading="lazy"></figure>'
+                         for src in item.get('images', []))
+        gallery = f'<div class="library-gallery">{photos}</div>' if photos else ''
+        return (f'<article class="library-portfolio-slide"><div><p class="eyebrow">Портфоліо бібліотеки</p>'
+                f'<h3>{esc(title)}</h3>{text}</div>{gallery}</article>')
+    portfolio_html = ''.join(portfolio_slide_html(item) for item in portfolio_slides
+                             if item.get('text') or item.get('images'))
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
-      <section class="library-intro"><div><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Добірки видань, бібліотечні новини, віртуальні виставки та нормативні документи зібрані на цій сторінці за матеріалами бібліотеки коледжу.</p><a class="text-link" href="#library-new-books">Перейти до нових надходжень {icon('arrow')}</a></div><div class="library-intro-mark">{icon('book')}<span>{len(arrivals)}<small>нових видань<br>у каталозі</small></span></div></section>
-      <nav class="library-sections" aria-label="Розділи бібліотеки">{''.join(f'<a href="#{anchor}">{label} {icon("arrow")}</a>' for anchor,label in [('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')])}</nav>
-      <section class="library-section" id="library-about"><div class="library-section-heading"><p class="eyebrow">Історія та діяльність</p><h2>Про бібліотеку</h2></div><p>Бібліотека є навчальним інформаційним і культурно-просвітницьким підрозділом коледжу. Тут зібрані матеріали для навчання, професійного розвитку та знайомства з виданнями працівників коледжу.</p>{image_grid('home')}<details class="library-document library-portfolio"><summary><span>{icon('book')}</span><strong>Портфоліо бібліотеки</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="Портфоліо бібліотеки коледжу" src="{esc(portfolio)}" loading="lazy" allow="autoplay"></iframe></div></details></section>
-      <section class="library-section" id="library-news"><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
-      <section class="library-section" id="library-exhibition"><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
-      <section class="library-section" id="library-new-books"><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Усі бібліографічні записи, опубліковані на вихідній сторінці нових надходжень.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повних електронних текстів цих книжок на вихідному сайті немає. Тут збережено описи й обкладинки; повні книжки не створювалися з їхніх описів.</p></section>
-      <section class="library-section" id="library-periodicals"><div class="library-section-heading"><p class="eyebrow">Читання та фахова преса</p><h2>Періодичні видання</h2></div><div class="library-periodical-list">{period_html}</div></section>
-      <section class="library-section" id="library-rules"><div class="library-section-heading"><p class="eyebrow">Документи для читачів</p><h2>Нормативна база</h2><p>Доступні PDF відкриваються без переходу на окрему сторінку.</p></div><div class="library-documents">{pdf_cards}{word_cards}</div></section>
-      <section class="library-section" id="library-events"><div class="library-section-heading"><p class="eyebrow">Життя бібліотеки</p><h2>Заходи</h2></div><article class="library-event"><p>{esc(event_text)}</p></article>{image_grid('events')}</section>
+      <section class="library-intro"><div><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-mark">{icon('book')}<span>{len(arrivals)}<small>нових видань<br>у каталозі</small></span></div></section>
+      <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
+      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading"><p class="eyebrow">Портфоліо, історія та діяльність</p><h2 id="library-portfolio">Про бібліотеку</h2><p>Нижче — текстовий виклад змісту оригінального портфоліо та його фотографії. Презентацію створено у 2017 році, тому вказані в ній кількісні показники, посади й персональні дані наведено як історичний зріз на час її підготовки.</p></div><div class="library-portfolio-list">{portfolio_html}</div>{image_grid('home')}</section>
+      <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
+      <section class="library-section" id="library-exhibition" role="tabpanel" aria-labelledby="tab-library-exhibition" hidden><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
+      <section class="library-section" id="library-new-books" role="tabpanel" aria-labelledby="tab-library-new-books" hidden><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Усі бібліографічні записи, опубліковані на вихідній сторінці нових надходжень.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повних електронних текстів цих книжок на вихідному сайті немає. Тут збережено описи й обкладинки; повні книжки не створювалися з їхніх описів.</p></section>
+      <section class="library-section" id="library-periodicals" role="tabpanel" aria-labelledby="tab-library-periodicals" hidden><div class="library-section-heading"><p class="eyebrow">Читання та фахова преса</p><h2>Періодичні видання</h2></div><div class="library-periodical-list">{period_html}</div></section>
+      <section class="library-section" id="library-rules" role="tabpanel" aria-labelledby="tab-library-rules" hidden><div class="library-section-heading"><p class="eyebrow">Документи для читачів</p><h2>Нормативна база</h2><p>Доступні PDF відкриваються без переходу на окрему сторінку.</p></div><div class="library-documents">{pdf_cards}{word_cards}</div></section>
+      <section class="library-section" id="library-events" role="tabpanel" aria-labelledby="tab-library-events" hidden><div class="library-section-heading"><p class="eyebrow">Життя бібліотеки</p><h2>Заходи</h2></div><article class="library-event"><p>{esc(event_text)}</p></article>{image_grid('events')}</section>
+      <script>(function(){{const root=document.querySelector('.library-page');if(!root)return;const tabs=[...root.querySelectorAll('[data-library-tab]')];const panels=tabs.map(tab=>root.querySelector('#'+tab.dataset.libraryTab));function activate(index,focus){{tabs.forEach((tab,i)=>{{const active=i===index;tab.setAttribute('aria-selected',active);tab.tabIndex=active?0:-1;panels[i].hidden=!active}});if(focus)tabs[index].focus()}}tabs.forEach((tab,index)=>{{tab.addEventListener('click',()=>activate(index,false));tab.addEventListener('keydown',event=>{{let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();activate(next,true)}})}})}})();</script>
       </div>'''
     write('/бібліотека/', shell('Головна сторінка бібліотеки', library_html, '/бібліотека/', 'Бібліотека коледжу: нові надходження, виставки, періодика, події та документи.'))
     SEARCH.append({'title':'Головна сторінка бібліотеки','url':'/бібліотека/','type':'Сторінка','text':'Бібліотека · Книги · Нові надходження · Виставки · Періодика · Документи'})
