@@ -497,19 +497,23 @@ def write(path,content,standalone=False):
         title_match = re.search(r'<title>(.*?)</title>', content)
         label = unquote(path).lower()
         # Every route, including individual articles, gets a distinct hue.
-        if ' is-article' in content:
-            hue = 345
+        if is_library_page:
+            hue = 142
+            companion = 94
         else:
-            hue = next((h for words,h in palette_groups if any(w in label for w in words)), None)
-            if hue is None:
-                label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
-                hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
-        seed = int(hashlib.sha256(path.encode()).hexdigest()[:8],16)
-        hue = round((hue + (seed % 36000) / 100) % 360, 2)
+            if ' is-article' in content:
+                hue = 345
+            else:
+                hue = next((h for words,h in palette_groups if any(w in label for w in words)), None)
+                if hue is None:
+                    label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
+                    hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
+            seed = int(hashlib.sha256(path.encode()).hexdigest()[:8],16)
+            hue = round((hue + (seed % 36000) / 100) % 360, 2)
+            companion = round((hue + 35 + seed % 55) % 360, 2)
         while hue in PAGE_PALETTES and PAGE_PALETTES[hue] != path:
             hue = round((hue + .17) % 360, 2)
         PAGE_PALETTES[hue] = path
-        companion = round((hue + 35 + seed % 55) % 360, 2)
         content = content.replace('<html lang="uk"', f'<html lang="uk" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{companion}"', 1)
         # A navigation strip links to real content headings, never invented sections.
         page = BeautifulSoup(content, 'html.parser')
@@ -532,9 +536,11 @@ def write(path,content,standalone=False):
                 page_heading.insert_after(nav)
                 content = str(page)
     if is_library_page and '<head>' in content:
-        library_styles = (ROOT/'src/library.css').read_text(encoding='utf-8')
-        content = content.replace('</head>', '<style>'+library_styles+'</style></head>', 1)
-    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
+        library_styles = ((ROOT/'src/library.css').read_text(encoding='utf-8')
+                          + (ROOT/'src/library-theme.css').read_text(encoding='utf-8'))
+        library_imports = '<script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/library-books.js"></script>'
+        content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
+    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -581,7 +587,7 @@ def home():
     body = body.replace('<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p>', '<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє</span><br><span class="hero-word together">разом з нами</span></h1>')
     return body
 
-for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/LICENSE','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -1065,7 +1071,7 @@ def library_page():
     portfolio_html = ''.join(portfolio_slide_html(item) for item in portfolio_slides
                              if item.get('text') or item.get('images'))
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
-      <section class="library-intro"><div><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-mark">{icon('book')}<span>{len(arrivals)}<small>нових видань<br>у каталозі</small></span></div></section>
+      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div><div class="library-book-orbit" aria-label="Інтерактивні 3D-моделі книг"><canvas data-book-model="open_book" role="img" tabindex="0" aria-label="Відкрита книга. Проведіть по моделі, щоб повернути її"></canvas><canvas data-book-model="enchanted_book" role="img" tabindex="0" aria-label="Книга з оздобленням. Проведіть по моделі, щоб повернути її"></canvas><canvas data-book-model="closed_book" role="img" tabindex="0" aria-label="Закрита книга. Проведіть по моделі, щоб повернути її"></canvas></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
       <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading"><p class="eyebrow">Портфоліо, історія та діяльність</p><h2 id="library-portfolio">Про бібліотеку</h2><p>Нижче — текстовий виклад змісту оригінального портфоліо та його фотографії. Презентацію створено у 2017 році, тому вказані в ній кількісні показники, посади й персональні дані наведено як історичний зріз на час її підготовки.</p></div><div class="library-portfolio-list">{portfolio_html}</div>{image_grid('home')}</section>
       <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
