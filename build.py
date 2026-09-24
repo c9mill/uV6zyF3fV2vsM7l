@@ -359,6 +359,13 @@ DATES = menu_find('Строки вступної кампанії').get('url','/
 shutil.copytree(ROOT/'src/assets', OUT/'assets', dirs_exist_ok=True)
 for stale_library_asset in ('.pdf', '10.pdf', '2026.pdf'):
     (OUT/'assets/library'/stale_library_asset).unlink(missing_ok=True)
+for stale_model in ('open_book', 'closed_book', 'enchanted_book'):
+    stale_folder = OUT/'assets/library/models'/stale_model
+    for stale_file in (f'{stale_model}.obj', f'{stale_model}.mtl', f'{stale_model}.png'):
+        (stale_folder/stale_file).unlink(missing_ok=True)
+    if stale_folder.is_dir():
+        stale_folder.rmdir()
+(OUT/'library-books.js').unlink(missing_ok=True)
 CAMPUS = '/assets/campus.webp'
 ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
 ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
@@ -478,6 +485,43 @@ def shell(title_text,body,path='/',description='',article=False):
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
 PAGE_PALETTES = {}
+SITE_MODEL_THEMES = [
+    (('про-коледж', 'істор', 'адміністраці', 'контакт'), ('Camera_01', 'SchoolChair_01')),
+    (('вступ', 'приймаль'), ('SchoolDesk_01', 'Megaphone_01')),
+    (('спеціальност', 'будів', 'архітект', 'дизайн', 'цивільн'), ('measuring_tape_01', 'SchoolDesk_01')),
+    (('студент', 'самоврядуван', 'гуртожит', 'соціальн'), ('SchoolChair_01', 'classic_laptop')),
+    (('публіч', 'прозор', 'документ', 'акредитац', 'положен', 'наказ', 'правил', 'інструкц'), ('clipboard', 'book_encyclopedia_set_01')),
+    (('оголош',), ('Megaphone_01', 'clipboard')),
+    (('дистанці', 'портал', 'пошук', 'електронн'), ('classic_laptop', 'clipboard')),
+    (('освіт', 'навчаль', 'дистанці', 'методич', 'педагог', 'розклад', 'лаборатор'), ('chemistry_set', 'industrial_microscope')),
+    (('виховн', 'культур', 'музе'), ('Camera_01', 'Ukulele_01')),
+    (('новин', 'поді'), ('Camera_01', 'Megaphone_01')),
+    (('психолог',), ('ArmChair_01', 'binder_notebook')),
+    (('виклада', 'комісі', 'працевлаштуван'), ('binder_notebook', 'industrial_microscope')),
+]
+SITE_MODEL_LABELS = {
+    'book_encyclopedia_set_01': 'набір книжок', 'binder_notebook': 'записник у шкіряній обкладинці',
+    'classic_laptop': 'ноутбук', 'Camera_01': 'фотоапарат', 'SchoolDesk_01': 'шкільна парта',
+    'clipboard': 'папка для документів', 'chemistry_set': 'набір для хімічних дослідів',
+    'Megaphone_01': 'мегафон', 'industrial_microscope': 'лабораторний мікроскоп',
+    'SchoolChair_01': 'шкільний стілець', 'measuring_tape_01': 'вимірювальна рулетка',
+    'Ukulele_01': 'укулеле', 'ArmChair_01': 'крісло',
+}
+def site_models_for(path):
+    route = unquote(path).lower().strip('/')
+    if route in ('бібліотека', 'library'):
+        return [
+            ('book_encyclopedia_set_01', 'left-upper', '0.18,-0.50,-0.12'),
+            ('binder_notebook', 'right-upper', '-0.32,0.54,0.08'),
+            ('book_encyclopedia_set_01', 'left-lower', '-0.50,0.42,-0.08'),
+        ]
+    if not route:
+        return [('SchoolDesk_01', 'left-upper', '0.14,-0.48,0'), ('binder_notebook', 'right-upper', '-0.35,0.48,0.06')]
+    for words, models in SITE_MODEL_THEMES:
+        if any(word in route for word in words):
+            return [(models[0], 'left-upper', '0.18,-0.50,0.06'), (models[1], 'right-upper', '-0.28,0.48,-0.06')]
+    return []
+
 def write(path,content,standalone=False):
     is_library_page = unquote(path).rstrip('/') in ('/бібліотека', '/library')
     # Give each internal route its own stable palette; preserve the two bespoke pages.
@@ -535,12 +579,26 @@ def write(path,content,standalone=False):
                     nav.append(link_tag)
                 page_heading.insert_after(nav)
                 content = str(page)
-    if is_library_page and '<head>' in content:
-        library_styles = ((ROOT/'src/library.css').read_text(encoding='utf-8')
-                          + (ROOT/'src/library-theme.css').read_text(encoding='utf-8'))
-        library_imports = '<script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/library-books.js"></script>'
-        content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
-    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js']:
+    models = [] if ' is-article' in content else site_models_for(path)
+    if models and '<head>' in content:
+        orbit = '<div class="site-object-orbit" aria-label="Інтерактивні 3D-моделі сторінки" aria-hidden="false">' + ''.join(
+            f'<canvas data-model="{slug}" data-slot="{slot}" data-rotation="{rotation}" role="img" tabindex="0" aria-label="3D-модель: {SITE_MODEL_LABELS.get(slug, slug)}. Проведіть по ній, щоб повернути"></canvas>'
+            for slug, slot, rotation in models) + '</div>'
+        page = BeautifulSoup(content, 'html.parser')
+        main = page.select_one('main')
+        if main:
+            main.insert_before(BeautifulSoup(orbit, 'html.parser'))
+            content = str(page)
+        if is_library_page:
+            library_styles = ((ROOT/'src/library.css').read_text(encoding='utf-8')
+                              + (ROOT/'src/library-theme.css').read_text(encoding='utf-8')
+                              + (ROOT/'src/site-models.css').read_text(encoding='utf-8'))
+            model_imports = '<script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/site-models.js"></script>'
+            content = content.replace('</head>', '<style>'+library_styles+'</style>'+model_imports+'</head>', 1)
+        else:
+            model_imports = '<link rel="stylesheet" href="/site-models.css"><script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/site-models.js"></script>'
+            content = content.replace('</head>', model_imports+'</head>', 1)
+    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','site-models.css','site-models.js','vendor/lenis.min.js','cosmos.svg','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/loaders/GLTFLoader.js','vendor/three/utils/BufferGeometryUtils.js','vendor/three/utils/SkeletonUtils.js']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -587,7 +645,7 @@ def home():
     body = body.replace('<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p>', '<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє</span><br><span class="hero-word together">разом з нами</span></h1>')
     return body
 
-for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/LICENSE','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','site-models.css','site-models.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/loaders/GLTFLoader.js','vendor/three/utils/BufferGeometryUtils.js','vendor/three/utils/SkeletonUtils.js','vendor/three/LICENSE','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -1071,7 +1129,7 @@ def library_page():
     portfolio_html = ''.join(portfolio_slide_html(item) for item in portfolio_slides
                              if item.get('text') or item.get('images'))
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
-      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div><div class="library-book-orbit" aria-label="Інтерактивні 3D-моделі книг"><canvas data-book-model="open_book" role="img" tabindex="0" aria-label="Відкрита книга. Проведіть по моделі, щоб повернути її"></canvas><canvas data-book-model="enchanted_book" role="img" tabindex="0" aria-label="Книга з оздобленням. Проведіть по моделі, щоб повернути її"></canvas><canvas data-book-model="closed_book" role="img" tabindex="0" aria-label="Закрита книга. Проведіть по моделі, щоб повернути її"></canvas></div></section>
+      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
       <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading"><p class="eyebrow">Портфоліо, історія та діяльність</p><h2 id="library-portfolio">Про бібліотеку</h2><p>Нижче — текстовий виклад змісту оригінального портфоліо та його фотографії. Презентацію створено у 2017 році, тому вказані в ній кількісні показники, посади й персональні дані наведено як історичний зріз на час її підготовки.</p></div><div class="library-portfolio-list">{portfolio_html}</div>{image_grid('home')}</section>
       <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
