@@ -363,6 +363,9 @@ CAMPUS = '/assets/campus.webp'
 ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
 ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
 shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
+def source_text_hash(path):
+    normalized = path.read_text(encoding='utf-8').replace('\r\n', '\n').replace('\r', '\n')
+    return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
 LOGO = '/assets/site-logo.webp'
 ADMISSION_PROGRAMS = '/assets/admission-programs.webp'
 ADMISSION_CONTACTS = '/assets/admission-contacts.webp'
@@ -475,7 +478,9 @@ def shell(title_text,body,path='/',description='',article=False):
     title_text = normalize_name_text(title_text)
     desc = normalize_name_text(description or f'{FULL_DISPLAY} у Житомирі: спеціальності, вступ, новини та студентське життя.')
     body_classes = ('home-page' if path=='/' else 'inner-page') + (' is-article' if article else '') + (' core-page' if not article and path != '/новини/' else '') + (' social-support-page' if path == '/соціальне-забезпечення/' else '')
-    return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
+    crane_module = '<link rel="stylesheet" href="/hero-crane.css"><script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/hero-crane.js"></script>' if path == '/' else ''
+    page = f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script>{crane_module}</head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
+    return page
 WRITTEN = []
 PAGE_PALETTES = {}
 def write(path,content,standalone=False):
@@ -540,8 +545,8 @@ def write(path,content,standalone=False):
                           + (ROOT/'src/library-theme.css').read_text(encoding='utf-8'))
         library_imports = '<script type="importmap">{"imports":{"three":"/vendor/three/three.module.js"}}</script><script type="module" src="/library-books.js"></script>'
         content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
-    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js']:
-        revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
+    for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','hero-crane.css','hero-crane.js','vendor/lenis.min.js','cosmos.svg','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js']:
+        revision = source_text_hash(ROOT/'src'/asset)[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
     relative = unquote(path).strip('/')
@@ -573,7 +578,7 @@ def program_cards():
 def section_heading(eyebrow,heading,url='',label='Дізнатися більше'):
     return f'<div class="section-heading"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2></div>'+ (link(url,label+icon('arrow'),'text-link') if url else '')+'</div>'
 def home_legacy():
-    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span></p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">{escape(HERO_DESCRIPTION)}</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус {ABBR} у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
+    return f'''<section class="hero container"><div class="hero-copy"><p class="eyebrow">Твій коледж у Житомирі</p><p class="institution">Фаховий коледж будівництва,<br>архітектури та дизайну<br><span class="institution-parent">Поліського національного університету</span></p><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p><p class="hero-description">{escape(HERO_DESCRIPTION)}</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div><div class="hero-visual"><img class="hero-photo" src="{CAMPUS}" alt="Навчальний корпус {ABBR} у Житомирі, студенти біля входу" fetchpriority="high" width="800" height="850"><canvas class="hero-crane-canvas" aria-label="Інтерактивний кран. Перетягніть фото, щоб похитати вантаж і повернути верх крана; стрілки на клавіатурі теж працюють." role="application" tabindex="0"></canvas><span class="hero-crane-hint" aria-hidden="true">Потягни фото — кран повернеться</span><div class="photo-label"><span>Місце, де ідеї стають професією</span><small>{icon('pin')} Житомир · Степана Бандери, 6</small></div><a class="hero-note" href="/про-коледж/"><span>З 1945 року</span><strong>Створюємо.<br>Навчаємо. Зростаємо.</strong>{icon('external')}</a></div></section>
     <div class="container quick-links">{link(SCHEDULE,icon('calendar')+'<span><strong>Розклад занять</strong><small>Твій навчальний день</small></span>'+icon('external'))}{link('/вступнику/',icon('cap')+'<span><strong>Вступна кампанія 2026</strong><small>Правила, строки, документи</small></span>'+icon('arrow'))}{link('/документи/',icon('file')+'<span><strong>Документи коледжу</strong><small>Відкрито та зручно</small></span>'+icon('arrow'))}</div>
     <section class="section container">{section_heading('Навчання з перспективою','Знайди свою справу.','/спеціальності/','Усі освітні програми')}{program_cards()}<p class="program-footnote">Спеціальність G19 «Будівництво та цивільна інженерія»</p></section>
     <section class="news-section section"><div class="container">{section_heading('Події та люди','Коледж сьогодні','/новини/','Усі новини')}<div class="news-grid">{''.join(news_card(p) for p in POSTS[:3])}</div></div></section>
@@ -587,7 +592,7 @@ def home():
     body = body.replace('<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">Майбутнє.</span></h1><p class="hero-subtitle">Почни з коледжу.</p>', '<h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє</span><br><span class="hero-word together">разом з нами</span></h1>')
     return body
 
-for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/LICENSE','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','hero-crane.css','hero-crane.js','library-books.js','vendor/three/three.module.js','vendor/three/three.core.js','vendor/three/OBJLoader.js','vendor/three/MTLLoader.js','vendor/three/LICENSE','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -599,12 +604,12 @@ shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,
 # versioned assets. Pages and the live schedule remain network-first/fresh.
-PWA_VERSION = hashlib.sha256((ROOT/'src/sw.js').read_bytes()).hexdigest()[:12]
+PWA_VERSION = source_text_hash(ROOT/'src/sw.js')[:12]
 def asset_url(filename):
-    revision = hashlib.sha256((ROOT/'src'/filename).read_bytes()).hexdigest()[:12]
+    revision = source_text_hash(ROOT/'src'/filename)[:12]
     return f'/{filename}?v={revision}'
 pwa_precache = ['/', '/offline.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png']
-pwa_precache += [asset_url(name) for name in ['styles.css','experience.css','app.js','experience.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']]
+pwa_precache += [asset_url(name) for name in ['styles.css','experience.css','app.js','experience.js','motion.css','motion.js','hero-crane.css','hero-crane.js','vendor/lenis.min.js','cosmos.svg']]
 service_worker = (ROOT/'src/sw.js').read_text(encoding='utf-8')
 service_worker = service_worker.replace('__PWA_VERSION__', PWA_VERSION).replace('__PWA_PRECACHE__', json.dumps(pwa_precache, ensure_ascii=False))
 (OUT/'sw.js').write_text(service_worker, encoding='utf-8')

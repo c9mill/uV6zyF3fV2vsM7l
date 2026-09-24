@@ -29,7 +29,7 @@ function sameOrigin(url) {
 
 function staticRequest(url) {
   return sameOrigin(url) && (
-    /\.(?:css|js|webp|svg|jpe?g|png|woff2?)$/i.test(url.pathname) ||
+    /\.(?:css|js|webp|svg|jpe?g|png|woff2?|obj|mtl)$/i.test(url.pathname) ||
     url.pathname === '/manifest.webmanifest' || url.pathname === OFFLINE_URL
   );
 }
