@@ -1144,4 +1144,16 @@ index_navigation(NAVIGATION)
 (OUT/'search-index.json').write_text(json.dumps(SEARCH,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
 (OUT/'route-map.json').write_text(json.dumps({str(k):v for k,v in ROUTES.items()},ensure_ascii=False),encoding='utf-8')
 (OUT/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n',encoding='utf-8')
+long_dashes = str.maketrans({'—':'-', '–':'-', '―':'-'})
+text_outputs = {'.html','.css','.js','.json','.xml','.webmanifest','.txt','.svg','.md','.yml','.yaml'}
+for output in OUT.rglob('*'):
+    if not output.is_file() or (output.suffix.lower() not in text_outputs and output.name != '_headers'):
+        continue
+    try:
+        current = output.read_text(encoding='utf-8')
+    except UnicodeDecodeError:
+        continue
+    cleaned = current.translate(long_dashes)
+    if cleaned != current:
+        output.write_text(cleaned,encoding='utf-8')
 print(f'Built {len(WRITTEN)} pages, {len(POSTS)} articles, {len(DOCUMENTS)} documents; {len(COPIED)} referenced images.')
