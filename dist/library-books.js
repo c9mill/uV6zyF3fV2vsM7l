@@ -40,7 +40,7 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
 
       const instance = {canvas, renderer, scene, camera, group, ready: false, visible: false,
         floatPhase: Math.random() * Math.PI * 2, baseX: initial[0], baseY: initial[1],
-        dragging: false, previousX: 0, previousY: 0, velocityX: 0, velocityY: 0};
+        dragging: false, previousX: 0, previousY: 0, velocityX: 0, velocityY: 0, scrollOffset: 0};
       instances.push(instance);
 
       const resize = new ResizeObserver(() => {
@@ -119,7 +119,19 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
     }
   }
 
+  let previousScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const scrollDelta = currentScrollY - previousScrollY;
+    previousScrollY = currentScrollY;
+    if (reducedMotion || Math.abs(scrollDelta) < 1) return;
+    for (const instance of instances) {
+      instance.scrollOffset = THREE.MathUtils.clamp(instance.scrollOffset - scrollDelta * 0.001, -0.32, 0.32);
+    }
+  }, {passive: true});
+
   let started = false;
+  let previousFrameTime = 0;
   function animate(time) {
     if (document.hidden) {
       requestAnimationFrame(animate);
@@ -128,7 +140,9 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
     for (const instance of instances) {
       if (!instance.visible || !instance.ready) continue;
       if (!reducedMotion) {
-        instance.group.position.y = Math.sin(time * 0.00075 + instance.floatPhase) * 0.11;
+        instance.scrollOffset *= Math.pow(0.976, Math.min(48, time - previousFrameTime) / 16.67);
+        if (Math.abs(instance.scrollOffset) < 0.0005) instance.scrollOffset = 0;
+        instance.group.position.y = Math.sin(time * 0.00075 + instance.floatPhase) * 0.11 + instance.scrollOffset;
         if (!instance.dragging) {
           instance.baseY += instance.velocityY;
           instance.baseX += instance.velocityX;
@@ -142,6 +156,7 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
       }
       instance.renderer.render(instance.scene, instance.camera);
     }
+    previousFrameTime = time;
     requestAnimationFrame(animate);
   }
   if (!started) {
