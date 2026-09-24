@@ -1040,40 +1040,73 @@ def library_page():
     docs = data.get('word_documents', {})
     word_ids = {'Положення про бібліотеку':'1GLZauRWW1N6EAO3imYhGcxwLQiTa_h2i','Правила користування бібліотекою':'1jRMJPdkMCu-jlKMbU9fP7zEc_74PhqB7'}
     word_cards = ''.join(f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(label)}</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="{esc(label)}" src="https://drive.google.com/file/d/{word_ids[label]}/preview" loading="lazy"></iframe><p>Цей вихідний документ опублікований у форматі Word; для перегляду він вбудований з бібліотечного сховища.</p></div></details>' for label in docs if label in word_ids)
-    portfolio_slides = data.get('portfolio_slides', [])
-    portfolio_titles = {
-        1:'Портфоліо бібліотеки', 2:'Бібліотека — простір знань',
-        3:'Історія бібліотеки', 4:'Команда бібліотеки: історичний зріз',
-        5:'Структура бібліотеки', 6:'Як працює бібліотека',
-        7:'Бібліотечний фонд: дані портфоліо 2017 року',
-        8:'Функції бібліотеки', 9:'Поповнення фонду', 10:'Поповнення фонду: фотоматеріали',
-        11:'Послуги бібліотеки', 12:'Професійний розвиток бібліотекарів',
-        13:'Культурно-просвітницька робота', 14:'Професійні зустрічі',
-        15:'Зустрічі з випускниками', 16:'День української писемності та мови',
-        17:'Конкурси', 18:'Вшанування Максима Рильського',
-        19:'Місячник першокурсника', 20:'Знайомство з природою Житомирщини',
-        21:'Події бібліотеки', 22:'Зустрічі з випускниками',
-        23:'Лекції та дискусії', 24:'Всесвітній день охорони праці',
-        25:'Бібліотечні виставки', 26:'Книжкові виставки', 27:'Книжкові виставки',
-        28:'Книжкові виставки', 29:'Оформлення бібліотечного простору',
-        30:'Фітодизайн бібліотеки', 31:'Фітодизайн бібліотеки',
-        32:'Фітодизайн бібліотеки', 33:'Відзнаки бібліотеки',
-        34:'Нагороди', 35:'Нагороди', 36:'Контактні відомості в портфоліо 2017 року',
+    portfolio_slides = {item['number']: item for item in data.get('portfolio_slides', [])}
+    # Keep the college's documentary photographs, but omit the clip art, charts,
+    # ornamental flourishes and outdated contact slide from the 2017 presentation.
+    portfolio_decorations = {
+        'ff5124d9b23777.jpg', 'ad14f5e8f98d52.jpg', '30fbc351e79f7a.jpg',
+        '6a95d443e78f88.jpg', '839ee48d02b90a.jpg', '6f9de36d752561.jpg',
+        '87ec4dfaf6a7c4.jpg', '3e967d1df96b61.jpg', '35927e2c57ed2b.jpg',
+        '8ac9b987be68e3.jpg', '2eed9d3354ad6c.jpg', 'f9d1794a08f1d5.jpg',
+        'fb28ea2996d411.jpg', '9a2576845646de.jpg', '82b724dec52fef.jpg',
+        'd86444e4024691.jpg', '481c2aaf9468be.jpg',
     }
-    def portfolio_slide_html(item):
-        title = portfolio_titles.get(item['number'], 'Матеріали бібліотеки')
-        text = f'<p>{esc(item["text"])}</p>' if item.get('text') else ''
-        photos = ''.join(f'<figure><img src="{esc(src)}" alt="{esc(title)}" loading="lazy"></figure>'
-                         for src in item.get('images', []))
-        gallery = f'<div class="library-gallery">{photos}</div>' if photos else ''
-        return (f'<article class="library-portfolio-slide"><div><p class="eyebrow">Портфоліо бібліотеки</p>'
-                f'<h3>{esc(title)}</h3>{text}</div>{gallery}</article>')
-    portfolio_html = ''.join(portfolio_slide_html(item) for item in portfolio_slides
-                             if item.get('text') or item.get('images'))
+    modern_portfolio_photos = {
+        'reading-room': ('Читальна зала з книжковими стелажами', 'LibraryReadingRoom4.jpg'),
+        'book-shelves': ('Книжкові стелажі сучасної бібліотеки', 'Library shelves iitd.jpg'),
+        'library-computers': ('Комп’ютерна зона бібліотеки', 'Library computers.jpg'),
+        'books': ('Книги на полицях бібліотеки', 'Library books 1.jpg'),
+    }
+    portfolio_stories = [
+        ('Історія, що почалася 1945 року',
+         'Бібліотека працює від часу заснування коледжу. За десятиліття вона стала місцем для навчання, пошуку інформації та культурних подій.',
+         [2, 5], ['reading-room']),
+        ('Книги, читальна зала й цифровий пошук',
+         'Абонемент, читальна зала та електронні ресурси допомагають знаходити фахову й художню літературу. У портфоліо 2017 року фонд налічував 69 228 видань.',
+         [5, 6, 9, 10, 11], ['library-computers', 'book-shelves']),
+        ('Люди бібліотеки',
+         'За книжками й подіями стоїть команда бібліотекарів. В архіві збереглися кадри їхньої роботи, професійних зустрічей і спілкування з випускниками.',
+         [4, 12, 13, 14, 15], []),
+        ('Зустрічі, лекції та відкриття',
+         'Бібліотека проводить розмови про мову, культуру, право й професію. Ці фотографії показують події, що відбувалися в коледжі на час створення портфоліо.',
+         [16, 17, 18, 19, 20, 21, 22, 23, 24], []),
+        ('Книжкові виставки',
+         'Тематичні добірки знайомлять читачів із новими темами та авторами. Тут зібрані справжні виставки бібліотеки й видання, що були представлені в її просторі.',
+         [25, 26, 27, 28], ['books']),
+        ('Простір, у якому хочеться залишитися',
+         'Читальну залу доповнюють рослини, книжкові полиці й роботи студентів. Оформлення змінюється разом із життям бібліотеки.',
+         [29, 30, 31, 32], []),
+        ('Відзнаки та професійний досвід',
+         'У портфоліо збережені нагороди й сертифікати працівників бібліотеки. Вони відображають участь у професійних подіях на час підготовки презентації.',
+         [33, 34, 35], []),
+    ]
+    def portfolio_story_html(story, index):
+        title, summary, slide_numbers, modern_keys = story
+        images = []
+        for key in modern_keys:
+            alt, _ = modern_portfolio_photos[key]
+            images.append((f'/assets/library/modern/{key}.webp', alt, True))
+        seen = set()
+        for number in slide_numbers:
+            for src in portfolio_slides.get(number, {}).get('images', []):
+                if Path(src).name in portfolio_decorations or src in seen:
+                    continue
+                seen.add(src)
+                images.append((src, f'Архівне фото бібліотеки коледжу: {title}', False))
+        photos = ''.join(
+            f'<figure><img src="{esc(src)}" alt="{esc(alt)}" loading="lazy">'
+            + ('<figcaption>Ілюстративне фото</figcaption>' if illustrative else '')
+            + '</figure>' for src, alt, illustrative in images
+        )
+        return (f'<article class="library-portfolio-story"><div class="library-portfolio-photos">{photos}</div>'
+                f'<div class="library-portfolio-copy"><span class="library-portfolio-index">{index:02d}</span>'
+                f'<div><h3>{esc(title)}</h3><p>{esc(summary)}</p></div></div></article>')
+    portfolio_html = ''.join(portfolio_story_html(story, index)
+                             for index, story in enumerate(portfolio_stories, 1))
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
-      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Переглянути портфоліо бібліотеки {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
+      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Познайомитися з бібліотекою {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
-      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading"><p class="eyebrow">Портфоліо, історія та діяльність</p><h2 id="library-portfolio">Про бібліотеку</h2><p>Нижче — текстовий виклад змісту оригінального портфоліо та його фотографії. Презентацію створено у 2017 році, тому вказані в ній кількісні показники, посади й персональні дані наведено як історичний зріз на час її підготовки.</p></div><div class="library-portfolio-list">{portfolio_html}</div>{image_grid('home')}</section>
+      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">Портфоліо бібліотеки</h2><p>Люди, книжки й події, які творили її історію. Архівні світлини та відомості взято з презентації 2017 року; цифри й персональні дані описують саме той час.</p></div><div class="library-portfolio-list">{portfolio_html}</div><p class="library-portfolio-credits">Ілюстративні фото: <a href="https://commons.wikimedia.org/wiki/File:LibraryReadingRoom4.jpg">читальна зала</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_computers.jpg">комп’ютерна зона</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_shelves_iitd.jpg">книжкові полиці</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_books_1.jpg">книги</a> — Wikimedia Commons, CC0.</p></section>
       <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
       <section class="library-section" id="library-exhibition" role="tabpanel" aria-labelledby="tab-library-exhibition" hidden><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
       <section class="library-section" id="library-new-books" role="tabpanel" aria-labelledby="tab-library-new-books" hidden><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Усі бібліографічні записи, опубліковані на вихідній сторінці нових надходжень.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повних електронних текстів цих книжок на вихідному сайті немає. Тут збережено описи й обкладинки; повні книжки не створювалися з їхніх описів.</p></section>
