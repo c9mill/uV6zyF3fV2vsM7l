@@ -95,11 +95,11 @@
 /* Keep gallery controls on the actual photo, regardless of its aspect ratio. */
 .library-carousel-arrow{top:50%;width:44px;height:54px;padding:0;border:0;border-radius:0;background:transparent!important;color:#f3f7f4;font-size:2.15rem;font-weight:350;line-height:1;text-shadow:0 1px 3px #0008,0 0 7px #0005;transform:translateY(-50%);transition:color .3s ease,transform .3s cubic-bezier(.22,1,.36,1)}
 .library-carousel-arrow:hover{background:transparent!important;color:#fff;transform:translateY(-50%);opacity:1}
-.library-carousel-arrow[data-carousel-prev]{left:var(--carousel-photo-left,0)}
-.library-carousel-arrow[data-carousel-next]{right:var(--carousel-photo-left,0)}
+.library-carousel-arrow[data-carousel-prev]{left:14px}
+.library-carousel-arrow[data-carousel-next]{right:14px}
 .library-lightbox-prev,.library-lightbox-next{background:transparent!important;border:0!important;border-radius:0!important;color:var(--ink);font-size:2.15rem!important;font-weight:350;transition:opacity .2s ease,color .2s ease}
 .library-lightbox-prev:hover,.library-lightbox-next:hover{background:transparent!important;color:#fff}
-@media(max-width:720px){.library-carousel-arrow{width:38px;height:46px;font-size:1.9rem}}
+@media(max-width:720px){.library-carousel-arrow{width:38px;height:46px;font-size:1.9rem}.library-carousel-arrow[data-carousel-prev]{left:8px}.library-carousel-arrow[data-carousel-next]{right:8px}}
 @media(prefers-reduced-motion:reduce){.library-carousel-arrow,.library-lightbox-prev,.library-lightbox-next{transition:none}}
 
 /* Alternate the library stories between copy-left/photo-right and the reverse. */
@@ -136,8 +136,8 @@
 @media(prefers-reduced-motion:reduce){.library-sections::before,.library-sections>button,.council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:.01ms}}
 .library-sections>button{background:color-mix(in srgb,var(--surface) 18%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .library-sections>button:hover{background:color-mix(in srgb,var(--surface) 32%,transparent)}
-/* Gallery photographs sit directly on the page and scale to the same clear frame. */
-.library-carousel-stage,.library-carousel-slide,.library-carousel-open{background:transparent!important}
+/* Photos remain transparent so the shared gallery surface surrounds them. */
+.library-carousel-slide,.library-carousel-open{background:transparent!important}
 .library-carousel-slide{border-radius:0!important;overflow:visible!important}
 .library-carousel-open{display:grid;place-items:center;width:auto;height:auto;max-width:100%;max-height:100%;padding:0;border:0;border-radius:clamp(14px,2vw,24px);overflow:hidden;background:transparent;cursor:grab}
 .library-carousel-open img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border-radius:inherit}
@@ -154,6 +154,5 @@
 .library-carousel-stage>.library-carousel-slide{position:absolute;inset:0;display:grid;place-items:center;align-content:center;justify-content:center;width:100%;height:100%;margin:0;box-sizing:border-box}
 /* Match the page title's green on library section headings. */
 .library-page :is(.library-intro h2,.library-section-heading h2,.library-portfolio-copy h3,.library-story h3){color:var(--accent)}
-/* Frosted frames follow the photograph itself without changing carousel sizing. */
-.library-carousel-open{box-shadow:0 0 0 9px color-mix(in srgb,var(--surface) 40%,transparent),0 16px 38px hsl(var(--page-hue) 42% 5% / .22)}
-@media(max-width:720px){.library-carousel-open{box-shadow:0 0 0 6px color-mix(in srgb,var(--surface) 40%,transparent),0 12px 28px hsl(var(--page-hue) 42% 5% / .2)}}
+/* One translucent gallery frame keeps both arrows at a fixed position. */
+.library-carousel-stage{border-radius:clamp(18px,2vw,28px);background:color-mix(in srgb,var(--surface) 42%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 16px 38px hsl(var(--page-hue) 42% 5% / .14)}
