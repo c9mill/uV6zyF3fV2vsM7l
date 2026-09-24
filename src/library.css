@@ -98,3 +98,14 @@
  .library-lightbox-content>img{height:calc(100% - 58px)}
 }
 @media(prefers-reduced-motion:reduce){.library-carousel-slide.library-slide-from-right,.library-carousel-slide.library-slide-from-left{animation:none}}
+
+/* Unified image window, desktop drag navigation and a discreet corner counter. */
+.library-carousel-stage{cursor:grab;touch-action:pan-y;user-select:none}
+.library-carousel-stage[data-dragging="true"]{cursor:grabbing}
+.library-carousel-slide{padding-inline:58px}
+.library-carousel-open{width:100%;height:100%;align-items:center;justify-content:center;cursor:grab}
+.library-carousel-stage[data-dragging="true"] .library-carousel-open{cursor:grabbing}
+.library-carousel-open img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.library-carousel-count{position:absolute;z-index:3;top:14px;right:14px;min-width:48px;padding:7px 12px;border-radius:999px;background:linear-gradient(100deg,#10281dcc,#10281d8c 72%,#10281d35);color:#f1f7f0;text-align:center;font-size:.78rem;font-weight:650;letter-spacing:.04em;text-shadow:0 1px 8px #0008;backdrop-filter:blur(8px);pointer-events:none}
+.library-carousel-controls{display:none}
+@media(max-width:720px){.library-carousel-slide{padding-inline:42px}.library-carousel-count{top:10px;right:10px;padding:6px 10px;font-size:.72rem}}
