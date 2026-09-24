@@ -16,7 +16,7 @@
     if(reduced.matches||!pointer.matches){scroll?.destroy();scroll=null;delete window.fkbadScroll;return;}
     if(!scroll&&window.Lenis){
       scroll=new Lenis({
-        autoRaf:true, lerp:.075, smoothWheel:true, wheelMultiplier:.9, syncTouch:false,
+        autoRaf:true, lerp:.13, smoothWheel:true, wheelMultiplier:1, syncTouch:false,
         anchors:{offset:-120},
         prevent:node=>node.matches?.('.mobile-nav,.schedule-picker,textarea,select,[data-lenis-prevent]'),
         virtualScroll:({event,deltaX,deltaY})=>!event.shiftKey&&Math.abs(deltaX)<=Math.abs(deltaY),
@@ -34,45 +34,19 @@
     ['.about-intro>img,.location-photo,.admission-intro>img,.editorial-photo,.article-hero','media'],
     ['.student-resources>a,.contact-details>div,.admission-banner,.editorial-section,.document-row,.footer>.container','line'],
   ];
-  const waveSelector='.program-card,.news-card,.resource-tile,.document-link,.document-row,.search-result,.steps>div,.resource-group,.footer-partner,.page-sidebar,.sidebar-help,.info-banner,.inline-cta,.admission-intro,.editorial-section,.contact-details>div,.library-intro,.library-book,.library-portfolio-slide,.library-document,.library-event,.library-source-note,.schedule-sidebar,.schedule-main,.schedule-week td,.schedule-lesson,.quick-links,.student-resources,.filter-bar,.empty-state,.admission-banner,.council-activity-grid article,.council-cta,.council-intro';
-  const waveCards=new Set(),waveOrder=new WeakMap(),waveBackdrop=document.querySelector('.cosmic-backdrop');
-  let waveIndex=0,waveEnergy=0,waveFrame=0,lastWaveScroll=window.scrollY;
-  const waveObserver='IntersectionObserver' in window?new IntersectionObserver(entries=>{
-    if(reduced.matches)return;
-    for(const entry of entries){if(entry.isIntersecting)waveCards.add(entry.target);else waveCards.delete(entry.target);}
-    requestScrollWave();
-  },{rootMargin:'180px 0px'}):null;
-  function registerWave(container=document){
-    if(reduced.matches)return;
-    const elements=[...(container.matches?.(waveSelector)?[container]:[]),...container.querySelectorAll(waveSelector)];
-    for(const el of elements){if(waveOrder.has(el)){waveObserver?.observe(el);if(!waveObserver)waveCards.add(el);continue;}waveOrder.set(el,waveIndex++);el.classList.add('scroll-wave-card');waveObserver?.observe(el);if(!waveObserver)waveCards.add(el);}
+  const waveBackdrop=document.querySelector('.cosmic-backdrop');
+  let waveTimer;
+  function clearScrollWave(){waveBackdrop?.classList.remove('scroll-wave-active');clearTimeout(waveTimer);}
+  if(document.querySelector('.home-page')&&waveBackdrop&&!reduced.matches){
+    let lastWaveScroll=window.scrollY;
+    window.addEventListener('scroll',()=>{
+      const current=window.scrollY,delta=Math.max(-100,Math.min(100,current-lastWaveScroll));lastWaveScroll=current;
+      waveBackdrop.style.setProperty('--brush-wave-shift',`${Math.max(-26,Math.min(26,delta*.34))}px`);
+      waveBackdrop.style.setProperty('--brush-wave-skew',`${Math.max(-3,Math.min(3,delta*.035))}deg`);
+      waveBackdrop.classList.add('scroll-wave-active');clearTimeout(waveTimer);
+      waveTimer=setTimeout(()=>waveBackdrop.classList.remove('scroll-wave-active'),180);
+    },{passive:true});
   }
-  function clearScrollWave(){
-    waveCards.clear();
-    waveBackdrop?.querySelectorAll('.cosmic-nebula,.cosmic-dust').forEach(layer=>['--scroll-wave-x','--scroll-wave-y','--scroll-wave-angle'].forEach(name=>layer.style.removeProperty(name)));
-    document.querySelectorAll(waveSelector).forEach(el=>{el.style.removeProperty('--scroll-wave-yaw');waveObserver?.unobserve(el);});
-    waveEnergy=0;cancelAnimationFrame(waveFrame);waveFrame=0;
-  }
-  function requestScrollWave(){if(reduced.matches)return;if(!waveFrame)waveFrame=requestAnimationFrame(drawScrollWave);}
-  function drawScrollWave(){
-    waveFrame=0;
-    waveEnergy*=.86;
-    const currentScroll=window.scrollY;
-    const intensity=waveEnergy/34,absolute=Math.abs(intensity),phaseOffset=currentScroll*.0018;
-    waveCards.forEach(el=>{
-      const rect=el.getBoundingClientRect(),position=(rect.top+rect.height*.5-innerHeight*.5)/Math.max(innerHeight,1),index=waveOrder.get(el)||0;
-      const phase=position*2.7+phaseOffset+index*.73;
-      const yaw=Math.max(-4.2,Math.min(4.2,Math.sin(phase)*(0.55+absolute*1.35)+Math.cos(phase*.72)*intensity*1.15));
-      el.style.setProperty('--scroll-wave-yaw',`${yaw.toFixed(2)}deg`);
-    });
-    if(waveBackdrop){
-      const nebula=waveBackdrop.querySelector('.cosmic-nebula'),dust=waveBackdrop.querySelector('.cosmic-dust');
-      nebula?.style.setProperty('--scroll-wave-x',`${(waveEnergy*.34).toFixed(1)}px`);nebula?.style.setProperty('--scroll-wave-y',`${(-waveEnergy*.26).toFixed(1)}px`);nebula?.style.setProperty('--scroll-wave-angle',`${(waveEnergy*.012).toFixed(2)}deg`);
-      dust?.style.setProperty('--scroll-wave-x',`${(-waveEnergy*.48).toFixed(1)}px`);dust?.style.setProperty('--scroll-wave-y',`${(waveEnergy*.22).toFixed(1)}px`);dust?.style.setProperty('--scroll-wave-angle',`${(-waveEnergy*.006).toFixed(2)}deg`);
-    }
-    if(Math.abs(waveEnergy)>.22)requestScrollWave();
-  }
-  window.addEventListener('scroll',()=>{const current=window.scrollY;waveEnergy=Math.max(-34,Math.min(34,waveEnergy*.76+(current-lastWaveScroll)*.48));lastWaveScroll=current;requestScrollWave();},{passive:true});
   function reveal(el){
     el.classList.remove('motion-pending');
     el.classList.add('motion-enter');
@@ -120,7 +94,6 @@
     },{rootMargin:'80px'});
     if(hero)mediaObserver.observe(hero);
     register();
-    registerWave();
   }
   // Filters and "load more" reuse the same effects; translator-generated text is ignored.
   for(const id of ['news-results','search-results']){
@@ -131,7 +104,6 @@
         node.classList.remove('motion-pending','motion-enter');
         node.querySelectorAll('.motion-pending,.motion-enter').forEach(el=>el.classList.remove('motion-pending','motion-enter'));
         register(node);
-        registerWave(node);
       }
     }).observe(container,{childList:true});
   }
@@ -191,9 +163,9 @@
     const staticSchedule=event.target.closest('.schedule-table-scroll');
     cursor.classList.toggle('is-visible',!textInput&&!staticSchedule);
     cursor.classList.toggle('is-active',!staticSchedule&&!!event.target.closest('a,button'));
-    const nextMagnet=event.target.closest('a[href],button:not(:disabled),summary');
+    const nextMagnet=event.target.closest('.button,.header-actions>.icon-button,.back-top');
     if(nextMagnet!==magnet){clearMagnet();magnet=nextMagnet;magnet?.classList.add('motion-magnet');}
-    const nextSurface=event.target.closest('.program-card,.news-card,.resource-tile,.document-link,.document-row,.search-result,.steps>div,.resource-group,.footer-partner,.page-sidebar>a,.sidebar-help,.info-banner,.inline-cta,.contact-details>div,.library-book,.library-portfolio-slide,.library-document,.library-event,.schedule-week td,.schedule-lesson,.quick-links>a,.student-resources>a,.section-explorer>a,.council-activity-grid article,.council-tab');
+    const nextSurface=event.target.closest('.program-card,.news-card,.resource-tile');
     if(nextSurface!==surface){surface?.classList.remove('motion-hover');surface=nextSurface;surface?.classList.add('motion-hover');}
     overHero=!!event.target.closest('.hero-visual');
     if(!overHero){hero?.style.removeProperty('--photo-x');hero?.style.removeProperty('--photo-y');}
