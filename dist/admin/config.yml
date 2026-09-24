@@ -32,7 +32,7 @@ collections:
     format: yaml-frontmatter
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     identifier_field: title
-    summary: "{{date | date('DD.MM.YYYY')}} — {{title}}"
+    summary: "{{date | date('DD.MM.YYYY')}} - {{title}}"
     sortable_fields:
       - { field: date, default_sort: desc }
       - title
@@ -182,7 +182,7 @@ collections:
     extension: json
     format: json
     identifier_field: title
-    summary: "{{category}} — {{title}}"
+    summary: "{{category}} - {{title}}"
     sortable_fields: [category, title]
     fields:
       - { label: Назва, name: title, widget: string }

@@ -162,7 +162,7 @@
     el('source').href = data.source;
     el('checked').textContent = `Перевірено ${date(data.checkedAt)}`;
     const periodEnd = new Date(`${data.semester.end}T23:59:59+02:00`);
-    el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} — ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
+    el('status').textContent = Date.now() > periodEnd.getTime() ? 'Період дії цього розкладу завершився.' : `${data.semester.start.split('-').reverse().join('.')} - ${data.semester.end.split('-').reverse().join('.')} · Оновлення кожні 5 хв`;
     const columns = data.days.map((day, dayIndex) => `<section class="schedule-day-column" data-weekday="${dayIndex + 1}"><h3>${escape(day)}</h3>${data.rows.map(row => `<div class="schedule-masonry-slot" data-period="${escape(row.number)}"><span class="schedule-period">${escape(row.number)}</span>${lessons(row.cells[dayIndex], data.splitWeeks)}</div>`).join('')}</section>`).join('');
     el('table').innerHTML = `<div class="schedule-table-scroll" role="region" aria-label="Тижневе розкладання занять"><div class="schedule-masonry" data-schedule-name="${escape(data.selected.name)}">${columns}</div></div>`;
   }
