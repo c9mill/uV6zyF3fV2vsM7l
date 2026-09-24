@@ -1059,41 +1059,32 @@ def library_page():
         'fb28ea2996d411.jpg', '9a2576845646de.jpg', '82b724dec52fef.jpg',
         'd86444e4024691.jpg', '481c2aaf9468be.jpg',
     }
-    modern_portfolio_photos = {
-        'reading-room': ('Читальна зала з книжковими стелажами', 'LibraryReadingRoom4.jpg'),
-        'book-shelves': ('Книжкові стелажі сучасної бібліотеки', 'Library shelves iitd.jpg'),
-        'library-computers': ('Комп’ютерна зона бібліотеки', 'Library computers.jpg'),
-        'books': ('Книги на полицях бібліотеки', 'Library books 1.jpg'),
-    }
     portfolio_stories = [
         ('Історія, що почалася 1945 року',
          'Бібліотека працює від часу заснування коледжу. За десятиліття вона стала місцем для навчання, пошуку інформації та культурних подій.',
-         [2, 5], ['reading-room']),
+         [2, 5]),
         ('Книги, читальна зала й цифровий пошук',
          'Абонемент, читальна зала та електронні ресурси допомагають знаходити фахову й художню літературу. У портфоліо 2017 року фонд налічував 69 228 видань.',
-         [5, 6, 9, 10, 11], ['library-computers', 'book-shelves']),
+         [5, 6, 9, 10, 11]),
         ('Люди бібліотеки',
          'За книжками й подіями стоїть команда бібліотекарів. В архіві збереглися кадри їхньої роботи, професійних зустрічей і спілкування з випускниками.',
-         [4, 12, 13, 14, 15], []),
+         [4, 12, 13, 14, 15]),
         ('Зустрічі, лекції та відкриття',
          'Бібліотека проводить розмови про мову, культуру, право й професію. Ці фотографії показують події, що відбувалися в коледжі на час створення портфоліо.',
-         [16, 17, 18, 19, 20, 21, 22, 23, 24], []),
+         [16, 17, 18, 19, 20, 21, 22, 23, 24]),
         ('Книжкові виставки',
          'Тематичні добірки знайомлять читачів із новими темами та авторами. Тут зібрані справжні виставки бібліотеки й видання, що були представлені в її просторі.',
-         [25, 26, 27, 28], ['books']),
+         [25, 26, 27, 28]),
         ('Простір, у якому хочеться залишитися',
          'Читальну залу доповнюють рослини, книжкові полиці й роботи студентів. Оформлення змінюється разом із життям бібліотеки.',
-         [29, 30, 31, 32], []),
+         [29, 30, 31, 32]),
         ('Відзнаки та професійний досвід',
          'У портфоліо збережені нагороди й сертифікати працівників бібліотеки. Вони відображають участь у професійних подіях на час підготовки презентації.',
-         [33, 34, 35], []),
+         [33, 34, 35]),
     ]
     def portfolio_story_html(story, index):
-        title, summary, slide_numbers, modern_keys = story
+        title, summary, slide_numbers = story
         images = []
-        for key in modern_keys:
-            alt, _ = modern_portfolio_photos[key]
-            images.append((f'/assets/library/modern/{key}.webp', alt, True))
         seen = set()
         for number in slide_numbers:
             for src in portfolio_slides.get(number, {}).get('images', []):
@@ -1111,7 +1102,7 @@ def library_page():
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
       <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Познайомитися з бібліотекою {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
-      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">Бібліотека</h2><p>Люди, книжки й події, які творили її історію. Архівні світлини та відомості взято з презентації 2017 року; цифри й персональні дані описують саме той час.</p></div><div class="library-portfolio-list">{portfolio_html}</div><p class="library-portfolio-credits">Ілюстративні фото: <a href="https://commons.wikimedia.org/wiki/File:LibraryReadingRoom4.jpg">читальна зала</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_computers.jpg">комп’ютерна зона</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_shelves_iitd.jpg">книжкові полиці</a>, <a href="https://commons.wikimedia.org/wiki/File:Library_books_1.jpg">книги</a> — Wikimedia Commons, CC0.</p></section>
+      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">Бібліотека</h2><p>Люди, книжки й події, які творили її історію. Архівні світлини та відомості взято з презентації 2017 року; цифри й персональні дані описують саме той час.</p></div><div class="library-portfolio-list">{portfolio_html}</div></section>
       <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
       <section class="library-section" id="library-exhibition" role="tabpanel" aria-labelledby="tab-library-exhibition" hidden><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
       <section class="library-section" id="library-new-books" role="tabpanel" aria-labelledby="tab-library-new-books" hidden><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Усі бібліографічні записи, опубліковані на вихідній сторінці нових надходжень.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повних електронних текстів цих книжок на вихідному сайті немає. Тут збережено описи й обкладинки; повні книжки не створювалися з їхніх описів.</p></section>
