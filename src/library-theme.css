@@ -2,8 +2,9 @@
 .library-page{--accent:inherit;--surface:inherit;--ink:inherit;--muted:inherit;--soft:inherit}
 .library-intro-stat .display-number{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 58%,white) 4%,color-mix(in srgb,var(--accent) 92%,white) 58%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .library-intro-copy{padding-left:clamp(0px,6vw,86px)}
-.library-book-orbit canvas[data-book-model="open_book"]{left:-104px}
-.library-book-orbit canvas[data-book-model="enchanted_book"]{right:-18px}
-.library-book-orbit canvas[data-book-model="closed_book"]{right:-18px;bottom:-30px}
-@media(max-width:1100px){.library-book-orbit canvas[data-book-model="open_book"]{left:-70px}.library-book-orbit canvas[data-book-model="enchanted_book"]{right:-16px}.library-book-orbit canvas[data-book-model="closed_book"]{right:-16px}}
-@media(max-width:720px){.library-intro-copy{padding-left:0}.library-book-orbit canvas[data-book-model="open_book"]{left:-12px}.library-book-orbit canvas[data-book-model="enchanted_book"]{right:-10px;top:-18px}.library-book-orbit canvas[data-book-model="closed_book"]{right:15%;bottom:-12px}}
+.library-book-orbit{position:fixed;inset:0;z-index:9;pointer-events:none;overflow:hidden}
+.library-book-orbit canvas[data-book-model="open_book"]{left:clamp(-72px,1.2vw,24px);top:31vh;transform:none}
+.library-book-orbit canvas[data-book-model="enchanted_book"]{right:clamp(-72px,1.2vw,24px);top:34vh}
+.library-book-orbit canvas[data-book-model="closed_book"]{left:clamp(-65px,1.6vw,30px);right:auto;top:66vh;bottom:auto}
+@media(max-width:1100px){.library-book-orbit canvas{width:150px;height:130px}.library-book-orbit canvas[data-book-model="open_book"]{left:-58px;top:32vh}.library-book-orbit canvas[data-book-model="enchanted_book"]{right:-58px;top:36vh}.library-book-orbit canvas[data-book-model="closed_book"]{left:-54px;top:69vh}}
+@media(max-width:720px){.library-intro-copy{padding-left:0}.library-book-orbit canvas{width:88px;height:78px;opacity:.8}.library-book-orbit canvas[data-book-model="open_book"]{left:-49px;top:34vh}.library-book-orbit canvas[data-book-model="enchanted_book"]{right:-48px;top:48vh;width:92px;height:80px}.library-book-orbit canvas[data-book-model="closed_book"]{left:-44px;top:66vh;width:84px;height:74px}}
