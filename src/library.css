@@ -150,3 +150,5 @@
 .library-carousel-slide[hidden]{display:none!important}
 .library-carousel-open{position:relative;display:grid;place-items:center;margin:0 auto}
 .library-carousel-open img{display:block;max-width:100%;max-height:100%;object-fit:contain;object-position:center}
+/* Override the older portfolio figure layout so slides never enter document flow. */
+.library-carousel-stage>.library-carousel-slide{position:absolute;inset:0;display:grid;place-items:center;align-content:center;justify-content:center;width:100%;height:100%;margin:0;box-sizing:border-box}
