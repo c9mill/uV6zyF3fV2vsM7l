@@ -156,3 +156,11 @@
 .library-page :is(.library-intro h2,.library-section-heading h2,.library-portfolio-copy h3,.library-story h3){color:var(--accent)}
 /* One translucent gallery frame keeps both arrows at a fixed position. */
 .library-carousel-stage{border-radius:clamp(18px,2vw,28px);background:color-mix(in srgb,var(--surface) 42%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 16px 38px hsl(var(--page-hue) 42% 5% / .14)}
+
+/* Book covers lead the library catalogue; its cards remain only a faint backdrop. */
+.library-page .library-book{grid-template-columns:150px minmax(0,1fr);background:color-mix(in srgb,var(--surface) 18%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:none}
+.library-page .library-book>img{width:150px;height:206px}
+.library-page .library-book-info :is(h3,p,small){text-shadow:0 1px 2px color-mix(in srgb,var(--accent) 24%,#061a0e),0 0 10px color-mix(in srgb,var(--accent) 18%,transparent)}
+.library-page .library-book-record>summary{text-shadow:0 1px 2px color-mix(in srgb,var(--accent) 25%,#061a0e)}
+@media(max-width:900px){.library-page .library-book{grid-template-columns:122px minmax(0,1fr)}.library-page .library-book>img{width:122px;height:174px}}
+@media(max-width:620px){.library-page .library-book{grid-template-columns:114px minmax(0,1fr)}.library-page .library-book>img{width:114px;height:162px}}
