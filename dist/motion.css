@@ -90,8 +90,8 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
   .motion-cursor{display:block;position:fixed;left:0;top:0;z-index:100;pointer-events:none;opacity:0;transition:opacity 200ms;contain:layout style}
   .motion-cursor:before{content:"";position:absolute;width:22px;height:22px;left:-11px;top:-11px;border:1px solid var(--accent);border-radius:50%;opacity:.5;transition:scale 500ms var(--motion-ease),background 300ms,opacity 300ms}
   .motion-cursor.is-visible{opacity:1}.motion-cursor.is-active:before{scale:1.9;background:color-mix(in srgb,var(--accent) 9%,transparent);opacity:.75}.motion-cursor.is-pressed:before{scale:1.2}
-  .program-card,.news-card,.resource-tile{position:relative;isolation:isolate;transition:transform 600ms var(--motion-ease),box-shadow 600ms var(--motion-ease)}
-  .program-card:before,.news-card:before,.resource-tile:before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;background:radial-gradient(300px circle at var(--light-x,50%) var(--light-y,50%),color-mix(in srgb,var(--accent) 7%,transparent),transparent 75%);opacity:0;transition:opacity 550ms}
+  .program-card,.news-card,.resource-tile,.document-link,.document-row,.search-result,.steps>div,.resource-group,.footer-partner,.page-sidebar>a,.sidebar-help,.info-banner,.inline-cta,.contact-details>div,.library-book,.library-portfolio-slide,.library-document,.library-event,.schedule-week td,.schedule-lesson,.quick-links>a,.student-resources>a,.section-explorer>a,.council-activity-grid article,.council-tab{position:relative;isolation:isolate;transition:transform 600ms var(--motion-ease),box-shadow 600ms var(--motion-ease),background-color 420ms}
+  .program-card:before,.news-card:before,.resource-tile:before,.document-link:before,.document-row:before,.search-result:before,.steps>div:before,.resource-group:before,.footer-partner:before,.page-sidebar>a:before,.sidebar-help:before,.info-banner:before,.inline-cta:before,.contact-details>div:before,.library-book:before,.library-portfolio-slide:before,.library-document:before,.library-event:before,.schedule-week td:before,.schedule-lesson:before,.quick-links>a:before,.student-resources>a:before,.section-explorer>a:before,.council-activity-grid article:before,.council-tab:before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;background:radial-gradient(300px circle at var(--light-x,50%) var(--light-y,50%),color-mix(in srgb,var(--accent) 7%,transparent),transparent 75%);opacity:0;transition:opacity 550ms}
   .motion-hover:before{opacity:1}
   .resource-tile:hover,.news-card:hover{transform:translateY(-5px)}
   .program-card:hover{transform:translateY(-6px)}
@@ -157,6 +157,12 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .site-header .mobile-nav .navigation-tree a{opacity:1;transform:none;transition-delay:0ms}
 
 .navigation-unavailable{padding:12px 14px;font-size:.85rem;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}.navigation-unavailable small{display:block;margin-top:4px;font-size:.72rem}
+
+/* Scroll carries a soft wave through the nebula and turns each visible card like a carousel. */
+.scroll-wave-card{rotate:0 1 0 var(--scroll-wave-yaw,0deg);transform-style:preserve-3d;transition:rotate 220ms cubic-bezier(.22,.61,.36,1)}
+:is(.program-grid,.news-grid,.resource-tiles,.document-catalog,.resource-list,.steps,.content-columns,.library-book-list,.library-portfolio-list,.library-documents,.council-activity-grid){perspective:1400px;perspective-origin:50% 48%}
+.cosmic-nebula,.cosmic-dust{translate:var(--scroll-wave-x,0px) var(--scroll-wave-y,0px);rotate:var(--scroll-wave-angle,0deg);transition:translate 360ms cubic-bezier(.22,.61,.36,1),rotate 480ms cubic-bezier(.22,.61,.36,1)}
+@media(prefers-reduced-motion:reduce){.scroll-wave-card{rotate:none!important;transition:none!important}.cosmic-nebula,.cosmic-dust{translate:none!important;rotate:none!important;transition:none!important}}
 
 /* Compact, touch-draggable alphabet directory. Only the list scrolls. */
 .site-header .mobile-nav.has-alphabet{width:min(600px,100%);padding:18px;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100dvh - 140px)}
