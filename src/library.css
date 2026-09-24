@@ -21,13 +21,12 @@
 .library-portfolio-photos img{display:block;width:100%;height:auto;border-radius:inherit;transition:transform .55s cubic-bezier(.2,.7,.2,1)}
 .library-portfolio-photos figure:hover img{transform:scale(1.025)}
 .library-portfolio-photos figcaption{position:absolute;right:9px;bottom:9px;padding:5px 9px;border-radius:999px;background:#0e2019b8;color:#e8f1e8;font-size:.66rem;backdrop-filter:blur(8px)}
-.library-portfolio-copy{display:grid;grid-template-columns:minmax(45px,90px) minmax(0,780px);align-items:start;gap:clamp(14px,3vw,36px);margin:clamp(23px,3vw,38px) 0 0;padding:0 clamp(4px,2vw,26px)}
-.library-portfolio-index{padding-top:.6em;color:var(--accent);font-size:.85rem;font-weight:800;letter-spacing:.16em}
+.library-portfolio-copy{display:block;max-width:780px;margin:0 0 clamp(18px,2.6vw,30px);padding:0 clamp(4px,2vw,26px)}
 .library-portfolio-copy h3{margin:0 0 14px;font-size:clamp(2rem,4.2vw,4.2rem);line-height:1.05;letter-spacing:-.035em;text-wrap:balance}
 .library-portfolio-copy p{max-width:680px;margin:0;color:var(--muted);font-size:clamp(.96rem,1.28vw,1.14rem);line-height:1.72}
 .library-portfolio-credits{max-width:820px;margin:4px 0 36px;color:var(--muted);font-size:.78rem;line-height:1.6}
 .library-portfolio-credits a{color:var(--accent);text-underline-offset:3px}
-@media(max-width:720px){.library-portfolio-heading{margin:20px 0 35px}.library-portfolio-photos{columns:2 150px;column-gap:9px}.library-portfolio-photos figure{margin-bottom:9px;border-radius:15px}.library-portfolio-copy{grid-template-columns:34px minmax(0,1fr);gap:12px;padding:0}.library-portfolio-story{padding-bottom:68px}}
+@media(max-width:720px){.library-portfolio-heading{margin:20px 0 35px}.library-portfolio-photos{columns:2 150px;column-gap:9px}.library-portfolio-photos figure{margin-bottom:9px;border-radius:15px}.library-portfolio-copy{padding:0;margin-bottom:18px}.library-portfolio-story{padding-bottom:68px}}
 @media(max-width:420px){.library-portfolio-photos{columns:2 125px}.library-portfolio-copy h3{font-size:clamp(1.8rem,8vw,2.4rem)}}
 
 /* Library photos stay natural-sized and are browsed as one-image slides. */
@@ -58,7 +57,6 @@
 .library-lightbox-prev,.library-lightbox-next{justify-self:center}
 .library-lightbox button:disabled{opacity:.35;cursor:default}
 .library-intro-stat .display-number{width:100%;white-space:nowrap;letter-spacing:0;transform:scaleX(1.22);transform-origin:center;}
-.library-portfolio-index{display:block;transform:scaleX(1.16);transform-origin:left center;font-size:1rem;letter-spacing:.12em}
 @media(max-width:720px){
  .library-intro{grid-template-columns:minmax(0,1fr) minmax(138px,42vw)}
  .library-intro-stat{grid-column:2;grid-row:2;justify-self:stretch;min-width:0}
@@ -111,7 +109,7 @@
 @media(max-width:720px){.library-carousel-slide{padding-inline:42px}.library-carousel-count{top:10px;right:10px;padding:6px 10px;font-size:.72rem}}
 .library-intro-stat .display-number{line-height:1.12;padding:.04em .06em .12em;overflow:visible}
 @media(max-width:720px){.library-intro-stat .display-number{line-height:1.12;padding:.05em .04em .14em}}
-.library-intro-stat .display-number,.library-portfolio-index{filter:drop-shadow(0 0 8px #79f6a18c) drop-shadow(0 0 22px #3abf6a55)}
+.library-intro-stat .display-number{filter:drop-shadow(0 0 8px #79f6a18c) drop-shadow(0 0 22px #3abf6a55)}
 /* A single green glow glides beneath the active library tab. */
 .library-sections{position:relative;isolation:isolate}
 .library-sections::before{content:"";position:absolute;z-index:0;left:0;top:0;width:var(--tab-glow-width,0px);height:var(--tab-glow-height,0px);border-radius:999px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 88%,#b5ffca),var(--accent));box-shadow:0 0 18px color-mix(in srgb,var(--accent) 46%,transparent),0 0 38px color-mix(in srgb,var(--accent) 25%,transparent);opacity:0;transform:translate3d(var(--tab-glow-x,0px),var(--tab-glow-y,0px),0);transition:transform 520ms cubic-bezier(.2,.78,.2,1),width 420ms cubic-bezier(.2,.78,.2,1),height 420ms cubic-bezier(.2,.78,.2,1),opacity 220ms ease;pointer-events:none}

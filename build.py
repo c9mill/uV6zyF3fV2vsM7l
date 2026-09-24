@@ -1081,7 +1081,7 @@ def library_page():
          'У портфоліо збережені нагороди й сертифікати працівників бібліотеки. Вони відображають участь у професійних подіях на час підготовки презентації.',
          [33, 34, 35]),
     ]
-    def portfolio_story_html(story, index):
+    def portfolio_story_html(story):
         title, summary, slide_numbers = story
         images = []
         seen = set()
@@ -1093,11 +1093,10 @@ def library_page():
                 images.append((src, f'Архівне фото бібліотеки коледжу: {title}', False))
         carousel_images = [{'src': src, 'alt': alt, 'caption': 'Ілюстративне фото' if illustrative else ''} for src, alt, illustrative in images]
         carousel = photo_carousel(carousel_images, 'library-portfolio-photos', f'Фото до розділу: {title}')
-        return (f'<article class="library-portfolio-story">{carousel}'
-                f'<div class="library-portfolio-copy"><span class="library-portfolio-index">{index:02d}</span>'
-                f'<div><h3>{esc(title)}</h3><p>{esc(summary)}</p></div></div></article>')
-    portfolio_html = ''.join(portfolio_story_html(story, index)
-                             for index, story in enumerate(portfolio_stories, 1))
+        return (f'<article class="library-portfolio-story">'
+                f'<div class="library-portfolio-copy"><h3>{esc(title)}</h3><p>{esc(summary)}</p></div>'
+                f'{carousel}</article>')
+    portfolio_html = ''.join(portfolio_story_html(story) for story in portfolio_stories)
     library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
       <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Познайомитися з бібліотекою {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
