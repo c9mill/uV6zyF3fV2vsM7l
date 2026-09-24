@@ -288,6 +288,31 @@ def featured(p):
         result = asset(i['src'])
         if result: return result
     return ''
+def news_photos(p):
+    items=[];seen=set();hero=featured(p)
+    if hero:
+        items.append({'src':hero,'alt':title(p)});seen.add(hero)
+    soup=BeautifulSoup(p.get('content',{}).get('rendered',''),'html.parser')
+    for image in soup.select('img[src]'):
+        src=asset(image.get('src',''))
+        if src and src not in seen:
+            items.append({'src':src,'alt':clean_text(image.get('alt','')) or title(p)})
+            seen.add(src)
+    return items
+def news_photo_carousel(images,label='Фотографії новини',href='',extra_class=''):
+    if not images:return ''
+    slides=[]
+    for index,item in enumerate(images):
+        image=f'<img src="{escape(item["src"],quote=True)}" alt="{escape(item.get("alt",label),quote=True)}" loading="lazy" decoding="async">'
+        photo=f'<a class="news-photo-link" href="{escape(href,quote=True)}">{image}</a>' if href else image
+        caption=f'<figcaption>{escape(item["caption"])}</figcaption>' if item.get('caption') else ''
+        slides.append(f'<figure class="news-photo-slide" data-news-slide{ "" if index==0 else " hidden" }>{photo}{caption}</figure>')
+    disabled=' disabled' if len(images)<2 else ''
+    return (f'<div class="news-photo-carousel {escape(extra_class,quote=True)}" data-news-carousel aria-label="{escape(label,quote=True)}">'
+            f'<div class="news-photo-stage">{ "".join(slides) }'
+            f'<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"{disabled}>‹</button>'
+            f'<span class="news-photo-count" data-news-count aria-live="polite">1 / {len(images)}</span>'
+            f'<button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"{disabled}>›</button></div></div>')
 def local_url(u):
     if not u: return ''
     u = unescape(u).strip()
@@ -480,10 +505,11 @@ WRITTEN = []
 PAGE_PALETTES = {}
 def write(path,content,standalone=False):
     is_library_page = unquote(path).rstrip('/') in ('/бібліотека', '/library')
+    is_news_page = 'новин' in unquote(path).lower() or ' is-article' in content
     # Give each internal route its own stable palette; preserve the two bespoke pages.
     if path != '/' and 'council-page-heading' not in content and '<html lang="uk"' in content:
         palette_groups = [
-            (('новин',), 345), (('вступ', 'приймаль', 'абітур'), 24),
+            (('новин',), 278), (('вступ', 'приймаль', 'абітур'), 24),
             (('психолог',), 278), (('бібліот', 'літератур'), 38),
             (('розклад',), 188), (('контакт', 'реквізит'), 170),
             (('спорт', 'здоров'), 142), (('волонтер', 'благодій'), 12),
@@ -500,18 +526,18 @@ def write(path,content,standalone=False):
         if is_library_page:
             hue = 142
             companion = 94
+        elif is_news_page:
+            hue = 278
+            companion = 315
         else:
-            if ' is-article' in content:
-                hue = 345
-            else:
-                hue = next((h for words,h in palette_groups if any(w in label for w in words)), None)
-                if hue is None:
-                    label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
-                    hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
+            hue = next((h for words,h in palette_groups if any(w in label for w in words)), None)
+            if hue is None:
+                label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
+                hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
             seed = int(hashlib.sha256(path.encode()).hexdigest()[:8],16)
             hue = round((hue + (seed % 36000) / 100) % 360, 2)
             companion = round((hue + 35 + seed % 55) % 360, 2)
-        while hue in PAGE_PALETTES and PAGE_PALETTES[hue] != path:
+        while not is_news_page and hue in PAGE_PALETTES and PAGE_PALETTES[hue] != path:
             hue = round((hue + .17) % 360, 2)
         PAGE_PALETTES[hue] = path
         content = content.replace('<html lang="uk"', f'<html lang="uk" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{companion}"', 1)
@@ -550,20 +576,13 @@ def write(path,content,standalone=False):
     dest.write_text('\n'.join(line.rstrip() for line in content.splitlines()),encoding='utf-8')
     if not standalone: WRITTEN.append(path)
 def news_card(p):
-    img = featured(p)
-    width, height = 640, 430
-    if img:
-        try:
-            with Image.open(OUT / img.lstrip('/')) as photo_file:
-                width, height = photo_file.size
-        except (OSError, ValueError):
-            pass
-    ratio = max(.7, min(1.9, width / height))
-    visual = f'<img src="{img}" alt="{escape(title(p),quote=True)}" loading="lazy" width="{width}" height="{height}">' if img else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
+    images=news_photos(p)
+    ratio=1.55
+    visual = news_photo_carousel(images,f'Фотографії новини: {title(p)}',ROUTES[p['id']],'news-card-carousel') if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
     excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
     excerpt = re.sub(r'\s+', ' ', excerpt).strip()
     category = p.get('category', 'Життя коледжу')
-    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><a href="{ROUTES[p["id"]]}" class="news-image">{visual}</a><div class="news-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
+    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><div class="news-image">{visual}</div><div class="news-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
 PROGRAMS = [
     ('будівництво','Будівництво та експлуатація будівель та споруд','Від креслення до реальної будівлі. Теорія, навчальні майстерні та практика на будівельних майданчиках.','Будівництво','БУДІВЕЛЬНИК'),
     ('проєктування','Проєктування будівель та інтер’єрів','Простір починається з ідеї. Знайомся з освітньою програмою та роботами студентів коледжу.','Проєктування','ПРОЄКТУВАЛЬНИК'),
@@ -760,11 +779,31 @@ def editorial_content(content):
         else:
             current.append(node.extract())
         length += len(node.get_text())
-    # Fail the build if presentation ever drops or reorders text or photographs.
-    assert re.sub(r'\s+', '', ''.join(result.stripped_strings)) == re.sub(r'\s+', '', original_text)
-    assert [i.get('src') for i in result.select('img')] == original_images
     for gallery in result.select('.editorial-gallery'):
         gallery['class'].append('single-photo' if len(gallery.contents) == 1 else 'photo-grid')
+    for gallery in list(result.select('.editorial-gallery.photo-grid')):
+        frames=gallery.select(':scope > .editorial-photo')
+        if len(frames)<2:continue
+        images=[];expected_photo_count=sum(len(frame.find_all('img')) for frame in frames)
+        for frame in frames:
+            frame_images=frame.find_all('img')
+            if not frame_images or frame.find(['video','audio']):
+                images=[];break
+            caption=frame.find('figcaption')
+            for index,image in enumerate(frame_images):
+                images.append({'src':image.get('src',''),'alt':image.get('alt',''),
+                               'caption':caption.get_text(' ',strip=True) if caption and index==0 else ''})
+        if len(images)==expected_photo_count and expected_photo_count>1:
+            carousel=BeautifulSoup(news_photo_carousel(images,'Галерея новини',extra_class='news-editorial-carousel'),'html.parser').div
+            gallery.replace_with(carousel)
+    # Fail the build if presentation ever drops or reorders text or photographs.
+    comparison=BeautifulSoup(str(result),'html.parser')
+    for control in comparison.select('[data-news-step],[data-news-count]'):control.decompose()
+    rendered_text=re.sub(r'\s+', '', ''.join(comparison.stripped_strings))
+    expected_text=re.sub(r'\s+', '', original_text)
+    assert rendered_text == expected_text
+    actual_images=[i.get('src') for i in result.select('img')]
+    assert actual_images == original_images
     return str(result)
 
 
@@ -833,7 +872,7 @@ def documents():
 SEARCH=[]
 for p in PAGES + POSTS:
     if p['id'] in [308,625]: continue
-    SEARCH.append({'title':normalize_name_text(title(p)),'url':ROUTES[p['id']],'type':'Новина' if p.get('type')=='post' else 'Розділ','text':normalize_name_text(clean_text(p['content']['rendered'])[:2200]), 'date':date(p),'iso':iso_date(p),'image':featured(p) if p.get('type')=='post' else ''})
+    SEARCH.append({'title':normalize_name_text(title(p)),'url':ROUTES[p['id']],'type':'Новина' if p.get('type')=='post' else 'Розділ','text':normalize_name_text(clean_text(p['content']['rendered'])[:2200]), 'date':date(p),'iso':iso_date(p),'image':featured(p) if p.get('type')=='post' else '', 'images':[item['src'] for item in news_photos(p)] if p.get('type')=='post' else []})
 for d in DOCUMENTS:SEARCH.append({'title':d['title'],'url':d['url'],'type':'Документ','text':d['category']})
 for t,u in [('Спеціальності','/спеціальності/'),('Документи','/документи/'),('Контакти','/контакти/'),('Розклад занять',SCHEDULE)]:SEARCH.append({'title':t,'url':u,'type':'Розділ','text':FULL_DISPLAY})
 
