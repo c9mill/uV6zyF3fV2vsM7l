@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
-const VERSION = 'b63bc914fbd2';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=920e99d607e8", "/experience.css?v=93ad01ea7d29", "/app.js?v=f7fc0f904e40", "/experience.js?v=2dbe797aedd4", "/motion.css?v=82281c48e79f", "/motion.js?v=258eea70efd8", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=a2f3902e58a1"];
+const VERSION = '6b7c16fa44db';
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=07f628fca47b", "/experience.css?v=04ba8d60a6ba", "/app.js?v=cd1a10ca4164", "/experience.js?v=5b7c6722335d", "/motion.css?v=cdbb15050085", "/motion.js?v=9d3115710446", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=e374ffd46a16"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
