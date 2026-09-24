@@ -143,6 +143,13 @@ MANIFEST = legacy_read('media_manifest.json') if (LEGACY_EXPORT/'media_manifest.
 NAVIGATION = json.loads((ROOT/'src/navigation.json').read_text(encoding='utf-8'))
 MENU_SOURCE = CONTENT / 'navigation-source.json'
 MENUS = json.loads(MENU_SOURCE.read_text(encoding='utf-8')) if MENU_SOURCE.is_file() else NAVIGATION
+# The college library is one unified destination now. Its own source sections
+# are rendered as anchors inside that page instead of separate menu entries.
+for nav_tree in (NAVIGATION, MENUS):
+    library_node = next((x for x in nav_tree if x.get('label', '').upper() == 'БІБЛІОТЕКА'), None)
+    if library_node:
+        library_node['url'] = '/бібліотека/'
+        library_node['children'] = []
 BY_ID = {p['id']:p for p in PAGES + POSTS}
 NAME = 'Фаховий коледж будівництва, архітектури та дизайну'
 FULL_NAME = NAME + ' Поліського національного університету'
@@ -350,6 +357,8 @@ SCHEDULE = '/розклад/'
 RULES = menu_find('ПРАВИЛА ПРИЙОМУ НА НАВЧАННЯ У 2026').get('url','/вступнику/')
 DATES = menu_find('Строки вступної кампанії').get('url','/вступнику/')
 shutil.copytree(ROOT/'src/assets', OUT/'assets', dirs_exist_ok=True)
+for stale_library_asset in ('.pdf', '10.pdf', '2026.pdf'):
+    (OUT/'assets/library'/stale_library_asset).unlink(missing_ok=True)
 CAMPUS = '/assets/campus.webp'
 ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
 ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
@@ -521,6 +530,9 @@ def write(path,content,standalone=False):
                     nav.append(link_tag)
                 page_heading.insert_after(nav)
                 content = str(page)
+    if path == '/бібліотека/' and '<head>' in content:
+        library_styles = (ROOT/'src/library.css').read_text(encoding='utf-8')
+        content = content.replace('</head>', '<style>'+library_styles+'</style></head>', 1)
     for asset in ['styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
@@ -960,6 +972,81 @@ for p in POSTS:
     others=[x for x in POSTS if x['id']!=p['id']][:3]
     body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
+
+def library_page():
+    data_path = CONTENT / 'library.json'
+    if not data_path.is_file():
+        return
+    data = json.loads(data_path.read_text(encoding='utf-8'))
+    sections = data.get('pages', {})
+    def esc(value): return escape(str(value or ''))
+    def image_grid(section, extra_class=''):
+        photos = sections.get(section, {}).get('images', [])
+        if not photos: return ''
+        return '<div class="library-gallery '+extra_class+'">'+''.join(
+            f'<figure><img src="{esc(item["src"])}" alt="{esc(item.get("alt") or "Матеріали бібліотеки")}" loading="lazy"></figure>'
+            for item in photos)+' </div>'
+    def book_records(section):
+        blocks = sections.get(section, {}).get('blocks', [])
+        covers = sections.get(section, {}).get('images', [])
+        records, current = [], []
+        for block in blocks:
+            # The source separates classification marks, authors, citations and
+            # annotations into individual text blocks. A short numeric block
+            # starts each bibliographic record.
+            starts_record = len(block) < 45 and bool(re.match(r'^\s*[\d(]', block)) and '[Текст]' not in block
+            if starts_record:
+                if current: records.append(current)
+                current = [block]
+            elif current:
+                current.append(block)
+        if current: records.append(current)
+        cards = []
+        for item in records:
+            citation = next((part for part in item if '[Текст]' in part), '')
+            if not citation: continue
+            code = item[0]
+            title = re.split(r'\s*\[Текст\]', citation, maxsplit=1)[0]
+            if len(title) > 180: title = title[:177].rsplit(' ', 1)[0]+'…'
+            description = ' '.join(part for part in item[1:] if part != citation)
+            cover = covers[len(cards)] if len(cards) < len(covers) else None
+            cover_html = f'<img src="{esc(cover["src"])}" alt="{esc(title)}" loading="lazy">' if cover else ''
+            cards.append(f'<article class="library-book">{cover_html}<small>{esc(code)}</small><h3>{esc(title)}</h3><p>{esc(citation)}</p>{f"<p>{esc(description)}</p>" if description else ""}<span>Бібліографічний опис · повного тексту у джерелі немає</span></article>')
+        return cards
+    arrivals = book_records('arrivals')
+    exhibition = book_records('exhibition')
+    arrivals_html = ''.join(arrivals)
+    exhibition_html = ''.join(exhibition)
+    periods = [x for x in sections.get('periodicals', {}).get('blocks', []) if x and x != 'Передплата періодичних видань']
+    period_html = ''.join(f'<span>{esc(item)}</span>' for item in periods)
+    news = sections.get('news', {}).get('blocks', [])
+    event_blocks = sections.get('events', {}).get('blocks', [])
+    event_text = ' '.join(event_blocks)
+    documents = data.get('documents', [])
+    def pdf_viewer(item):
+        return f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(item["title"])}</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="{esc(item["title"])}" src="{esc(item["url"])}#view=FitH" loading="lazy"></iframe><a href="{esc(item["url"])}" download>Завантажити PDF</a></div></details>'
+    arrivals_pdf = next((item for item in documents if '2026' in item['title']), None)
+    rule_pdfs = [item for item in documents if item is not arrivals_pdf]
+    pdf_cards = ''.join(pdf_viewer(item) for item in rule_pdfs)
+    docs = data.get('word_documents', {})
+    word_ids = {'Положення про бібліотеку':'1GLZauRWW1N6EAO3imYhGcxwLQiTa_h2i','Правила користування бібліотекою':'1jRMJPdkMCu-jlKMbU9fP7zEc_74PhqB7'}
+    word_cards = ''.join(f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(label)}</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="{esc(label)}" src="https://drive.google.com/file/d/{word_ids[label]}/preview" loading="lazy"></iframe><p>Цей вихідний документ опублікований у форматі Word; для перегляду він вбудований з бібліотечного сховища.</p></div></details>' for label in docs if label in word_ids)
+    portfolio = data.get('portfolio', '')
+    library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
+      <section class="library-intro"><div><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Добірки видань, бібліотечні новини, віртуальні виставки та нормативні документи зібрані на цій сторінці за матеріалами бібліотеки коледжу.</p><a class="text-link" href="#library-new-books">Перейти до нових надходжень {icon('arrow')}</a></div><div class="library-intro-mark">{icon('book')}<span>{len(arrivals)}<small>нових видань<br>у каталозі</small></span></div></section>
+      <nav class="library-sections" aria-label="Розділи бібліотеки">{''.join(f'<a href="#{anchor}">{label} {icon("arrow")}</a>' for anchor,label in [('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')])}</nav>
+      <section class="library-section" id="library-about"><div class="library-section-heading"><p class="eyebrow">Історія та діяльність</p><h2>Про бібліотеку</h2></div><p>Бібліотека є навчальним інформаційним і культурно-просвітницьким підрозділом коледжу. Тут зібрані матеріали для навчання, професійного розвитку та знайомства з виданнями працівників коледжу.</p>{image_grid('home')}<details class="library-document library-portfolio"><summary><span>{icon('book')}</span><strong>Портфоліо бібліотеки</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="Портфоліо бібліотеки коледжу" src="{esc(portfolio)}" loading="lazy" allow="autoplay"></iframe></div></details></section>
+      <section class="library-section" id="library-news"><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
+      <section class="library-section" id="library-exhibition"><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
+      <section class="library-section" id="library-new-books"><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Усі бібліографічні записи, опубліковані на вихідній сторінці нових надходжень.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повних електронних текстів цих книжок на вихідному сайті немає. Тут збережено описи й обкладинки; повні книжки не створювалися з їхніх описів.</p></section>
+      <section class="library-section" id="library-periodicals"><div class="library-section-heading"><p class="eyebrow">Читання та фахова преса</p><h2>Періодичні видання</h2></div><div class="library-periodical-list">{period_html}</div></section>
+      <section class="library-section" id="library-rules"><div class="library-section-heading"><p class="eyebrow">Документи для читачів</p><h2>Нормативна база</h2><p>Доступні PDF відкриваються без переходу на окрему сторінку.</p></div><div class="library-documents">{pdf_cards}{word_cards}</div></section>
+      <section class="library-section" id="library-events"><div class="library-section-heading"><p class="eyebrow">Життя бібліотеки</p><h2>Заходи</h2></div><article class="library-event"><p>{esc(event_text)}</p></article>{image_grid('events')}</section>
+      </div>'''
+    write('/бібліотека/', shell('Головна сторінка бібліотеки', library_html, '/бібліотека/', 'Бібліотека коледжу: нові надходження, виставки, періодика, події та документи.'))
+    SEARCH.append({'title':'Головна сторінка бібліотеки','url':'/бібліотека/','type':'Сторінка','text':'Бібліотека · Книги · Нові надходження · Виставки · Періодика · Документи'})
+
+library_page()
 
 # Preserve important legacy page paths with static forwarding pages.
 for p in PAGES:
