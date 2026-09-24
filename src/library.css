@@ -152,3 +152,8 @@
 .library-carousel-open img{display:block;max-width:100%;max-height:100%;object-fit:contain;object-position:center}
 /* Override the older portfolio figure layout so slides never enter document flow. */
 .library-carousel-stage>.library-carousel-slide{position:absolute;inset:0;display:grid;place-items:center;align-content:center;justify-content:center;width:100%;height:100%;margin:0;box-sizing:border-box}
+/* Match the page title's green on library section headings. */
+.library-page :is(.library-intro h2,.library-section-heading h2,.library-portfolio-copy h3,.library-story h3){color:var(--accent)}
+/* Frosted frames follow the photograph itself without changing carousel sizing. */
+.library-carousel-open{box-shadow:0 0 0 9px color-mix(in srgb,var(--surface) 40%,transparent),0 16px 38px hsl(var(--page-hue) 42% 5% / .22)}
+@media(max-width:720px){.library-carousel-open{box-shadow:0 0 0 6px color-mix(in srgb,var(--surface) 40%,transparent),0 12px 28px hsl(var(--page-hue) 42% 5% / .2)}}
