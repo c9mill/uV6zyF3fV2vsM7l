@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
-const VERSION = '0decb9978fda';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=07f628fca47b", "/experience.css?v=633f62bb7a10", "/app.js?v=7ce15bcf8966", "/experience.js?v=5b7c6722335d", "/motion.css?v=2e89fa3c57b5", "/motion.js?v=3aeed7574841", "/hero-crane.css?v=50d5810e6d2c", "/hero-crane.js?v=7ab623ae617f", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=e374ffd46a16"];
+const VERSION = '6b7c16fa44db';
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/styles.css?v=07f628fca47b", "/experience.css?v=633f62bb7a10", "/app.js?v=7ce15bcf8966", "/experience.js?v=5b7c6722335d", "/motion.css?v=2e89fa3c57b5", "/motion.js?v=3aeed7574841", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=e374ffd46a16"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -29,7 +29,7 @@ function sameOrigin(url) {
 
 function staticRequest(url) {
   return sameOrigin(url) && (
-    /\.(?:css|js|webp|svg|jpe?g|png|woff2?|obj|mtl)$/i.test(url.pathname) ||
+    /\.(?:css|js|webp|svg|jpe?g|png|woff2?)$/i.test(url.pathname) ||
     url.pathname === '/manifest.webmanifest' || url.pathname === OFFLINE_URL
   );
 }
