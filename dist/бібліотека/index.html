@@ -111,6 +111,15 @@
 @media(max-width:720px){.library-carousel-arrow{width:38px;height:46px;font-size:1.9rem}.library-carousel-stage::before,.library-carousel-stage::after{width:54px}.library-carousel-stage::before{border-radius:14px 0 0 14px}.library-carousel-stage::after{border-radius:0 14px 14px 0}}
 @media(prefers-reduced-motion:reduce){.library-carousel-stage::before,.library-carousel-stage::after,.library-carousel-arrow,.library-lightbox-prev,.library-lightbox-next{transition:none}}
 
+/* Alternate the library stories between copy-left/photo-right and the reverse. */
+.library-portfolio-story{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);align-items:center;gap:clamp(28px,6vw,92px)}
+.library-portfolio-story .library-portfolio-copy{grid-column:1;grid-row:1;max-width:620px;margin:0;padding:0}
+.library-portfolio-story .library-carousel{grid-column:2;grid-row:1;width:100%;margin:0}
+.library-portfolio-story:nth-child(even){grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr)}
+.library-portfolio-story:nth-child(even) .library-portfolio-copy{grid-column:2;justify-self:end}
+.library-portfolio-story:nth-child(even) .library-carousel{grid-column:1}
+@media(max-width:720px){.library-portfolio-story,.library-portfolio-story:nth-child(even){grid-template-columns:minmax(0,1fr);gap:18px}.library-portfolio-story .library-portfolio-copy,.library-portfolio-story:nth-child(even) .library-portfolio-copy{grid-column:1;grid-row:1;justify-self:stretch}.library-portfolio-story .library-carousel,.library-portfolio-story:nth-child(even) .library-carousel{grid-column:1;grid-row:2;width:100%}}
+
 /* Unified image window, desktop drag navigation and a discreet corner counter. */
 .library-carousel-stage{cursor:grab;touch-action:pan-y;user-select:none}
 .library-carousel-stage[data-dragging="true"]{cursor:grabbing}
