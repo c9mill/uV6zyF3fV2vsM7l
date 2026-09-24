@@ -70,3 +70,31 @@
  .library-lightbox-prev,.library-lightbox-next{width:32px;height:38px;border-radius:12px;font-size:.95rem}
 }
 @media(prefers-reduced-motion:reduce){.library-carousel-open img,.library-lightbox-content>img{transition:none}}
+
+/* Keep gallery viewports the same size and move photos with a light slide. */
+.library-carousel-stage{position:relative;display:flex;height:clamp(280px,44vw,620px);min-height:0;align-items:center;justify-content:center;overflow:hidden}
+.library-carousel-slide{position:absolute;inset:0;display:grid;place-items:center;width:auto;height:100%;padding-inline:58px}
+.library-carousel-slide[hidden]{display:none}
+.library-carousel-slide.library-slide-from-right{animation:library-slide-from-right .42s cubic-bezier(.22,.72,.25,1) both}
+.library-carousel-slide.library-slide-from-left{animation:library-slide-from-left .42s cubic-bezier(.22,.72,.25,1) both}
+.library-carousel-open{display:inline-flex;max-width:100%;max-height:100%}
+.library-carousel-open img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain}
+.library-carousel-arrow{position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:42px;height:42px;border:0;border-radius:50%;background:color-mix(in srgb,var(--surface) 82%,transparent);color:var(--ink);font:inherit;font-size:1.15rem;cursor:pointer;transition:background .2s,transform .2s}
+.library-carousel-arrow:hover{background:color-mix(in srgb,var(--accent) 28%,var(--surface));transform:translateY(-50%) scale(1.06)}
+.library-carousel-arrow[data-carousel-prev]{left:4px}
+.library-carousel-arrow[data-carousel-next]{right:4px}
+.library-carousel-controls{margin-top:8px}
+.library-lightbox-content>img{width:100%;height:calc(100% - 58px);max-height:none;object-fit:contain}
+.library-lightbox-content{overflow:hidden}
+.library-lightbox[open]{height:100dvh}
+@keyframes library-slide-from-right{from{opacity:.45;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes library-slide-from-left{from{opacity:.45;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:720px){
+ .library-carousel-stage{height:min(62vh,460px);min-height:240px}
+ .library-carousel-slide{padding-inline:42px}
+ .library-carousel-arrow{width:34px;height:38px;border-radius:12px}
+ .library-carousel-arrow[data-carousel-prev]{left:2px}
+ .library-carousel-arrow[data-carousel-next]{right:2px}
+ .library-lightbox-content>img{height:calc(100% - 58px)}
+}
+@media(prefers-reduced-motion:reduce){.library-carousel-slide.library-slide-from-right,.library-carousel-slide.library-slide-from-left{animation:none}}
