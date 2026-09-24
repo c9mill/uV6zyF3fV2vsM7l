@@ -40,7 +40,8 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
 
       const instance = {canvas, renderer, scene, camera, group, ready: false, visible: false,
         floatPhase: Math.random() * Math.PI * 2, baseX: initial[0], baseY: initial[1],
-        dragging: false, previousX: 0, previousY: 0, velocityX: 0, velocityY: 0, scrollOffset: 0};
+        dragging: false, previousX: 0, previousY: 0, velocityX: 0, velocityY: 0,
+        scrollPosition: 0, scrollTarget: 0, scrollVelocity: 0};
       instances.push(instance);
 
       const resize = new ResizeObserver(() => {
@@ -120,14 +121,24 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
   }
 
   let previousScrollY = window.scrollY;
+  let previousScrollAt = performance.now();
+  let scrollReleaseTimer;
   window.addEventListener('scroll', () => {
+    const now = performance.now();
     const currentScrollY = window.scrollY;
     const scrollDelta = currentScrollY - previousScrollY;
+    const elapsed = Math.max(8, now - previousScrollAt);
     previousScrollY = currentScrollY;
+    previousScrollAt = now;
     if (reducedMotion || Math.abs(scrollDelta) < 1) return;
+    const speed = THREE.MathUtils.clamp(scrollDelta / elapsed * 1000, -1800, 1800);
     for (const instance of instances) {
-      instance.scrollOffset = THREE.MathUtils.clamp(instance.scrollOffset - scrollDelta * 0.001, -0.32, 0.32);
+      instance.scrollTarget = THREE.MathUtils.clamp(-speed * 0.04, -48, 48);
     }
+    clearTimeout(scrollReleaseTimer);
+    scrollReleaseTimer = setTimeout(() => {
+      for (const instance of instances) instance.scrollTarget = 0;
+    }, 110);
   }, {passive: true});
 
   let started = false;
@@ -140,9 +151,14 @@ if (canvases.length && 'WebGLRenderingContext' in window) {
     for (const instance of instances) {
       if (!instance.visible || !instance.ready) continue;
       if (!reducedMotion) {
-        instance.scrollOffset *= Math.pow(0.976, Math.min(48, time - previousFrameTime) / 16.67);
-        if (Math.abs(instance.scrollOffset) < 0.0005) instance.scrollOffset = 0;
-        instance.group.position.y = Math.sin(time * 0.00075 + instance.floatPhase) * 0.11 + instance.scrollOffset;
+        const deltaTime = Math.min(0.05, Math.max(0, (time - previousFrameTime) / 1000));
+        instance.scrollVelocity += (26 * (instance.scrollTarget - instance.scrollPosition) - 5.5 * instance.scrollVelocity) * deltaTime;
+        instance.scrollPosition += instance.scrollVelocity * deltaTime;
+        if (Math.abs(instance.scrollTarget) < 0.001 && Math.abs(instance.scrollPosition) < 0.08 && Math.abs(instance.scrollVelocity) < 0.35) {
+          instance.scrollTarget = instance.scrollPosition = instance.scrollVelocity = 0;
+        }
+        instance.canvas.style.setProperty('--scroll-drift', `${instance.scrollPosition.toFixed(2)}px`);
+        instance.group.position.y = Math.sin(time * 0.00075 + instance.floatPhase) * 0.11;
         if (!instance.dragging) {
           instance.baseY += instance.velocityY;
           instance.baseX += instance.velocityX;
