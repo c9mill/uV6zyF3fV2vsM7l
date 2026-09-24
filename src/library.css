@@ -122,3 +122,9 @@
 @media(prefers-reduced-motion:reduce){.library-sections::before,.library-sections>button,.council-tabs [role="tab"],.schedule-choice,.alphabet-index button{transition-duration:.01ms}}
 .library-sections>button{background:color-mix(in srgb,var(--surface) 18%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .library-sections>button:hover{background:color-mix(in srgb,var(--surface) 32%,transparent)}
+/* Gallery photographs sit directly on the page and scale to the same clear frame. */
+.library-carousel-stage,.library-carousel-slide,.library-carousel-open{background:transparent!important}
+.library-carousel-slide{border-radius:0!important;overflow:visible!important}
+.library-carousel-open{display:grid;place-items:center;width:auto;height:auto;max-width:100%;max-height:100%;padding:0;border:0;border-radius:clamp(14px,2vw,24px);overflow:hidden;background:transparent;cursor:grab}
+.library-carousel-open img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border-radius:inherit}
+.library-lightbox-content>img{border-radius:clamp(14px,2vw,24px)}
