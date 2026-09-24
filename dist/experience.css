@@ -572,3 +572,21 @@ html[data-page-palette] .interior-arrived{animation:interior-arrive 650ms cubic-
 @media(max-width:720px){.news-card .news-image{margin-bottom:17px;border-radius:20px}.news-card .news-meta,.news-card h3,.news-card>.text-link{margin-inline:20px}.news-excerpt{margin-inline:20px}.news-photo-arrow{width:42px;height:48px}.news-photo-count{top:9px;right:9px}.article-prose .news-editorial-carousel{min-height:200px;max-height:60vh;margin:18px 0}}
 @media(prefers-reduced-motion:reduce){.news-photo-enter{animation:none}.news-photo-arrow{transition:none}}
 @media print{html[data-page-palette] .section-explorer{display:none}html[data-page-palette] .interior-card{box-shadow:none;background:none}}
+
+/* Site-wide frosted glass for content cards and grouped resource panels. */
+:root,[data-theme="light"]{--card-glass:color-mix(in srgb,var(--surface) 58%,transparent);--card-glass-hover:color-mix(in srgb,var(--surface) 70%,transparent)}
+[data-theme="dark"]{--card-glass:color-mix(in srgb,var(--surface) 38%,transparent);--card-glass-hover:color-mix(in srgb,var(--surface) 50%,transparent)}
+:is(.program-card,.news-card,.quick-links,.student-resources,.resource-tile,.page-sidebar,.sidebar-help,.resource-group,.document-link,.document-row,.search-result,.filter-bar,.empty-state,.info-banner,.inline-cta,.admission-intro,.steps>div,.footer-partner,.editorial-section,.contact-details>div,.library-intro,.library-book,.library-portfolio-slide,.library-document,.library-event,.library-source-note,.schedule-sidebar,.schedule-main,.schedule-week td){
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 4%,transparent),transparent 68%),var(--card-glass)!important;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:0!important;
+  box-shadow:0 10px 32px color-mix(in srgb,var(--ink) 5%,transparent)!important;
+}
+:is(.program-card,.news-card,.resource-tile,.document-link,.document-row,.search-result,.footer-partner,.library-book,.library-portfolio-slide,.library-document,.library-event,.schedule-week td):hover{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 7%,transparent),transparent 68%),var(--card-glass-hover)!important;
+  box-shadow:0 14px 38px color-mix(in srgb,var(--ink) 8%,transparent)!important;
+}
+:is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a){background:transparent;transition:background 260ms,color 260ms}
+:is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a):hover{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.schedule-week td{background:color-mix(in srgb,var(--lesson-color,var(--accent)) 9%,var(--card-glass))!important}
+.schedule-lesson{background:color-mix(in srgb,var(--lesson-color) 11%,var(--card-glass))!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
