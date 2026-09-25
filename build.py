@@ -347,7 +347,7 @@ def icon(name):
 def social_icon(name):
     marks = {
         'telegram': '<path d="M21.8 4.3 18.5 20c-.2 1.1-.8 1.4-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.8.4l.3-4.7 8.5-7.7c.4-.3-.1-.5-.5-.2L7 13.9l-4.5-1.4c-1-.3-1-1 .2-1.5L20 3.8c.9-.3 2 .2 1.8.5Z"/>',
-        'instagram': '<rect x="3.5" y="3.5" width="17" height="17" rx="5.5" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="17.7" cy="6.5" r="1.25"/>',
+        'instagram': '<defs><linearGradient id="instagram-brand" x1="3" y1="21" x2="21" y2="3" gradientUnits="userSpaceOnUse"><stop stop-color="#FEDA75"/><stop offset=".32" stop-color="#FA7E1E"/><stop offset=".62" stop-color="#D62976"/><stop offset=".82" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="3.5" y="3.5" width="17" height="17" rx="5.5" fill="none" stroke="url(#instagram-brand)" stroke-width="2.1"/><circle cx="12" cy="12" r="4" fill="none" stroke="url(#instagram-brand)" stroke-width="2.1"/><circle cx="17.7" cy="6.5" r="1.25" fill="url(#instagram-brand)"/>',
         'facebook': '<path d="M13.3 21v-8h2.8l.4-3.1h-3.2V8c0-.9.3-1.5 1.5-1.5h1.8V3.7c-.3 0-1.4-.1-2.7-.1-2.6 0-4.4 1.6-4.4 4.5v1.8H6.8V13h2.7v8h3.8Z"/>'
     }
     return f'<svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{marks[name]}</svg>'
@@ -477,7 +477,7 @@ PARTNERS = (
 
 def footer():
     socials = ''.join(
-        f'<a class="social-link social-link--{name}" href="{escape(url, quote=True)}" aria-label="{label}" title="{label}" target="_blank" rel="noopener noreferrer">{social_icon(name)}</a>'
+        f'<a class="social-link social-link--{name}" href="{escape(url, quote=True)}" aria-label="{label}" title="{label}" target="_blank" rel="noopener noreferrer">{social_icon(name)}<span class="social-link-label">{label}</span></a>'
         for name,url,label in [('telegram',TELEGRAM,'Телеграм'),('instagram',INSTAGRAM,'Інстаграм'),('facebook',FACEBOOK,'Фейсбук')]
         if url
     )

@@ -542,11 +542,16 @@ html[data-page-palette] .interior-arrived{animation:interior-arrive 650ms cubic-
 @media(max-width:720px){html[data-page-palette] .page-heading{padding:25px 21px;border-radius:24px}html[data-page-palette] :is(.resource-group,.document-row,.search-result){padding:15px 18px}html[data-page-palette] .interior-arrived{animation-duration:450ms}}
 @media(prefers-reduced-motion:reduce){html[data-page-palette] .interior-arrived{animation:none}}
 
-.footer-grid .socials>a.social-link{display:inline-flex;align-items:center;justify-content:center;flex:0 0 48px;width:48px;min-height:48px;height:48px;padding:0;border-radius:50%;color:#fff;background:radial-gradient(circle at 28% 20%,color-mix(in srgb,var(--page-companion,var(--secondary)) 74%,white 26%),transparent 46%),linear-gradient(145deg,color-mix(in srgb,var(--accent-solid,var(--accent)) 92%,var(--surface)),color-mix(in srgb,var(--page-companion,var(--secondary)) 82%,var(--accent)));box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 24%,transparent);transition:transform 320ms var(--ease),box-shadow 320ms var(--ease),filter 320ms var(--ease)}
-.footer-grid .socials>a.social-link:hover{color:#fff;transform:translateY(-4px) scale(1.05);filter:saturate(1.12);box-shadow:0 12px 28px color-mix(in srgb,var(--accent) 34%,transparent)}
-.social-icon{width:23px;height:23px;fill:currentColor;transition:transform 320ms var(--ease)}
+.footer-grid .socials>a.social-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;flex:0 0 auto;width:auto;min-height:44px;height:44px;padding:0 16px;border:0;border-radius:999px;color:#f5f7fa;background:color-mix(in srgb,var(--surface) 13%,transparent);box-shadow:0 5px 16px #0002;transition:transform 280ms var(--ease),box-shadow 280ms var(--ease),background-color 280ms var(--ease),filter 280ms var(--ease)}
+.footer-grid .socials>a.social-link:hover{color:#fff;transform:translateY(-3px);filter:saturate(1.08);box-shadow:0 9px 24px #0003}
+.footer-grid .socials>a.social-link--instagram{background:linear-gradient(115deg,#feda75 0%,#fa7e1e 28%,#d62976 58%,#962fbf 80%,#4f5bd5 100%)}
+.footer-grid .socials>a.social-link--telegram{background:rgb(34 158 217 / 15%)}
+.footer-grid .socials>a.social-link--facebook{background:rgb(24 119 242 / 15%)}
+.social-icon{width:21px;height:21px;flex:0 0 21px;fill:currentColor;transition:transform 280ms var(--ease)}
+.social-link--telegram .social-icon{color:#29a9e8}
+.social-link--facebook .social-icon{color:#1877f2}
 .social-link:hover .social-icon{transform:scale(1.08)}
-html[data-page-palette] .footer .socials>a.social-link,html[data-page-palette] .footer .socials>a.social-link:hover{color:#fff}
+.social-link-label{font-size:.8125rem;font-weight:600;white-space:nowrap}
 
 /* News uses one photo at a time and frosted violet glass for every card. */
 .news-card,html[data-page-palette] .news-card{background:linear-gradient(140deg,hsl(278 52% 54% / .2),hsl(316 46% 48% / .1)),color-mix(in srgb,var(--surface) 68%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0;box-shadow:inset 0 0 42px hsl(286 78% 72% / .035),0 12px 38px hsl(278 56% 24% / .1)}
