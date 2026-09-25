@@ -101,12 +101,25 @@ collections:
             widget: object
             fields:
               - { label: Текст цитати, name: value, widget: text }
-      - label: Редактор публікації
+          - label: Посилання
+            name: link
+            widget: object
+            fields:
+              - { label: Текст посилання, name: label, widget: string }
+              - { label: Адреса сторінки або документа, name: url, widget: string }
+          - label: Список
+            name: list
+            widget: object
+            fields:
+              - { label: Тип списку, name: style, widget: select, options: [{ label: Маркований, value: unordered }, { label: Нумерований, value: ordered }], default: unordered }
+              - { label: Пункти, name: items, widget: list, field: { label: Пункт списку, name: item, widget: string } }
+      - label: Візуальний редактор публікації
         name: body
-        widget: markdown
+        widget: richtext
+        modes: [rich_text]
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
         required: false
-        hint: "Візуальний редактор: форматуй текст кнопками та додавай зображення через панель. Для нового матеріалу зручніше використовувати блоки вище."
+        hint: "Форматуй текст кнопками. Режим вихідного Markdown і вставлення коду вимкнені."
         editor_components: [image]
 
   - name: pages
@@ -165,12 +178,25 @@ collections:
             widget: object
             fields:
               - { label: Текст цитати, name: value, widget: text }
+          - label: Посилання
+            name: link
+            widget: object
+            fields:
+              - { label: Текст посилання, name: label, widget: string }
+              - { label: Адреса сторінки або документа, name: url, widget: string }
+          - label: Список
+            name: list
+            widget: object
+            fields:
+              - { label: Тип списку, name: style, widget: select, options: [{ label: Маркований, value: unordered }, { label: Нумерований, value: ordered }], default: unordered }
+              - { label: Пункти, name: items, widget: list, field: { label: Пункт списку, name: item, widget: string } }
       - label: Візуальний редактор сторінки
         name: body
-        widget: markdown
+        widget: richtext
+        modes: [rich_text]
         buttons: [bold, italic, link, heading-one, heading-two, heading-three, heading-four, quote, bulleted-list, numbered-list]
         required: false
-        hint: "Редагуй сторінку кнопками: текст, заголовки, списки, посилання та зображення. Код писати не потрібно."
+        hint: "Форматуй текст кнопками. Режим вихідного Markdown і вставлення коду вимкнені."
         editor_components: [image]
 
   - name: documents
@@ -190,6 +216,170 @@ collections:
       - { label: Файл, name: file, widget: file, required: false, hint: Завантаж файл або вкажи посилання нижче }
       - { label: Зовнішнє посилання, name: url, widget: string, required: false }
       - { label: Опубліковано, name: published, widget: boolean, default: true }
+
+  - name: library
+    label: Бібліотека
+    files:
+      - name: library_content
+        label: Сторінка бібліотеки та її розділи
+        file: src/content/library.json
+        format: json
+        fields:
+          - { label: Джерело матеріалів, name: source, widget: hidden }
+          - label: Розділи бібліотеки
+            name: pages
+            widget: object
+            fields:
+              - label: Головна сторінка бібліотеки
+                name: home
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+              - label: Бібліотека інформує
+                name: news
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+              - label: Віртуальна виставка
+                name: exhibition
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії та обкладинки
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+              - label: Нові надходження
+                name: arrivals
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Опис і бібліографічні дані видань, name: blocks, widget: list, field: { label: Текст або опис видання, name: item, widget: text } }
+                  - label: Обкладинки та фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото або обкладинка, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+              - label: Періодичні видання
+                name: periodicals
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+              - label: Нормативна база
+                name: rules
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Документи та PDF для перегляду на сторінці
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва документа, name: label, widget: string }
+                      - { label: Посилання на документ, name: url, widget: string }
+              - label: Заходи в бібліотеці
+                name: events
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текстові блоки, name: blocks, widget: list, field: { label: Текст, name: item, widget: text } }
+                  - label: Фотографії
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: Фото, name: src, widget: image }
+                      - { label: Опис фото, name: alt, widget: string, required: false }
+                  - label: Файли та посилання
+                    name: files
+                    widget: list
+                    fields:
+                      - { label: Назва, name: label, widget: string }
+                      - { label: Посилання, name: url, widget: string }
+          - label: Документи бібліотеки
+            name: documents
+            widget: list
+            fields:
+              - { label: Назва документа, name: title, widget: string }
+              - { label: PDF на сайті, name: url, widget: file, required: false }
+          - label: Посилання на документи Word
+            name: word_documents
+            widget: object
+            fields:
+              - { label: Положення про бібліотеку, name: "Положення про бібліотеку", widget: string }
+              - { label: Правила користування бібліотекою, name: "Правила користування бібліотекою", widget: string }
+          - { label: Посилання на портфоліо, name: portfolio, widget: string }
+          - label: Слайди портфоліо бібліотеки
+            name: portfolio_slides
+            widget: list
+            summary: "Слайд {{number}}"
+            fields:
+              - { label: Номер слайда, name: number, widget: number, value_type: int }
+              - { label: Текст слайда, name: text, widget: text }
+              - label: Фотографії слайда
+                name: images
+                widget: list
+                field: { label: Фото, name: src, widget: image }
 
   - name: settings
     label: Налаштування сайту
