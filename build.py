@@ -1078,6 +1078,8 @@ for p in PAGES:
     if path in CUSTOM or path in ('/','/новини/'):continue
     t=title(p)
     content=sanitize(p['content']['rendered'],t)
+    if p['id'] == 371:
+        content += '<details class="distance-video-disclosure"><summary>Відеорекомендації</summary><div class="distance-video"><iframe src="https://www.youtube-nocookie.com/embed/ocbM_PWYtek" title="Відеорекомендації щодо дистанційного навчання" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></details>'
     if p['id'] == 814:
         content_soup = BeautifulSoup(content, 'html.parser')
         material_images = content_soup.select('img')
