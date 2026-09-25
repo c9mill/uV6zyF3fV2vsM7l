@@ -19,3 +19,4 @@
 .site-header .menu-toggle span{display:block;width:21px;height:2px;background:currentColor;border-radius:4px}
 .language-toggle{font-size:.72rem;font-weight:700;letter-spacing:.04em}
 .goog-te-banner-frame,.skiptranslate iframe,.goog-te-balloon-frame,.goog-te-menu-frame,.goog-te-ftab,.goog-tooltip,.goog-te-spinner-pos{display:none!important}body{top:0!important}.goog-te-gadget,.goog-te-gadget-simple,#google_translate_element{display:none!important;font-size:0!important}.goog-te-gadget select,.goog-te-combo{display:none!important}.notranslate{translate:no}
+.distance-video-disclosure{margin-block:28px}.distance-video-disclosure summary{cursor:pointer;color:var(--accent);font-weight:700;padding-block:12px}.distance-video{width:min(100%,900px);aspect-ratio:16/9;margin-top:10px}.distance-video iframe{display:block;width:100%;height:100%;border:0;border-radius:20px}
