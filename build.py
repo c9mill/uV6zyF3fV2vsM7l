@@ -1168,7 +1168,7 @@ def library_page():
     rule_pdfs = [item for item in documents if item is not arrivals_pdf]
     pdf_cards = ''.join(pdf_viewer(item) for item in rule_pdfs)
     docs = data.get('word_documents', {})
-    word_ids = {'Положення про бібліотеку':'1GLZauRWW1N6EAO3imYhGcxwLQiTa_h2i','Правила користування бібліотекою':'1jRMJPdkMCu-jlKMbU9fP7zEc_74PhqB7'}
+    word_ids = {label: (re.search(r'/d/([^/]+)', url).group(1) if re.search(r'/d/([^/]+)', url) else url) for label, url in docs.items()}
     word_cards = ''.join(f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(label)}</strong><small>Переглянути на сторінці</small></summary><div class="library-pdf"><iframe title="{esc(label)}" src="https://drive.google.com/file/d/{word_ids[label]}/preview" loading="lazy"></iframe><p>Цей вихідний документ опублікований у форматі Word; для перегляду він вбудований з бібліотечного сховища.</p></div></details>' for label in docs if label in word_ids)
     portfolio_slides = {item['number']: item for item in data.get('portfolio_slides', [])}
     # Keep the college's documentary photographs, but omit the clip art, charts,
