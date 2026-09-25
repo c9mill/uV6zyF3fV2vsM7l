@@ -87,6 +87,17 @@ def render_content_blocks(blocks):
             value = str(block.get('value') or '').strip()
             if value:
                 rendered.append(f'<blockquote>{markdown.markdown(value, extensions=["extra"])} </blockquote>')
+        elif kind == 'link':
+            label = escape(str(block.get('label') or '').strip())
+            url = str(block.get('url') or '').strip()
+            parsed_url = urlparse(url)
+            if label and url and (url.startswith('/') and not url.startswith('//') or parsed_url.scheme.lower() in {'https', 'http', 'mailto', 'tel'}):
+                rendered.append(f'<p><a class="text-link" href="{escape(url, quote=True)}">{label}</a></p>')
+        elif kind == 'list':
+            items = [escape(str(item or '').strip()) for item in block.get('items', []) if str(item or '').strip()]
+            if items:
+                tag = 'ol' if block.get('style') == 'ordered' else 'ul'
+                rendered.append(f'<{tag}>' + ''.join(f'<li>{item}</li>' for item in items) + f'</{tag}>')
     return ''.join(rendered)
 
 def cms_record(path, kind):
