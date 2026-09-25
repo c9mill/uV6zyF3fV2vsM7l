@@ -493,7 +493,7 @@ html[data-page-palette] .cosmic-nebula{background:radial-gradient(ellipse at 35%
 html[data-page-palette] .cosmic-dust{filter:sepia(1) hue-rotate(calc((var(--page-hue) - 45) * 1deg));opacity:.45}
 html[data-page-palette] :is(.site-header,.mobile-nav,.footer){background:var(--surface)}
 html[data-page-palette] :is(.page-heading h1,.subheading,.section-heading h2){color:var(--accent)}
-html[data-page-palette] :is(.search-field,.header-search,.icon-button,.theme-toggle,.socials a){background:var(--card);color:var(--ink)}
+html[data-page-palette] :is(.search-field,.header-search,.icon-button,.theme-toggle){background:var(--card);color:var(--ink)}
 html[data-page-palette] .button{background:var(--accent-solid);color:#fff;box-shadow:0 8px 24px hsl(var(--page-hue) 55% 45% / .15)}
 html[data-page-palette] .button.secondary{background:var(--blue-soft);color:var(--ink)}
 html[data-page-palette] :is(.admission-banner,.future-banner,.future-art){background:linear-gradient(120deg,hsl(var(--page-hue) 50% 22%),hsl(var(--page-hue) 60% 40%));box-shadow:none}
@@ -541,6 +541,12 @@ html[data-page-palette] .interior-arrived{animation:interior-arrive 650ms cubic-
 @media(hover:hover) and (prefers-reduced-motion:no-preference){html[data-page-palette] .interior-card:hover{box-shadow:0 16px 42px hsl(var(--card-hue) 70% 45% / .19)}}
 @media(max-width:720px){html[data-page-palette] .page-heading{padding:25px 21px;border-radius:24px}html[data-page-palette] :is(.resource-group,.document-row,.search-result){padding:15px 18px}html[data-page-palette] .interior-arrived{animation-duration:450ms}}
 @media(prefers-reduced-motion:reduce){html[data-page-palette] .interior-arrived{animation:none}}
+
+.footer-grid .socials>a.social-link{display:inline-flex;align-items:center;justify-content:center;flex:0 0 48px;width:48px;min-height:48px;height:48px;padding:0;border-radius:50%;color:#fff;background:radial-gradient(circle at 28% 20%,color-mix(in srgb,var(--page-companion,var(--secondary)) 74%,white 26%),transparent 46%),linear-gradient(145deg,color-mix(in srgb,var(--accent-solid,var(--accent)) 92%,var(--surface)),color-mix(in srgb,var(--page-companion,var(--secondary)) 82%,var(--accent)));box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 24%,transparent);transition:transform 320ms var(--ease),box-shadow 320ms var(--ease),filter 320ms var(--ease)}
+.footer-grid .socials>a.social-link:hover{color:#fff;transform:translateY(-4px) scale(1.05);filter:saturate(1.12);box-shadow:0 12px 28px color-mix(in srgb,var(--accent) 34%,transparent)}
+.social-icon{width:23px;height:23px;fill:currentColor;transition:transform 320ms var(--ease)}
+.social-link:hover .social-icon{transform:scale(1.08)}
+html[data-page-palette] .footer .socials>a.social-link,html[data-page-palette] .footer .socials>a.social-link:hover{color:#fff}
 
 /* News uses one photo at a time and frosted violet glass for every card. */
 .news-card,html[data-page-palette] .news-card{background:linear-gradient(140deg,hsl(278 52% 54% / .2),hsl(316 46% 48% / .1)),color-mix(in srgb,var(--surface) 68%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0;box-shadow:inset 0 0 42px hsl(286 78% 72% / .035),0 12px 38px hsl(278 56% 24% / .1)}

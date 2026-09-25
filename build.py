@@ -344,6 +344,13 @@ def icon(name):
         'palette':'<path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1.6-3.2 1.8 1.8 0 0 1 1.4-2.9h1.3A3.7 3.7 0 0 0 21 11c0-4.5-4-8-9-8Z"/><circle cx="7.5" cy="9" r="1"/><circle cx="11" cy="6.5" r="1"/><circle cx="16" cy="8" r="1"/><circle cx="6.5" cy="14" r="1"/>'
     })
     return f'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{paths.get(name,paths["arrow"])}</svg>'
+def social_icon(name):
+    marks = {
+        'telegram': '<path d="M21.8 4.3 18.5 20c-.2 1.1-.8 1.4-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.8.4l.3-4.7 8.5-7.7c.4-.3-.1-.5-.5-.2L7 13.9l-4.5-1.4c-1-.3-1-1 .2-1.5L20 3.8c.9-.3 2 .2 1.8.5Z"/>',
+        'instagram': '<rect x="3.5" y="3.5" width="17" height="17" rx="5.5" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="17.7" cy="6.5" r="1.25"/>',
+        'facebook': '<path d="M13.3 21v-8h2.8l.4-3.1h-3.2V8c0-.9.3-1.5 1.5-1.5h1.8V3.7c-.3 0-1.4-.1-2.7-.1-2.6 0-4.4 1.6-4.4 4.5v1.8H6.8V13h2.7v8h3.8Z"/>'
+    }
+    return f'<svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{marks[name]}</svg>'
 def link(u,label,cls=''):
     u = local_url(u)
     if not u: return ''
@@ -469,7 +476,11 @@ PARTNERS = (
 )
 
 def footer():
-    socials = ''.join(link(url, label+' ↗') for url,label in [(FACEBOOK,'Фейсбук'),(TELEGRAM,'Телеграм'),(INSTAGRAM,'Інстаграм')] if url)
+    socials = ''.join(
+        f'<a class="social-link social-link--{name}" href="{escape(url, quote=True)}" aria-label="{label}" title="{label}" target="_blank" rel="noopener noreferrer">{social_icon(name)}</a>'
+        for name,url,label in [('telegram',TELEGRAM,'Телеграм'),('instagram',INSTAGRAM,'Інстаграм'),('facebook',FACEBOOK,'Фейсбук')]
+        if url
+    )
     address = escape(ADDRESS).replace('\n', '<br>')
     partner_cards = ''.join(f'<a class="footer-partner" href="{url}" target="_blank" rel="noopener noreferrer"><img src="{logo}" alt="" loading="lazy"><span>{escape(name)}</span><span class="footer-partner-arrow" aria-hidden="true">↗</span></a>' for url,name,logo in PARTNERS)
     return f'''<footer class="footer"><div class="container footer-partners"><div class="footer-partners-heading"><p class="eyebrow">Партнери та ресурси</p><h2>Працюємо разом</h2></div><div class="footer-partners-grid">{partner_cards}</div></div><div class="container footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="{LOGO}" width="54" height="48" alt=""><strong>{ABBR}</strong></a><p>{FULL_DISPLAY}</p><div class="socials">{socials}</div></div><div><h3>Навчання</h3><a href="/вступнику/">Вступнику</a><a href="/спеціальності/">Спеціальності</a><a href="/студенту/">Студенту</a>{link(SCHEDULE,'Розклад занять')}</div><div><h3>Коледж</h3><a href="/про-коледж/">Про коледж</a><a href="/новини/">Новини</a><a href="/документи/">Документи</a><a href="/контакти/">Контакти</a></div><div><h3>Завітай до нас</h3><p>{address}</p><a href="tel:{phone_href(PHONE_PRIMARY)}">{escape(PHONE_PRIMARY)}</a><a href="mailto:{escape(EMAIL, quote=True)}">{escape(EMAIL)}</a></div></div><div class="container footer-signature" aria-hidden="true">{escape(FOOTER_SIGNATURE)}</div><div class="container footer-bottom"><span>© 2026 {ABBR}</span><span aria-hidden="true"></span><span>{escape(FOOTER_SLOGAN)}</span></div></footer>'''
