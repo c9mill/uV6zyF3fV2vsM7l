@@ -309,10 +309,9 @@ if(siteSearch){
  siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});input.addEventListener('input',()=>search());if(input.value)search(false);
 }
 
-function newsPhotoCollageMarkup(images,title,href){
- const photos=(images||[]).filter(src=>typeof src==='string'&&src);if(!photos.length)return '';
- const visible=photos.slice(0,4),tiles=visible.map((src,index)=>`<a class="news-collage-item news-collage-item--${visible.length} news-collage-item--${index+1}" href="${escapeHTML(href)}" aria-label="Переглянути новину: ${escapeHTML(title)}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></a>`).join('');
- return `<div class="news-collage news-collage--${visible.length}" aria-label="Фотографії новини: ${escapeHTML(title)}">${tiles}</div>`;
+function newsPreviewMarkup(image,title,href){
+ if(typeof image!=='string'||!image)return '';
+ return `<a class="news-image" href="${escapeHTML(href)}" aria-label="Переглянути новину: ${escapeHTML(title)}"><img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></a>`;
 }
 function stepNewsPhoto(carousel,direction){
  if(!carousel)return;
@@ -400,7 +399,7 @@ if(newsForm){
   status.textContent='Шукаємо новини…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
-   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><div class="news-image">${newsPhotoCollageMarkup(r.images?.length?r.images:(r.image?[r.image]:[]),r.title,r.url)||'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</div><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
+   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)||'<div class="news-image"><div class="news-placeholder">ВСП ФКБАД Поліського університету</div></div>'}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
  newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
