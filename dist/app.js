@@ -309,11 +309,11 @@ if(siteSearch){
  siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});input.addEventListener('input',()=>search());if(input.value)search(false);
 }
 
-function newsPhotoCarouselMarkup(images,title){
+function newsPhotoCarouselMarkup(images,title,href){
  const photos=(images||[]).filter(src=>typeof src==='string'&&src);if(!photos.length)return '';
- const slides=photos.map((src,index)=>`<figure class="news-photo-slide" data-news-slide${index?' hidden':''}><button type="button" class="news-photo-open" data-site-photo-open aria-label="Збільшити фото ${index+1}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></button></figure>`).join('');
+ const slides=photos.map((src,index)=>`<figure class="news-photo-slide" data-news-slide${index?' hidden':''}>${href?`<a class="news-photo-link" href="${escapeHTML(href)}" aria-label="Переглянути новину: ${escapeHTML(title)}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></a>`:`<button type="button" class="news-photo-open" data-site-photo-open aria-label="Збільшити фото ${index+1}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></button>`}</figure>`).join('');
  const disabled=photos.length<2?' disabled':'';
- return `<div class="news-photo-carousel news-card-carousel" data-news-carousel aria-label="Фотографії новини: ${escapeHTML(title)}"><div class="news-photo-stage">${slides}<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"${disabled}>‹</button><span class="news-photo-count" data-news-count aria-live="polite">1 / ${photos.length}</span><button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"${disabled}>›</button></div></div>`;
+ return `<div class="news-photo-carousel news-card-carousel" data-news-carousel aria-label="Фотографії новини: ${escapeHTML(title)}"><div class="news-photo-stage">${slides}<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"${disabled}>‹</button><button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"${disabled}>›</button></div></div>`;
 }
 function stepNewsPhoto(carousel,direction){
  if(!carousel)return;
@@ -323,7 +323,7 @@ function stepNewsPhoto(carousel,direction){
  const outgoing=slides[current],incoming=slides[next],stage=carousel.querySelector('.news-photo-stage');
  const distance=stage.getBoundingClientRect().width,side=direction<0?-1:1;
  carousel._photoMoving=true;incoming.hidden=false;
- carousel.dataset.index=String(next);carousel.querySelector('[data-news-count]').textContent=`${next+1} / ${slides.length}`;
+ carousel.dataset.index=String(next);const count=carousel.querySelector('[data-news-count]');if(count)count.textContent=`${next+1} / ${slides.length}`;
  const finish=()=>{
   outgoing.hidden=true;outgoing.getAnimations().forEach(animation=>animation.cancel());incoming.getAnimations().forEach(animation=>animation.cancel());
   carousel._photoMoving=false;
@@ -361,9 +361,10 @@ document.addEventListener('click',event=>{
  if(button){event.preventDefault();event.stopPropagation();stepNewsPhoto(button.closest('[data-news-carousel]'),Number(button.dataset.newsStep));return;}
  if(suppressNewsPhotoClick&&event.target.closest('.news-photo-stage')){event.preventDefault();event.stopPropagation();suppressNewsPhotoClick=false;return;}
  const opener=event.target.closest('[data-site-photo-open]');
+ if(opener&&!document.body.classList.contains('is-article'))return;
  if(opener){activeSitePhoto=opener.closest('[data-news-carousel]');activeSitePhotoImages=[...activeSitePhoto.querySelectorAll('[data-news-slide] img')];sitePhotoIndex=Number(activeSitePhoto.dataset.index||0);sitePhotoZoom=1;syncSitePhoto();sitePhotoDialog.showModal();return;}
  const inlinePhoto=event.target.closest('.prose img');
- if(inlinePhoto&&!inlinePhoto.closest('[data-news-carousel],a')){
+ if(document.body.classList.contains('is-article')&&inlinePhoto&&!inlinePhoto.closest('[data-news-carousel],a')){
   activeSitePhoto=null;activeSitePhotoImages=[...document.querySelectorAll('.prose img')].filter(image=>!image.closest('[data-news-carousel],a'));
   sitePhotoIndex=activeSitePhotoImages.indexOf(inlinePhoto);sitePhotoZoom=1;syncSitePhoto();sitePhotoDialog.showModal();
  }
@@ -400,7 +401,7 @@ if(newsForm){
   status.textContent='Шукаємо новини…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
-   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><div class="news-image">${newsPhotoCarouselMarkup(r.images?.length?r.images:(r.image?[r.image]:[]),r.title)||'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</div><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
+   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><div class="news-image">${newsPhotoCarouselMarkup(r.images?.length?r.images:(r.image?[r.image]:[]),r.title,r.url)||'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</div><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
  newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
