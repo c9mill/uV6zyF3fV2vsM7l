@@ -309,11 +309,10 @@ if(siteSearch){
  siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});input.addEventListener('input',()=>search());if(input.value)search(false);
 }
 
-function newsPhotoCarouselMarkup(images,title,href){
+function newsPhotoCollageMarkup(images,title,href){
  const photos=(images||[]).filter(src=>typeof src==='string'&&src);if(!photos.length)return '';
- const slides=photos.map((src,index)=>`<figure class="news-photo-slide" data-news-slide${index?' hidden':''}>${href?`<a class="news-photo-link" href="${escapeHTML(href)}" aria-label="Переглянути новину: ${escapeHTML(title)}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></a>`:`<button type="button" class="news-photo-open" data-site-photo-open aria-label="Збільшити фото ${index+1}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></button>`}</figure>`).join('');
- const disabled=photos.length<2?' disabled':'';
- return `<div class="news-photo-carousel news-card-carousel" data-news-carousel aria-label="Фотографії новини: ${escapeHTML(title)}"><div class="news-photo-stage">${slides}<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"${disabled}>‹</button><button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"${disabled}>›</button></div></div>`;
+ const visible=photos.slice(0,4),tiles=visible.map((src,index)=>`<a class="news-collage-item news-collage-item--${visible.length} news-collage-item--${index+1}" href="${escapeHTML(href)}" aria-label="Переглянути новину: ${escapeHTML(title)}"><img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async"></a>`).join('');
+ return `<div class="news-collage news-collage--${visible.length}" aria-label="Фотографії новини: ${escapeHTML(title)}">${tiles}</div>`;
 }
 function stepNewsPhoto(carousel,direction){
  if(!carousel)return;
@@ -401,7 +400,7 @@ if(newsForm){
   status.textContent='Шукаємо новини…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
-   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><div class="news-image">${newsPhotoCarouselMarkup(r.images?.length?r.images:(r.image?[r.image]:[]),r.title,r.url)||'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</div><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
+   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card"><div class="news-image">${newsPhotoCollageMarkup(r.images?.length?r.images:(r.image?[r.image]:[]),r.title,r.url)||'<div class="news-placeholder">ВСП ФКБАД Поліського університету</div>'}</div><div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
  newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
