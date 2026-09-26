@@ -400,12 +400,11 @@ SCHEDULE = '/розклад/'
 RULES = menu_find('ПРАВИЛА ПРИЙОМУ НА НАВЧАННЯ У 2026').get('url','/вступнику/')
 DATES = menu_find('Строки вступної кампанії').get('url','/вступнику/')
 shutil.copytree(ROOT/'src/assets', OUT/'assets', dirs_exist_ok=True)
+for stale_anniversary_asset in (OUT/'assets').glob('campus-80*.jpg'):
+    stale_anniversary_asset.unlink()
 for stale_library_asset in ('.pdf', '10.pdf', '2026.pdf'):
     (OUT/'assets/library'/stale_library_asset).unlink(missing_ok=True)
 CAMPUS = '/assets/campus.webp'
-ANNIVERSARY_SOURCE = ROOT/'src/assets/campus-80.jpg'
-ANNIVERSARY = '/assets/campus-80-' + hashlib.sha256(ANNIVERSARY_SOURCE.read_bytes()).hexdigest()[:12] + '.jpg'
-shutil.copy2(ANNIVERSARY_SOURCE, OUT/ANNIVERSARY.lstrip('/'))
 LOGO = '/assets/site-logo.webp'
 ADMISSION_PROGRAMS = '/assets/admission-programs.webp'
 ADMISSION_CONTACTS = '/assets/admission-contacts.webp'
@@ -487,22 +486,6 @@ def footer():
 THEME_INIT = "(()=>{let t;try{t=localStorage.getItem('fkbad-theme')}catch{}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'})()"
 
 def shell(title_text,body,path='/',description='',article=False):
-    # Replace this campus photo only in institutional content, never in news.
-    # Keep the original campus photo and overlay card on the homepage.
-    # The anniversary artwork is used only on the informational subpages.
-    if not article and path != '/' and CAMPUS in body:
-        content = BeautifulSoup(body, 'html.parser')
-        for img in content.select(f'img[src="{CAMPUS}"]'):
-            if img.find_parent(class_='news-card'):
-                continue
-            img['src'] = ANNIVERSARY
-            img['width'], img['height'] = 2400, 1350
-            img['alt'] = f'80 років {FULL_DISPLAY}'
-            img['class'] = img.get('class', []) + ['campus-anniversary']
-            parent_link = img.find_parent('a')
-            if parent_link and parent_link.get('href') == CAMPUS:
-                parent_link['href'] = ANNIVERSARY
-        body = str(content)
     body = normalize_college_names(strip_heading_periods(body))
     contact_replacements = {
         'tel:+380412472847': f'tel:{phone_href(PHONE_PRIMARY)}',
