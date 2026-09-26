@@ -310,19 +310,23 @@ def news_photos(p):
             items.append({'src':src,'alt':clean_text(image.get('alt','')) or title(p)})
             seen.add(src)
     return items
-def news_photo_carousel(images,label='Фотографії новини',extra_class=''):
+def news_photo_carousel(images,label='Фотографії новини',extra_class='',image_link=''):
     if not images:return ''
     slides=[]
     for index,item in enumerate(images):
         image=f'<img src="{escape(item["src"],quote=True)}" alt="{escape(item.get("alt",label),quote=True)}" loading="lazy" decoding="async">'
-        photo=f'<button type="button" class="news-photo-open" data-site-photo-open aria-label="Збільшити фото {index + 1}">{image}</button>'
+        if image_link:
+            photo=f'<a class="news-photo-link" href="{escape(image_link,quote=True)}" aria-label="Переглянути новину: {escape(label,quote=True)}">{image}</a>'
+        else:
+            photo=f'<button type="button" class="news-photo-open" data-site-photo-open aria-label="Збільшити фото {index + 1}">{image}</button>'
         caption=f'<figcaption>{escape(item["caption"])}</figcaption>' if item.get('caption') else ''
         slides.append(f'<figure class="news-photo-slide" data-news-slide{ "" if index==0 else " hidden" }>{photo}{caption}</figure>')
     disabled=' disabled' if len(images)<2 else ''
+    count=f'<span class="news-photo-count" data-news-count aria-live="polite">1 / {len(images)}</span>' if 'news-card-carousel' not in extra_class else ''
     return (f'<div class="news-photo-carousel {escape(extra_class,quote=True)}" data-news-carousel aria-label="{escape(label,quote=True)}">'
             f'<div class="news-photo-stage">{ "".join(slides) }'
             f'<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"{disabled}>‹</button>'
-            f'<span class="news-photo-count" data-news-count aria-live="polite">1 / {len(images)}</span>'
+            f'{count}'
             f'<button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"{disabled}>›</button></div></div>')
 def local_url(u):
     if not u: return ''
@@ -583,7 +587,7 @@ def write(path,content,standalone=False):
 def news_card(p):
     images=news_photos(p)
     ratio=1.55
-    visual = news_photo_carousel(images,f'Фотографії новини: {title(p)}','news-card-carousel') if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
+    visual = news_photo_carousel(images,f'Фотографії новини: {title(p)}','news-card-carousel',ROUTES[p['id']]) if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
     excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
     excerpt = re.sub(r'\s+', ' ', excerpt).strip()
     category = p.get('category', 'Життя коледжу')
