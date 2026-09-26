@@ -593,13 +593,13 @@ def write(path,content,standalone=False):
     dest.write_text('\n'.join(line.rstrip() for line in content.splitlines()),encoding='utf-8')
     if not standalone: WRITTEN.append(path)
 def news_card(p):
-    images=news_photos(p)
+    img=featured(p)
     ratio=1.55
-    visual = news_photo_collage(images,f'Фотографії новини: {title(p)}',ROUTES[p['id']]) if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
+    visual = f'<a class="news-image" href="{escape(ROUTES[p["id"]],quote=True)}" aria-label="Переглянути новину: {escape(title(p),quote=True)}"><img src="{escape(img,quote=True)}" alt="{escape(title(p),quote=True)}" loading="lazy" decoding="async"></a>' if img else f'<div class="news-image"><div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div></div>'
     excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
     excerpt = re.sub(r'\s+', ' ', excerpt).strip()
     category = p.get('category', 'Життя коледжу')
-    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px"><div class="news-image">{visual}</div><div class="news-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
+    return f'<article class="news-card" style="--photo-weight:{ratio:.3f};--photo-basis:{210 * ratio:.1f}px">{visual}<div class="news-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(category)}</span></div><h3><a href="{ROUTES[p["id"]]}">{escape(title(p))}</a></h3><p class="news-excerpt"><span>{escape(excerpt)}</span></p><a class="text-link" href="{ROUTES[p["id"]]}">Читати новину {icon("arrow")}</a></article>'
 PROGRAMS = [
     ('будівництво','Будівництво та експлуатація будівель та споруд','Від креслення до реальної будівлі. Теорія, навчальні майстерні та практика на будівельних майданчиках.','Будівництво','БУДІВЕЛЬНИК'),
     ('проєктування','Проєктування будівель та інтер’єрів','Простір починається з ідеї. Знайомся з освітньою програмою та роботами студентів коледжу.','Проєктування','ПРОЄКТУВАЛЬНИК'),
