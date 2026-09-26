@@ -328,6 +328,14 @@ def news_photo_carousel(images,label='Фотографії новини',extra_c
             f'<button type="button" class="news-photo-arrow" data-news-step="-1" aria-label="Попереднє фото"{disabled}>‹</button>'
             f'{count}'
             f'<button type="button" class="news-photo-arrow" data-news-step="1" aria-label="Наступне фото"{disabled}>›</button></div></div>')
+def news_photo_collage(images,label,href):
+    if not images:return ''
+    visible=images[:4]
+    tiles=[]
+    for index,item in enumerate(visible):
+        image=f'<img src="{escape(item["src"],quote=True)}" alt="{escape(item.get("alt",label),quote=True)}" loading="lazy" decoding="async">'
+        tiles.append(f'<a class="news-collage-item news-collage-item--{len(visible)} news-collage-item--{index + 1}" href="{escape(href,quote=True)}" aria-label="Переглянути новину: {escape(label,quote=True)}">{image}</a>')
+    return f'<div class="news-collage news-collage--{len(visible)}" aria-label="{escape(label,quote=True)}">{"".join(tiles)}</div>'
 def local_url(u):
     if not u: return ''
     u = unescape(u).strip()
@@ -587,7 +595,7 @@ def write(path,content,standalone=False):
 def news_card(p):
     images=news_photos(p)
     ratio=1.55
-    visual = news_photo_carousel(images,f'Фотографії новини: {title(p)}','news-card-carousel',ROUTES[p['id']]) if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
+    visual = news_photo_collage(images,f'Фотографії новини: {title(p)}',ROUTES[p['id']]) if images else f'<div class="news-placeholder">{icon("book")}<span>{ABBR}</span></div>'
     excerpt = clean_text(p.get('excerpt', {}).get('rendered', '')) or clean_text(p['content']['rendered'])
     excerpt = re.sub(r'\s+', ' ', excerpt).strip()
     category = p.get('category', 'Життя коледжу')
@@ -851,21 +859,6 @@ def editorial_content(content):
         length += len(node.get_text())
     for gallery in result.select('.editorial-gallery'):
         gallery['class'].append('single-photo' if len(gallery.contents) == 1 else 'photo-grid')
-    for gallery in list(result.select('.editorial-gallery')):
-        frames=gallery.select(':scope > .editorial-photo')
-        if not frames:continue
-        images=[];expected_photo_count=sum(len(frame.find_all('img')) for frame in frames)
-        for frame in frames:
-            frame_images=frame.find_all('img')
-            if not frame_images or frame.find(['video','audio']):
-                images=[];break
-            caption=frame.find('figcaption')
-            for index,image in enumerate(frame_images):
-                images.append({'src':image.get('src',''),'alt':image.get('alt',''),
-                               'caption':caption.get_text(' ',strip=True) if caption and index==0 else ''})
-        if len(images)==expected_photo_count and expected_photo_count:
-            carousel=BeautifulSoup(news_photo_carousel(images,'Галерея новини',extra_class='news-editorial-carousel'),'html.parser').div
-            gallery.replace_with(carousel)
     # Fail the build if presentation ever drops or reorders text or photographs.
     comparison=BeautifulSoup(str(result),'html.parser')
     for control in comparison.select('[data-news-step],[data-news-count]'):control.decompose()
@@ -1087,7 +1080,7 @@ for p in POSTS:
     content=sanitize(p['content']['rendered'],t)
     hero=featured(p)
     # Avoid duplicating a featured photograph already present in the article.
-    image=news_photo_carousel([{'src':hero,'alt':t}],f'Головне фото новини: {t}',extra_class='article-hero-carousel') if hero and hero not in content else ''
+    image=f'<img class="article-hero" src="{escape(hero,quote=True)}" alt="{escape(t,quote=True)}" loading="eager" decoding="async">' if hero and hero not in content else ''
     others=[x for x in POSTS if x['id']!=p['id']][:3]
     body=page_heading(t,'',('/новини/','Новини'))+f'<div class="container article-container"><div class="article-meta"><time datetime="{iso_date(p)}">{date(p)}</time><span>{escape(p.get("category", "Життя коледжу"))}</span><button type="button" class="share-button" data-share>Поділитися {icon("external")}</button><span class="share-status" aria-live="polite"></span></div>{image}<article class="prose article-prose">{editorial_content(content)}</article><a class="text-link article-back" href="/новини/">Усі новини {icon("arrow")}</a></div><section class="section news-section"><div class="container">{section_heading("Читайте також","Інші новини")}<div class="news-grid">'+''.join(news_card(x) for x in others)+'</div></div></section>'
     write(path,shell(t,body,path,clean_text(content),True))
