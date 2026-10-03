@@ -1,3 +1,10 @@
 /* The library follows its green page palette in both light and dark modes. */
 .library-page{--accent:inherit;--surface:inherit;--ink:inherit;--muted:inherit;--soft:inherit}
 .library-intro-stat .display-number{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 58%,white) 4%,color-mix(in srgb,var(--accent) 92%,white) 58%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Library disclosures use the same navigation chevron as the site links. */
+.library-document>summary{flex-wrap:nowrap;gap:14px}
+.library-document>summary strong{flex:1;min-width:0}
+.library-document>summary>.nav-chevron{width:16px;height:16px;flex:0 0 16px;margin-left:auto;stroke-width:1.2;opacity:.65;transition:transform 180ms ease}
+.library-document[open]>summary>.nav-chevron{transform:rotate(90deg)}
+.library-document>summary:after{display:none}

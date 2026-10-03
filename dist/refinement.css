@@ -1,0 +1,92 @@
+/* Focused refinement of the established animated college design. */
+.home-page .hero.hero-centered{position:relative;display:flex;justify-content:center;align-items:center;min-height:620px;padding:64px 32px;margin-top:24px;isolation:isolate;overflow:hidden;border-radius:30px;gap:0}
+.hero-centered .hero-background{position:absolute;inset:0;z-index:-2;display:block;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.52;pointer-events:none}
+.hero.hero-centered:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,color-mix(in srgb,var(--canvas) 55%,transparent),color-mix(in srgb,var(--canvas) 15%,transparent) 50%,color-mix(in srgb,var(--canvas) 55%,transparent));pointer-events:none}
+.home-page .hero.hero-centered .hero-copy{width:100%;max-width:1040px;padding:0;align-self:center;text-align:center;container-type:normal}
+.home-page .hero.hero-centered h1{font-size:clamp(3rem,7.7vw,7.5rem);width:100%;max-width:100%;margin:0 0 20px;line-height:1.18;text-align:center}
+.hero-centered .button-row{justify-content:center;gap:16px}
+.home-page .hero.hero-centered .hero-word{white-space:nowrap;margin-inline:auto}
+.hero-centered .hero-college-name{max-width:760px;margin:0 auto 26px;font-size:.95rem;line-height:1.6;color:var(--ink);text-shadow:0 2px 12px rgba(5,14,30,.8)}
+/* Keep the floating island and the original brand and admissions action. */
+@media(min-width:1200px){
+ .site-header{width:min(1480px,calc(100% - 48px))}
+ .site-header .header-inner,.site-header.is-scrolled .header-inner{padding-inline:20px;gap:16px}
+ .site-header .brand{flex:0 1 270px;gap:9px}
+ .site-header .brand img{width:72px;height:56px;flex-basis:72px}
+ .site-header .brand strong{font-size:.875rem;line-height:1.35}
+ .site-header .desktop-nav{display:flex;flex:0 0 auto;gap:18px;font-size:.8rem;white-space:nowrap}
+ .site-header .desktop-nav>a,.site-header .nav-group>a{padding-block:16px}
+ .site-header .header-search{flex:1 1 180px;min-width:120px}
+ .site-header .header-search input{font-size:.8rem}
+ .site-header .header-actions{gap:4px}
+ .site-header .header-actions>.icon-button{width:38px;height:42px;flex-basis:38px}
+ .site-header .header-actions>.button.compact{padding-inline:14px;gap:10px;font-size:.8rem}
+}
+/* No padding bands around ordinary photos. Swipe stages retain their bounds. */
+.news-image{height:auto;aspect-ratio:auto;background:transparent;align-self:start}
+.news-image img,.about-intro>img,.admission-intro>img,.article-hero,.photo-grid img,.editorial-gallery img{height:auto;aspect-ratio:auto;max-height:none;background:transparent;object-fit:contain}
+.library-book-cover,.library-book-media{background:transparent;height:auto;min-height:0}
+.library-book-cover img,.library-book-media img{height:auto;aspect-ratio:auto;background:transparent;max-height:none}
+@media(max-width:720px){
+ .home-page .hero.hero-centered{min-height:460px;padding:44px 12px;margin-top:20px;border-radius:24px}
+ .home-page .hero.hero-centered h1{font-size:clamp(2.5rem,10.8vw,4.5rem);margin-left:0;margin-bottom:18px;line-height:1.22}
+ .hero-centered .hero-background{opacity:.48;object-position:54% center}
+ .hero-centered .hero-college-name{max-width:340px;font-size:.8rem;margin-bottom:22px}
+ .hero-centered .button-row{gap:10px}
+ .hero-centered .button{font-size:.82rem;padding:13px 14px;gap:10px}
+}
+@media(prefers-reduced-motion:reduce){.hero-centered{animation:none!important}.hero-centered .hero-copy{transform:none!important}}
+
+/* Five compact recent stories on the homepage. */
+.home-page .news-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;align-items:stretch}
+.home-page .news-grid>.news-card{min-width:0;max-width:none;width:auto;padding:0 0 16px;display:flex;flex-direction:column}
+.home-page .news-card .news-image{margin-bottom:14px;border-radius:20px}
+.home-page .news-card .news-meta,.home-page .news-card h3,.home-page .news-card>.text-link{margin-inline:16px}
+.home-page .news-card .news-meta{font-size:.68rem;gap:6px;margin-bottom:10px}
+.home-page .news-card h3{font-size:1.05rem;line-height:1.35;margin-bottom:10px}
+.home-page .news-card .news-excerpt{flex:none;min-height:0;height:auto;margin:0 16px 16px;font-size:.82rem;line-height:1.5}
+.home-page .news-card .news-excerpt>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.home-page .news-grid>.news-card>.text-link{margin-top:auto;font-size:.75rem;padding-top:4px;gap:10px}
+@media(max-width:1100px){.home-page .news-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.home-page .news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media(max-width:480px){.home-page .news-grid{grid-template-columns:1fr}.home-page .news-card h3{font-size:1.15rem}}
+
+/* Resource navigation: clear links instead of nested decorative cards. */
+html body :is(.quick-links,.student-resources,.page-sidebar,.resource-group,.resource-tile,.document-link),html[data-page-palette] :is(.page-sidebar,.resource-group,.resource-tile,.document-link){background:transparent!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0}
+:is(.quick-links,.student-resources,.page-sidebar,.resource-group,.resource-tile,.document-link):before{display:none!important}
+.quick-links{gap:32px;padding-block:20px;margin-top:8px}
+.quick-links>a,.quick-links>a:first-child,.quick-links>a:last-child{padding:12px 4px;gap:12px;border-radius:6px}
+.quick-links>a>span{flex:1;min-width:0}
+.quick-links strong{font-size:.95rem;font-weight:550;line-height:1.45}
+.quick-links small{font-size:.76rem;margin-top:3px}
+:is(.quick-links>a,.document-link,.resource-tile)>.icon:first-child{background:transparent;border-radius:0;padding:0;width:22px;height:22px;flex-shrink:0;box-shadow:none}
+:is(.quick-links>a,.document-link,.student-resources>a)>.icon:last-child{width:16px;height:16px;flex-shrink:0;opacity:.65}
+.student-resources{padding:0}
+.student-resources>a{padding:17px 6px;gap:14px;border-radius:6px;font-weight:500}
+.page-sidebar{padding:0 0 0 24px}
+.page-sidebar>a{padding:13px 6px;border-radius:6px;font-weight:500}
+.document-link{padding:15px 6px;min-height:60px;margin-block:3px;gap:14px;border-radius:6px!important}
+.document-link strong{font-weight:500;font-size:.95rem}
+.document-link small{margin-top:3px;font-size:.76rem}
+.document-link:hover,.document-link:hover>.icon:first-child{transform:none}
+.resource-group,html[data-page-palette] .resource-group{padding:0;margin-block:12px}
+.resource-group summary{min-height:58px;padding:15px 6px;font-weight:600}
+.resource-group>div{padding-left:16px}
+.resource-tile{display:grid;grid-template-columns:24px minmax(0,1fr) 16px;align-content:start;align-items:start;gap:7px 14px;padding:18px 6px;border-radius:6px}
+.resource-tile>.icon:first-child{grid-column:1;grid-row:1;margin:2px 0 0}
+.resource-tile h2{grid-column:2;grid-row:1;font-size:1.15rem;line-height:1.4;letter-spacing:-.015em;margin:0}
+.resource-tile p{grid-column:2;grid-row:2;font-size:.85rem;line-height:1.6;margin:0}
+.resource-tile>.icon:last-child{position:static;grid-column:3;grid-row:1;width:16px;height:16px;margin-top:4px;opacity:.65}
+:is(.quick-links>a,.student-resources>a,.page-sidebar>a,.document-link,.resource-tile):hover,html[data-page-palette] :is(.document-link,.resource-tile):hover{background:color-mix(in srgb,var(--accent) 6%,transparent)!important;box-shadow:none!important;color:var(--ink);transform:none}
+:is(.quick-links>a,.student-resources>a,.page-sidebar>a,.document-link,.resource-tile):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:720px){.quick-links{gap:4px;padding-block:12px}.quick-links>a{padding:14px 6px}.quick-links strong{font-size:.95rem}.page-sidebar{padding:0}.resource-tile{padding:16px 6px}.resource-group>div{padding-left:10px}}
+
+/* One thin chevron for navigation links and photo controls. */
+.icon.nav-chevron{stroke-width:1.2}
+.footer-partner-arrow .icon{width:18px;height:18px}
+.library-book-record summary .icon{width:15px;height:15px;vertical-align:middle}
+:is(.site-photo-lightbox-arrow,.library-carousel-arrow,.library-lightbox-arrow) .nav-chevron{width:24px;height:24px}
+
+/* The alphabet rail stays still while the filtered list changes. */
+.navigation-alphabet button{transform:none!important;animation:none!important;transition:background-color 120ms ease,color 120ms ease!important}
+.navigation-alphabet{contain:layout style}

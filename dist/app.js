@@ -1,3 +1,4 @@
+const navigationChevron = '<svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
 const actions=document.querySelector('.header-actions');
 // Make the static site installable as FKBAD without changing page navigation.
 if('serviceWorker' in navigator && window.isSecureContext){
@@ -117,30 +118,26 @@ if(navigationTree){
  toolbar.append(heading,reset);
  const rail=document.createElement('div');rail.className='navigation-alphabet';rail.setAttribute('role','group');rail.setAttribute('aria-label','Розділи за абеткою');
  const bubble=document.createElement('span');bubble.className='navigation-letter-preview';bubble.setAttribute('aria-hidden','true');
- const buttons=[];let selected='*';const filterTimers=new WeakMap();
+ const buttons=[];let selected=null;
  function setFilteredEntry(entry,visible){
-  clearTimeout(filterTimers.get(entry));
-  if(visible){
-   const entering=entry.hidden||entry.classList.contains('navigation-filter-exit');entry.hidden=false;entry.classList.remove('navigation-filter-exit');if(entering)entry.classList.add('navigation-filter-enter');
-   filterTimers.set(entry,setTimeout(()=>entry.classList.remove('navigation-filter-enter'),280));
-  }else if(!entry.hidden){
-   entry.classList.remove('navigation-filter-enter');entry.classList.add('navigation-filter-exit');
-   filterTimers.set(entry,setTimeout(()=>{entry.hidden=true;entry.classList.remove('navigation-filter-exit');},180));
-  }
+  if(entry.hidden===!visible)return;
+  entry.hidden=!visible;
+  entry.classList.remove('navigation-filter-enter','navigation-filter-exit');
  }
  function selectLetter(value){
+  if(value===selected)return;
   selected=value;
   const flatMode=!desktopMenu.matches&&value!=='*';
   catalog.hidden=flatMode;flatCatalog.hidden=!flatMode;
   for(const entry of entries)setFilteredEntry(entry,!(!flatMode&&value!=='*'&&letterOf(entry)!==value));
   for(const entry of flatEntries)setFilteredEntry(entry,!(flatMode&&flatLetter(entry)!==value));
   for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.letter===value));
-  heading.classList.remove('navigation-heading-change');void heading.offsetWidth;heading.textContent=value==='*'?'Усі розділи':`${flatMode?'Усі пункти':'Розділи'} на «${value}»`;heading.classList.add('navigation-heading-change');
+  heading.textContent=value==='*'?'Усі розділи':`${flatMode?'Усі пункти':'Розділи'} на «${value}»`;
   reset.hidden=value==='*';navigationTree.scrollTop=0;
   bubble.textContent=value==='*'?'Усі':value;
  }
  function buildAlphabet(){
- buttons.length=0;rail.replaceChildren();
+ selected=null;buttons.length=0;rail.replaceChildren();
  const letters=desktopMenu.matches?topLetters:allLetters;
  rail.style.setProperty('--letter-count',letters.length+1);
  for(const value of ['*',...letters]){
@@ -157,15 +154,33 @@ if(navigationTree){
   const next=event.key==='ArrowDown'?Math.min(index+1,buttons.length-1):event.key==='ArrowUp'?Math.max(index-1,0):event.key==='Home'?0:event.key==='End'?buttons.length-1:-1;
   if(next<0)return;event.preventDefault();buttons[next].focus();selectLetter(buttons[next].dataset.letter);
  });
- const choose=event=>{
-  const index=Math.max(0,Math.min(buttons.length-1,Math.floor((event.clientY-rail.getBoundingClientRect().top)/rail.clientHeight*buttons.length)));
-  selectLetter(buttons[index].dataset.letter);bubble.textContent=index?buttons[index].dataset.letter:'Усі';
-  bubble.style.top=`${buttons[index].offsetTop+buttons[index].offsetHeight/2}px`;
+ let dragFrame=0,dragY=0,dragButtons=[];
+ const choose=y=>{
+  const index=dragButtons.findIndex(bounds=>y<bounds.bottom);
+  const button=buttons[index<0?buttons.length-1:index];
+  if(!button||selected===button.dataset.letter)return;
+  selectLetter(button.dataset.letter);
+  bubble.style.top=`${button.offsetTop+button.offsetHeight/2}px`;
  };
- rail.addEventListener('pointerdown',event=>{if(event.button!==0)return;event.preventDefault();rail.setPointerCapture(event.pointerId);shell.classList.add('is-browsing');choose(event);});
- rail.addEventListener('pointermove',event=>{if(rail.hasPointerCapture(event.pointerId))choose(event);});
- const finish=event=>{if(rail.hasPointerCapture(event.pointerId))rail.releasePointerCapture(event.pointerId);shell.classList.remove('is-browsing');};
- rail.addEventListener('pointerup',finish);rail.addEventListener('pointercancel',finish);rail.addEventListener('lostpointercapture',()=>shell.classList.remove('is-browsing'));
+ rail.addEventListener('pointerdown',event=>{
+  if(event.button!==0)return;
+  event.preventDefault();
+  dragButtons=buttons.map(button=>button.getBoundingClientRect());
+  rail.setPointerCapture(event.pointerId);shell.classList.add('is-browsing');
+  choose(event.clientY);
+ });
+ rail.addEventListener('pointermove',event=>{
+  if(!rail.hasPointerCapture(event.pointerId))return;
+  dragY=event.clientY;
+  if(!dragFrame)dragFrame=requestAnimationFrame(()=>{dragFrame=0;choose(dragY);});
+ });
+ const finish=event=>{
+  if(dragFrame){cancelAnimationFrame(dragFrame);dragFrame=0;choose(dragY);}
+  if(rail.hasPointerCapture(event.pointerId))rail.releasePointerCapture(event.pointerId);
+  shell.classList.remove('is-browsing');
+ };
+ rail.addEventListener('pointerup',finish);rail.addEventListener('pointercancel',finish);
+ rail.addEventListener('lostpointercapture',()=>{cancelAnimationFrame(dragFrame);dragFrame=0;shell.classList.remove('is-browsing');});
  navigationTree.id='navigation-sections';navigationTree.before(toolbar,shell);shell.append(navigationTree,rail,bubble);mobileNav.classList.add('has-alphabet');
  const catalog=document.createElement('div');catalog.className='navigation-catalog';catalog.append(...entries);navigationTree.append(catalog,flatCatalog);
  const pane=document.createElement('section');pane.className='navigation-detail navigation-detail-animated';pane.id='navigation-detail';pane.setAttribute('aria-label','Підрозділи обраної категорії');
@@ -303,7 +318,7 @@ if(siteSearch){
   if(updateURL){const p=new URLSearchParams({q});history.replaceState(null,'','#'+p);}
   status.textContent='Шукаємо матеріали…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>matches(r,q)).sort((a,b)=>Number(norm(b.title).includes(norm(q)))-Number(norm(a.title).includes(norm(q))));status.textContent=found.length?`Знайдено матеріалів: ${found.length}`:'Нічого не знайдено. Спробуй інше слово.';
-   let shown=0;function renderMore(){const batch=found.slice(shown,shown+20);results.insertAdjacentHTML('beforeend',batch.map(r=>`<article class="search-result"><small>${escapeHTML(r.type)}${r.type==='Новина'?' · '+escapeHTML(r.date):''}</small><h2><a href="${escapeHTML(r.url)}"${externalAttrs(r.url)}>${escapeHTML(r.title)}${r.url.startsWith('http')?' ↗':''}</a></h2><p>${escapeHTML((r.text||'').slice(0,220))}${r.text?.length>220?'…':''}</p></article>`).join(''));shown+=batch.length;if(shown<found.length)moreButton(results,renderMore);}renderMore();
+   let shown=0;function renderMore(){const batch=found.slice(shown,shown+20);results.insertAdjacentHTML('beforeend',batch.map(r=>`<article class="search-result"><small>${escapeHTML(r.type)}${r.type==='Новина'?' · '+escapeHTML(r.date):''}</small><h2><a href="${escapeHTML(r.url)}"${externalAttrs(r.url)}>${escapeHTML(r.title)}${r.url.startsWith('http')?' '+navigationChevron:''}</a></h2><p>${escapeHTML((r.text||'').slice(0,220))}${r.text?.length>220?'…':''}</p></article>`).join(''));shown+=batch.length;if(shown<found.length)moreButton(results,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити пошук. Перевір з’єднання та натисни «Знайти» ще раз.';}
  }
  siteSearch.addEventListener('submit',e=>{e.preventDefault();search();});input.addEventListener('input',()=>search());if(input.value)search(false);
@@ -336,7 +351,7 @@ function stepNewsPhoto(carousel,direction){
 let newsPhotoDrag=null,suppressNewsPhotoClick=false;
 let activeSitePhoto=null,activeSitePhotoImages=[],sitePhotoIndex=0,sitePhotoZoom=1;
 const sitePhotoDialog=document.createElement('dialog');sitePhotoDialog.className='site-photo-lightbox';sitePhotoDialog.setAttribute('aria-label','Перегляд фотографій');
-sitePhotoDialog.innerHTML='<button type="button" class="site-photo-lightbox-close" data-site-photo-close aria-label="Закрити">×</button><button type="button" class="site-photo-lightbox-arrow" data-site-photo-prev aria-label="Попереднє фото">‹</button><div class="site-photo-lightbox-media"><img alt="" data-site-photo-image><div class="site-photo-lightbox-tools"><button type="button" data-site-photo-zoom-out aria-label="Зменшити">−</button><button type="button" data-site-photo-zoom-reset aria-label="Скинути масштаб">100%</button><button type="button" data-site-photo-zoom-in aria-label="Збільшити">+</button></div></div><button type="button" class="site-photo-lightbox-arrow" data-site-photo-next aria-label="Наступне фото">›</button>';
+sitePhotoDialog.innerHTML='<button type="button" class="site-photo-lightbox-close" data-site-photo-close aria-label="Закрити">×</button><button type="button" class="site-photo-lightbox-arrow" data-site-photo-prev aria-label="Попереднє фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="site-photo-lightbox-media"><img alt="" data-site-photo-image><div class="site-photo-lightbox-tools"><button type="button" data-site-photo-zoom-out aria-label="Зменшити">−</button><button type="button" data-site-photo-zoom-reset aria-label="Скинути масштаб">100%</button><button type="button" data-site-photo-zoom-in aria-label="Збільшити">+</button></div></div><button type="button" class="site-photo-lightbox-arrow" data-site-photo-next aria-label="Наступне фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>';
 document.body.append(sitePhotoDialog);
 const sitePhotoImage=sitePhotoDialog.querySelector('[data-site-photo-image]');
 function syncSitePhoto(){
@@ -399,7 +414,7 @@ if(newsForm){
   status.textContent='Шукаємо новини…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
-   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)||'<div class="news-image"><div class="news-placeholder">ВСП ФКБАД Поліського університету</div></div>'}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину →</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
+   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)||'<div class="news-image"><div class="news-placeholder">ВСП ФКБАД Поліського університету</div></div>'}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину ${navigationChevron}</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
  newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
