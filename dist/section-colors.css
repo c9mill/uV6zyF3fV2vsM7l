@@ -42,7 +42,7 @@ html[data-section-theme] .council-stats strong{background-image:linear-gradient(
 html[data-section-theme] .council-intro-copy .eyebrow{color:var(--accent)}
 html[data-section-theme] .council-table th{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 html[data-section-theme] .council-table tbody tr,html[data-section-theme] .council-table tbody tr:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
-html[data-section-theme] .schedule-lesson{--lesson-color:var(--accent)!important}
+/* Schedule lessons keep their own subject colors; other pages use the section accent. */
 html[data-section-theme] .footer-grid .socials>a.social-link--instagram{background:linear-gradient(115deg,#f5da7230,#88e8a730);color:var(--ink)}
 html[data-section-theme] .social-link--telegram .social-icon,html[data-section-theme] .social-link--facebook .social-icon{color:var(--theme-blue)}
 html[data-section-theme] .social-link--instagram .social-icon{color:var(--theme-green)}
