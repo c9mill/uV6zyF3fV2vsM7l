@@ -1,7 +1,17 @@
 /* Shared motion: native document scrolling, original text nodes and layout retained. */
 (()=>{
   const root=document.documentElement;
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+  // Use the reduced-motion path on low-end or data-saving devices so the
+  // visual layout stays intact without running the expensive motion layers.
+  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  const lowPower=Boolean(
+    (Number.isFinite(navigator.hardwareConcurrency)&&navigator.hardwareConcurrency<=2)||
+    (Number.isFinite(navigator.deviceMemory)&&navigator.deviceMemory<=2)||
+    connection?.saveData
+  );
+  if(lowPower)root.classList.add('low-power');
+  const reduced={get matches(){return motionPreference.matches||lowPower;},addEventListener(...args){return motionPreference.addEventListener(...args);}};
   const pointer=matchMedia('(hover: hover) and (pointer: fine)');
   let scroll, revealObserver, mediaObserver, pointerFrame=0, scrollFrame=0, printing=false;
   const seen=new WeakSet(), activeMedia=new Set();

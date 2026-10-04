@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
-const VERSION = 'ee5235a60dda';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=073784e07376", "/refinement.css?v=68944e714362", "/styles.css?v=5b436d9fdb3c", "/experience.css?v=7c14eb493dcf", "/app.js?v=44d6ee876ee5", "/experience.js?v=184acaaaf59f", "/motion.css?v=cdbb15050085", "/motion.js?v=9d3115710446", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=e374ffd46a16"];
+const VERSION = '8c4d87033685';
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=073784e07376", "/refinement.css?v=68944e714362", "/styles.css?v=5b436d9fdb3c", "/experience.css?v=e94fb4b2504f", "/app.js?v=44d6ee876ee5", "/experience.js?v=184acaaaf59f", "/motion.css?v=cdbb15050085", "/motion.js?v=23a7e466f608", "/vendor/lenis.min.js?v=53195c9797e7", "/cosmos.svg?v=e374ffd46a16"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
