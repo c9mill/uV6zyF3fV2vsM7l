@@ -168,6 +168,7 @@ ABBR = 'ВСП ФКБАД Поліського університету'
 FULL_DISPLAY = f'ВСП «{FULL_NAME}»'
 SETTINGS_FILE = CONTENT / 'settings/site.json'
 SITE_SETTINGS = json.loads(SETTINGS_FILE.read_text(encoding='utf-8')) if SETTINGS_FILE.is_file() else {}
+SITE_ORIGIN = 'https://fkbad.site'
 PHONE_PRIMARY = SITE_SETTINGS.get('phone_primary', '(0412) 47-28-47')
 PHONE_SECONDARY = SITE_SETTINGS.get('phone_secondary', '(0412) 42-20-83')
 PHONE_THIRD = SITE_SETTINGS.get('phone_third', '(0412) 47-30-04')
@@ -342,6 +343,11 @@ def local_url(u):
     parsed = urlparse(u)
     if parsed.scheme not in ('','http','https','mailto','tel'): return ''
     if parsed.netloc in ('2','localhost'): return ''
+    if parsed.hostname in ('fkbad.site', 'www.fkbad.site', 'fkbad.pages.dev'):
+        path = unquote(parsed.path).rstrip('/') or '/'
+        return (URLS.get(path, unquote(parsed.path) or '/')
+                + ('?' + parsed.query if parsed.query else '')
+                + ('#' + parsed.fragment if parsed.fragment else ''))
     if parsed.hostname in ('fkbad.com.ua', 'www.fkbad.com.ua'):
         path = unquote(parsed.path).rstrip('/') or '/'
         if path == '/' and not parsed.query: return '/'
@@ -520,50 +526,52 @@ def shell(title_text,body,path='/',description='',article=False):
     body_classes = ('home-page' if path=='/' else 'inner-page') + (' is-article' if article else '') + (' core-page' if not article and path != '/новини/' else '') + (' social-support-page' if path == '/соціальне-забезпечення/' else '')
     return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><link rel="stylesheet" href="/refinement.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
-PAGE_PALETTES = {}
+THEME_HUES = {'blue': 205, 'yellow': 48, 'green': 142}
+ROUTE_THEMES = {'/': 'blue', '/про-коледж': 'blue', '/документи': 'blue',
+                '/викладачу': 'blue', '/вступнику': 'yellow', '/студенту': 'yellow',
+                '/спеціальності': 'yellow', '/розклад': 'yellow',
+                '/студентське-самоврядування': 'yellow', '/бібліотека': 'green',
+                '/library': 'green', '/новини': 'green', '/контакти': 'green', '/пошук': 'green'}
+
+def index_theme_routes(items, theme):
+    for item in items:
+        target = local_url(item.get('url', ''))
+        if target.startswith('/') and not target.startswith('/#'):
+            ROUTE_THEMES.setdefault(unquote(urlparse(target).path).rstrip('/') or '/', theme)
+        index_theme_routes(item.get('children', []), theme)
+
+for theme_tree in (NAVIGATION, MENUS):
+    for group in theme_tree:
+        label = group.get('label', '').lower()
+        theme = ('yellow' if any(word in label for word in ('вступ', 'студент', 'вихов', 'оголош'))
+                 else 'green' if any(word in label for word in ('бібліот', 'новин', 'психолог')) else 'blue')
+        index_theme_routes([group], theme)
+
+def page_theme(path, article=False):
+    route = unquote(urlparse(path).path).rstrip('/') or '/'
+    if article or re.match(r'^/\d{4}/', route):
+        return 'green'
+    if route in ROUTE_THEMES:
+        return ROUTE_THEMES[route]
+    if any(word in route for word in ('бібліот', 'літератур', 'психолог', 'контакт', 'новин', 'cookie', 'конфіденц', 'умови-корист')):
+        return 'green'
+    if any(word in route for word in ('студент', 'вступ', 'спеціальност', 'розклад', 'гуртожит', 'соціальн', 'стипенд', 'працевлашт')):
+        return 'yellow'
+    return 'blue'
+
 def write(path,content,standalone=False):
     is_library_page = unquote(path).rstrip('/') in ('/бібліотека', '/library')
     is_news_page = 'новин' in unquote(path).lower() or ' is-article' in content
-    # Give each internal route its own stable palette; preserve the two bespoke pages.
-    if path != '/' and 'council-page-heading' not in content and '<html lang="uk"' in content:
-        palette_groups = [
-            (('новин',), 278), (('вступ', 'приймаль', 'абітур'), 24),
-            (('психолог',), 278), (('бібліот', 'літератур'), 38),
-            (('розклад',), 188), (('контакт', 'реквізит'), 170),
-            (('спорт', 'здоров'), 142), (('волонтер', 'благодій'), 12),
-            (('дизайн',), 315), (('архітект', 'проєкт'), 205),
-            (('будів',), 28), (('студент', 'гуртожит'), 155),
-            (('виклада', 'педагог', 'методич'), 250),
-            (('документ', 'положен', 'наказ', 'публіч', 'прозор', 'акредита'), 220),
-            (('освіт', 'навчаль', 'дистанц'), 195),
-            (('істор', 'музе', 'коледж'), 32), (('пошук',), 265),
-        ]
-        title_match = re.search(r'<title>(.*?)</title>', content)
-        label = unquote(path).lower()
-        # Every route, including individual articles, gets a distinct hue.
-        if is_library_page:
-            hue = 142
-            companion = 94
-        elif is_news_page:
-            hue = 278
-            companion = 315
-        else:
-            hue = next((h for words,h in palette_groups if any(w in label for w in words)), None)
-            if hue is None:
-                label = unescape(title_match.group(1)).split(' — ')[0].lower() if title_match else label
-                hue = next((h for words,h in palette_groups if any(w in label for w in words)), int(hashlib.sha256(path.encode()).hexdigest()[:4],16) % 360)
-            seed = int(hashlib.sha256(path.encode()).hexdigest()[:8],16)
-            hue = round((hue + (seed % 36000) / 100) % 360, 2)
-            companion = round((hue + 35 + seed % 55) % 360, 2)
-        while not is_news_page and hue in PAGE_PALETTES and PAGE_PALETTES[hue] != path:
-            hue = round((hue + .17) % 360, 2)
-        PAGE_PALETTES[hue] = path
-        content = content.replace('<html lang="uk"', f'<html lang="uk" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{companion}"', 1)
+    # Route purpose, including descendants of menu groups, determines the palette.
+    if '<html lang="uk"' in content:
+        theme = page_theme(path, ' is-article' in content)
+        hue = THEME_HUES[theme]
+        content = content.replace('<html lang="uk"', f'<html lang="uk" data-section-theme="{theme}" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{hue}"', 1)
         # A navigation strip links to real content headings, never invented sections.
         page = BeautifulSoup(content, 'html.parser')
         main = page.select_one('main')
         page_heading = page.select_one('.page-heading')
-        if main and page_heading and not is_library_page:
+        if main and page_heading and not is_library_page and path != '/':
             headings = [h for h in main.select('h2,h3')
                         if h.get_text(strip=True) and not h.find_parent(['aside','table','details'])
                         and not h.find_parent(class_=re.compile(r'news-card|program-card|resource-tile|page-sidebar|empty-state|schedule|map-consent'))]
@@ -584,7 +592,13 @@ def write(path,content,standalone=False):
                           + (ROOT/'src/library-theme.css').read_text(encoding='utf-8'))
         library_imports = ''
         content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
-    for asset in ['refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
+    if '<main' in content:
+        content = content.replace('</head>', '<link rel="stylesheet" href="/section-colors.css"></head>', 1)
+        canonical = SITE_ORIGIN + quote(unquote(path), safe='/')
+        content = content.replace('</head>', f'<link rel="canonical" href="{canonical}"><meta property="og:url" content="{canonical}"></head>', 1)
+        content = re.sub(r'(<a\b[^>]*?href=")(/[^"#]*)(")',
+                         lambda match: match.group(0) + f' data-link-theme="{page_theme(match.group(2))}"', content)
+    for asset in ['section-colors.css','refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -635,7 +649,7 @@ def home():
     body = body.replace('Студентське самоврядування, творчість, спорт і підтримка. Усе, що допомагає знайти себе та відчути себе частиною коледжу.', 'Розклад занять, бібліотека, студентське самоврядування та соціальна підтримка.')
     return body
 
-for filename in ['refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['section-colors.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -647,12 +661,12 @@ shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,
 # versioned assets. Pages and the live schedule remain network-first/fresh.
-PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','styles.css','experience.css','motion.css','refinement.css','app.js','experience.js','motion.js'])).hexdigest()[:12]
+PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','section-colors.css','styles.css','experience.css','motion.css','refinement.css','app.js','experience.js','motion.js'])).hexdigest()[:12]
 def asset_url(filename):
     revision = hashlib.sha256((ROOT/'src'/filename).read_bytes()).hexdigest()[:12]
     return f'/{filename}?v={revision}'
 pwa_precache = ['/', '/offline.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png']
-pwa_precache += [asset_url(name) for name in ['refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']]
+pwa_precache += [asset_url(name) for name in ['section-colors.css','refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']]
 service_worker = (ROOT/'src/sw.js').read_text(encoding='utf-8')
 service_worker = service_worker.replace('__PWA_VERSION__', PWA_VERSION).replace('__PWA_PRECACHE__', json.dumps(pwa_precache, ensure_ascii=False))
 (OUT/'sw.js').write_text(service_worker, encoding='utf-8')

@@ -1,0 +1,48 @@
+/* Three section identities. Tints vary with the light/dark mode, never by route hash. */
+html[data-section-theme]{--theme-blue:#79c9fa;--theme-green:#88e8a7;--theme-yellow:#f5da72;--page-companion:var(--page-hue);--secondary:var(--accent)}
+html[data-section-theme]:not([data-theme="dark"]){--accent:hsl(var(--page-hue) 72% 30%);--accent-solid:hsl(var(--page-hue) 76% 30%)}
+html[data-section-theme][data-theme="dark"]{--accent:hsl(var(--page-hue) 82% 76%);--accent-solid:hsl(var(--page-hue) 72% 64%)}
+html[data-section-theme] .button:not(.secondary){color:hsl(var(--page-hue) 46% 12%);text-shadow:none}
+html[data-section-theme]:not([data-theme="dark"]) .button:not(.secondary){color:white}
+html[data-section-theme] .button:not(.secondary):hover{background:color-mix(in srgb,var(--accent-solid) 88%,var(--ink));box-shadow:0 10px 26px color-mix(in srgb,var(--accent) 22%,transparent)}
+html[data-section-theme] :is(.site-header,.mobile-nav,.nav-dropdown,.mega-menu){--secondary:var(--accent)}
+html[data-section-theme] a[data-link-theme="blue"]{--link-hue:205}
+html[data-section-theme] a[data-link-theme="yellow"]{--link-hue:48}
+html[data-section-theme] a[data-link-theme="green"]{--link-hue:142}
+html[data-section-theme] :is(.desktop-nav,.navigation-tree,.quick-links) a[data-link-theme]:hover{color:hsl(var(--link-hue) 72% 30%)}
+html[data-section-theme][data-theme="dark"] :is(.desktop-nav,.navigation-tree,.quick-links) a[data-link-theme]:hover{color:hsl(var(--link-hue) 82% 76%)}
+html[data-section-theme] :is(.header-actions,.hero-centered) .button[data-link-theme="yellow"]:not(.secondary){--accent-solid:hsl(48 76% 37%);--accent:hsl(48 72% 30%)}
+html[data-section-theme][data-theme="dark"] :is(.header-actions,.hero-centered) .button[data-link-theme="yellow"]:not(.secondary){--accent-solid:#f5da72;--accent:#f5da72;color:#29230f}
+html[data-section-theme="yellow"] .button:not(.secondary),html[data-section-theme] :is(.header-actions,.hero-centered) .button[data-link-theme="yellow"]:not(.secondary){--accent-solid:#f5da72;background:var(--accent-solid);color:#29230f}
+html[data-section-theme] .section-explorer a:is(:hover,[aria-current]){background:var(--accent-solid);color:var(--canvas)}
+
+/* Home retains the moving clouds and scroll wave with the same three hues. */
+html[data-section-theme]:has(.home-page) body:before{background:radial-gradient(ellipse 32% 38% at 10% 18%,#79c9fa48,transparent 72%),radial-gradient(ellipse 38% 32% at 83% 12%,#88e8a747,transparent 72%),radial-gradient(ellipse 34% 42% at 92% 75%,#88e8a73d,transparent 74%),radial-gradient(ellipse 30% 36% at 18% 88%,#f5da7240,transparent 72%),radial-gradient(ellipse 46% 38% at 52% 48%,#79c9fa44,transparent 76%)}
+html[data-section-theme]:has(.home-page) body:after{background:radial-gradient(ellipse 25% 30% at 27% 35%,#f5da7240,transparent 70%),radial-gradient(ellipse 30% 34% at 72% 62%,#79c9fa45,transparent 72%),radial-gradient(ellipse 24% 30% at 48% 90%,#88e8a738,transparent 70%)}
+html[data-section-theme]:has(.home-page) .cosmic-backdrop::after{background:linear-gradient(172deg,transparent 39%,#79c9fa08 43%,#79c9fa28 47%,#f5da7220 50%,#88e8a71b 53%,transparent 59%)}
+html[data-section-theme] .home-page .hero h1 .future{--headline-color:var(--accent)}
+html[data-section-theme] .home-page .hero h1 .together{--headline-color:var(--theme-green)}
+html[data-section-theme]:not([data-theme="dark"]) .home-page .hero h1 .together{--headline-color:hsl(142 65% 30%)}
+
+/* Programs and student actions share yellow; news and services share green. */
+html[data-section-theme] body main .program-grid .program-card{--program-hue:48;--accent:hsl(48 72% 30%);--program-base:hsl(48 58% 94%)}
+html[data-section-theme][data-theme="dark"] body main .program-grid .program-card{--accent:var(--theme-yellow);--program-base:hsl(48 38% 15%)}
+html[data-section-theme] .news-section{--page-hue:142;--page-companion:142;--accent:hsl(142 72% 30%);--blue-soft:hsl(142 44% 90%);background:linear-gradient(180deg,hsl(142 62% 50% / .075),transparent 82%)}
+html[data-section-theme][data-theme="dark"] .news-section{--accent:var(--theme-green);--blue-soft:hsl(142 32% 20%)}
+html[data-section-theme] .news-card{background:linear-gradient(140deg,hsl(142 52% 54% / .12),hsl(142 46% 48% / .04)),var(--card-glass)!important;box-shadow:0 12px 38px hsl(142 56% 24% / .08)!important}
+html[data-section-theme] .news-card:hover{background:linear-gradient(140deg,hsl(142 58% 58% / .18),hsl(142 52% 52% / .08)),var(--card-glass-hover)!important}
+html[data-section-theme] .news-card .news-meta span{color:var(--accent);background:var(--blue-soft)}
+html[data-section-theme] :is(.admission-banner,.future-banner,.student-resources){--accent:hsl(48 72% 30%);--accent-solid:hsl(48 76% 37%);--blue-soft:hsl(48 44% 90%)}
+html[data-section-theme][data-theme="dark"] :is(.admission-banner,.future-banner,.student-resources){--accent:var(--theme-yellow);--accent-solid:#f5da72;--blue-soft:hsl(48 32% 20%)}
+html[data-section-theme] :is(.admission-banner,.future-banner,.future-art){background:linear-gradient(120deg,hsl(48 50% 15%),hsl(48 50% 27%))}
+html[data-section-theme] :is(.council-table tbody tr,.council-tab,.council-panel){--row-accent:var(--accent)!important}
+html[data-section-theme] .council-activity-grid article{--activity-color:var(--accent)}
+html[data-section-theme] .council-intro-copy h2{background-image:linear-gradient(180deg,var(--ink),var(--accent))}
+html[data-section-theme] .council-stats strong{background-image:linear-gradient(180deg,color-mix(in srgb,var(--accent) 70%,white),var(--accent))}
+html[data-section-theme] .council-intro-copy .eyebrow{color:var(--accent)}
+html[data-section-theme] .council-table th{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+html[data-section-theme] .council-table tbody tr,html[data-section-theme] .council-table tbody tr:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+html[data-section-theme] .schedule-lesson{--lesson-color:var(--accent)!important}
+html[data-section-theme] .footer-grid .socials>a.social-link--instagram{background:linear-gradient(115deg,#f5da7230,#88e8a730);color:var(--ink)}
+html[data-section-theme] .social-link--telegram .social-icon,html[data-section-theme] .social-link--facebook .social-icon{color:var(--theme-blue)}
+html[data-section-theme] .social-link--instagram .social-icon{color:var(--theme-green)}

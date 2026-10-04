@@ -18,7 +18,7 @@
   let deviceData = {};
   try { const saved = JSON.parse(localStorage.getItem(STORAGE) || '{}'); mode = saved.mode === 'teacher' ? 'teacher' : 'student'; selected = {...selected, ...(saved.selected || {})}; studentCategory = saved.studentCategory || 'all'; teacherLetter = saved.teacherLetter || 'all'; } catch {}
   try { deviceData = JSON.parse(localStorage.getItem(DATA_STORAGE) || '{}'); } catch {}
-  const hue = id => { let hash = 0; for (const c of id) hash = (hash * 31 + c.charCodeAt(0)) >>> 0; return (hash * 137.508) % 360; };
+  const hue = () => 48;
   const color = id => colors.get(id) || `hsl(${hue(id).toFixed(2)} 65% 57%)`;
   const dot = id => `<span class="schedule-dot" style="--person:${color(id)}" aria-hidden="true"></span>`;
   const date = value => new Intl.DateTimeFormat('uk-UA', {dateStyle:'short', timeStyle:'short', timeZone:'Europe/Kyiv'}).format(new Date(value));

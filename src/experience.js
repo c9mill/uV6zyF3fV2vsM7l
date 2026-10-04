@@ -90,7 +90,7 @@
   }));
  }
  const cards=document.querySelectorAll('main .editorial-section,main .resource-group,main .resource-tile,main .news-card,main .document-row,main .contact-details>div,main .steps>div');
- cards.forEach((card,i)=>{card.classList.add('interior-card');card.style.setProperty('--card-hue',`calc(var(--page-hue) + ${[0,32,-28,65][i%4]})`);});
+ cards.forEach(card=>{card.classList.add('interior-card');card.style.setProperty('--card-hue','var(--page-hue)');});
  if('IntersectionObserver' in window){
   const reveal=new IntersectionObserver(entries=>{
    for(const entry of entries)if(entry.isIntersecting){
@@ -104,7 +104,7 @@
  ['news-results','search-results'].forEach(id=>{
   const list=document.getElementById(id);if(!list)return;
   new MutationObserver(()=>{[...list.children].forEach((card,i)=>{
-   card.classList.add('interior-card');card.style.setProperty('--card-hue',`calc(var(--page-hue) + ${[0,32,-28,65][i%4]})`);
+   card.classList.add('interior-card');card.style.setProperty('--card-hue','var(--page-hue)');
   });}).observe(list,{childList:true});
  });
 })();

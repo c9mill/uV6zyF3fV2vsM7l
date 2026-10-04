@@ -10,9 +10,9 @@ backend:
   use_graphql: true
 
 publish_mode: simple
-site_url: https://fkbad.pages.dev
-display_url: https://fkbad.pages.dev
-logo_url: https://fkbad.pages.dev/favicon.webp
+site_url: https://fkbad.site
+display_url: https://fkbad.site
+logo_url: https://fkbad.site/favicon.webp
 media_folder: src/uploads
 public_folder: /uploads
 
