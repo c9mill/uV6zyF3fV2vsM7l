@@ -675,6 +675,12 @@ for static_dir in ('admin', 'uploads'):
     source_dir = ROOT / 'src' / static_dir
     if source_dir.is_dir():
         shutil.copytree(source_dir, OUT / static_dir, dirs_exist_ok=True)
+admin_files = ['editor.css','editor.js','preview.css','vendor/marked.js','vendor/purify.js','vendor/tinymce/tinymce.min.js']
+admin_revision = hashlib.sha256(b''.join((ROOT/'src/admin'/name).read_bytes() for name in admin_files)).hexdigest()[:12]
+admin_index = (OUT/'admin/index.html').read_text(encoding='utf-8').replace('__CMS_ASSET_VERSION__', admin_revision)
+for filename in admin_files:
+    admin_index = admin_index.replace(f'"/admin/{filename}"', f'"/admin/{filename}?v={admin_revision}"')
+(OUT/'admin/index.html').write_text(admin_index,encoding='utf-8')
 shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,

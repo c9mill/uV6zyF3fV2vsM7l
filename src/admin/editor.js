@@ -59,7 +59,7 @@
   });
   const VisualPreview = ({value}) => h('div', {className: 'preview-prose', dangerouslySetInnerHTML: {__html: html(value)}});
   CMS.registerWidget('visual', VisualControl, VisualPreview);
-  CMS.registerPreviewStyle('/admin/preview.css');
+  CMS.registerPreviewStyle('/admin/preview.css?v=' + window.CMS_ASSET_VERSION);
 
   function photo(props, src, alt = '') {
     return src ? h('img', {src: media(props, src), alt, loading: 'lazy'}) : null;

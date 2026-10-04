@@ -49,7 +49,7 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-  if (!sameOrigin(url) || url.pathname.startsWith('/api/') || url.pathname === '/search-index.json' || url.pathname === '/_worker.js') return;
+  if (!sameOrigin(url) || url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin/') || url.pathname === '/search-index.json' || url.pathname === '/_worker.js') return;
   if (request.mode === 'navigate') {
     event.respondWith(networkFirstPage(request));
     return;
