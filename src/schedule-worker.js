@@ -124,7 +124,7 @@ async function readTable(html) {
 }
 
 async function cached(key, ttl, loader, ctx) {
-  const request = new Request(`https://fkbad.pages.dev/api/schedule-cache/v1/${key}`);
+  const request = new Request(`https://fkbad.site/api/schedule-cache/v1/${key}`);
   const hit = await caches.default.match(request);
   if (hit) return hit.json();
   const data = {...await loader(), checkedAt:new Date().toISOString()};

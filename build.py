@@ -113,9 +113,8 @@ def cms_record(path, kind):
     route = '/' + route.strip('/') + '/' if route.strip('/') else '/'
     legacy_id = data.get('legacy_id')
     entry_id = int(legacy_id) if str(legacy_id or '').isdigit() else -int(hashlib.sha1(str(path).encode()).hexdigest()[:10], 16)
-    rendered_body = render_content_blocks(data.get('content_blocks'))
-    if not rendered_body:
-        rendered_body = markdown.markdown(strip_wordpress_markers(body), extensions=['extra', 'sane_lists']) if body.strip() else ''
+    rendered_body = markdown.markdown(strip_wordpress_markers(body), extensions=['extra', 'sane_lists']) if body.strip() else ''
+    rendered_body += render_content_blocks(data.get('content_blocks'))
     return {
         'id': entry_id,
         'date': date_value,
@@ -130,6 +129,7 @@ def cms_record(path, kind):
         'featured_image': str(data.get('featured_image') or ''),
         'category': str(data.get('category') or 'Життя коледжу'),
         '_cms': True,
+        '_visual_layout': bool(data.get('visual_layout')),
     }
 
 def cms_collection(name, kind):
@@ -144,9 +144,9 @@ def legacy_read(name):
 
 PAGES = cms_collection('pages', 'page')
 POSTS = cms_collection('news', 'post')
-if not PAGES:
+if not (CONTENT / 'pages').is_dir():
     PAGES = legacy_read('backend/pages.json')
-if not POSTS:
+if not (CONTENT / 'news').is_dir():
     POSTS = legacy_read('backend/posts.json')
 POSTS = sorted(POSTS, key=lambda x:x['date'], reverse=True)
 MEDIA = {x['id']:x for x in legacy_read('backend/media.json')} if (LEGACY_EXPORT/'backend/media.json').is_file() else {}
@@ -169,6 +169,8 @@ FULL_DISPLAY = f'ВСП «{FULL_NAME}»'
 SETTINGS_FILE = CONTENT / 'settings/site.json'
 SITE_SETTINGS = json.loads(SETTINGS_FILE.read_text(encoding='utf-8')) if SETTINGS_FILE.is_file() else {}
 SITE_ORIGIN = 'https://fkbad.site'
+HOME_FILE = CONTENT / 'settings/home.json'
+HOME_SETTINGS = json.loads(HOME_FILE.read_text(encoding='utf-8')) if HOME_FILE.is_file() else {}
 PHONE_PRIMARY = SITE_SETTINGS.get('phone_primary', '(0412) 47-28-47')
 PHONE_SECONDARY = SITE_SETTINGS.get('phone_secondary', '(0412) 42-20-83')
 PHONE_THIRD = SITE_SETTINGS.get('phone_third', '(0412) 47-30-04')
@@ -636,7 +638,11 @@ def home():
     body = home_legacy()
     start = body.index('<section class="hero container">')
     end = body.index('</section>', start) + len('</section>')
-    hero = f'''<section class="hero container hero-centered"><img class="hero-background" src="{CAMPUS}" alt="" aria-hidden="true" width="1024" height="685" fetchpriority="high"><div class="hero-copy"><h1><span class="hero-word">Будуй</span><br><span class="hero-word future">майбутнє</span><br><span class="hero-word together">разом з нами</span></h1><p class="hero-college-name">{escape(FULL_DISPLAY)}</p><div class="button-row">{button('/вступнику/','Як вступити')}{button('/спеціальності/','Обрати спеціальність',True)}</div></div></section>'''
+    lines = HOME_SETTINGS.get('headline_lines', ['Будуй','майбутнє','разом з нами'])
+    headline = '<br>'.join(f'<span class="hero-word{" future" if i == 1 else " together" if i > 1 else ""}">{escape(text)}</span>' for i,text in enumerate(lines))
+    actions = HOME_SETTINGS.get('buttons', [{'label':'Як вступити','url':'/вступнику/'},{'label':'Обрати спеціальність','url':'/спеціальності/'}])
+    hero_buttons = ''.join(button(local_url(item.get('url','')), escape(item.get('label','')), i > 0) for i,item in enumerate(actions))
+    hero = f'''<section class="hero container hero-centered"><img class="hero-background" src="{escape(local_url(HOME_SETTINGS.get('background',CAMPUS)),quote=True)}" alt="" aria-hidden="true" width="1024" height="685" fetchpriority="high"><div class="hero-copy"><h1>{headline}</h1><p class="hero-college-name">{escape(HOME_SETTINGS.get('college_name',FULL_DISPLAY))}</p><div class="button-row">{hero_buttons}</div></div></section>'''
     body = body[:start] + hero + body[end:]
     # Remove ornamental recruitment captions; keep actual section names and facts.
     body = re.sub(r'<p class="eyebrow">.*?</p>', '', body, flags=re.S)
@@ -647,7 +653,19 @@ def home():
     body = body.replace('Зустрінемось у коледжі.', 'Контакти')
     body = body.replace('<h2>Почнемо твоє майбутнє?</h2><p>Твоє майбутнє починається з одного рішення.</p>', '<h2>Вступ до коледжу</h2>')
     body = body.replace('Студентське самоврядування, творчість, спорт і підтримка. Усе, що допомагає знайти себе та відчути себе частиною коледжу.', 'Розклад занять, бібліотека, студентське самоврядування та соціальна підтримка.')
-    return body
+    page = BeautifulSoup(body, 'html.parser')
+    if 'quick_links' in HOME_SETTINGS:
+        quick = page.select_one('.quick-links')
+        quick.clear()
+        for item in HOME_SETTINGS['quick_links']:
+            markup = icon(item.get('icon','file')) + '<span><strong>'+escape(item.get('title',''))+'</strong>'
+            if item.get('subtitle'): markup += '<small>'+escape(item['subtitle'])+'</small>'
+            markup += '</span>' + icon('arrow')
+            quick.append(BeautifulSoup(link(local_url(item.get('url','')),markup),'html.parser'))
+    news_grid = page.select_one('.news-grid')
+    news_grid.clear()
+    news_grid.append(BeautifulSoup(''.join(news_card(p) for p in POSTS[:max(1,min(10,int(HOME_SETTINGS.get('news_count',5))))]),'html.parser'))
+    return str(page)
 
 for filename in ['section-colors.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
@@ -912,11 +930,11 @@ def students():
     cards=[(SCHEDULE,'Розклад занять','І семестр 2026–2027 навчального року','calendar'),(bells.get('url','/студенту/'),'Розклад дзвінків','Початок і завершення навчальних пар','calendar'),('/дистанційне-навчання/','Дистанційне навчання','Матеріали та освітні ресурси','book'),('/бібліотека/','Бібліотека','Навчальна література й корисні матеріали','book')]
     tiles='<div class="resource-tiles">'+''.join(link(u,icon(i)+f'<h2>{t}</h2><p>{d}</p>'+icon('external' if u.startswith('http') else 'arrow'),'resource-tile') for u,t,d,i in cards)+'</div>'
     life_links = [doc_link('Студентське самоврядування', '/студентське-самоврядування/')]
-    life_links += [doc_link(title(BY_ID[i]), ROUTES[i]) for i in [1135, 1136, 1137, 372, 1615]]
+    life_links += [doc_link(title(BY_ID[i]), ROUTES[i]) for i in [1135, 1136, 1137, 372, 1615] if i in BY_ID]
     return page_heading('Студенту','Навчання, розклад і підтримка — усе потрібне в одному місці.')+f'<div class="container page-content">{tiles}<div class="content-columns"><section><h2 class="subheading">Навчальні ресурси</h2><div class="resource-list">{resource_groups(menu("СТУДЕНТУ"))}</div><h2 class="subheading spaced">Життя у коледжі</h2>'+''.join(life_links)+f'</section>{sidebar("/студенту/")}</div></div>'
 
 def programs_page():
-    return page_heading('Спеціальності','Знайди напрям, у якому твої ідеї стануть професією.')+f'<section class="container page-content"><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійні програми коледжу для вступників 2026 року</p></div></div>{program_cards()}<div class="content-columns spaced"><section><h2 class="subheading">Дізнайся більше про навчання</h2>{doc_link("Освітньо-професійні програми",ROUTES[820])}{doc_link("Відділення будівництва та цивільної інженерії",ROUTES[9911])}{doc_link("Дипломне проєктування: проєктування та дизайн",ROUTES[9767])}{doc_link("Дипломне проєктування: будівництво",ROUTES[9812])}{doc_link("Перелік програм для вступу",ADMISSION_PROGRAMS)}</section>{sidebar("/спеціальності/")}</div></section>'
+    return page_heading('Спеціальності','Знайди напрям, у якому твої ідеї стануть професією.')+f'<section class="container page-content"><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійні програми коледжу для вступників 2026 року</p></div></div>{program_cards()}<div class="content-columns spaced"><section><h2 class="subheading">Дізнайся більше про навчання</h2>{doc_link("Освітньо-професійні програми",ROUTES.get(820, "/документи/"))}{doc_link("Відділення будівництва та цивільної інженерії",ROUTES.get(9911, "/документи/"))}{doc_link("Дипломне проєктування: проєктування та дизайн",ROUTES.get(9767, "/документи/"))}{doc_link("Дипломне проєктування: будівництво",ROUTES.get(9812, "/документи/"))}{doc_link("Перелік програм для вступу",ADMISSION_PROGRAMS)}</section>{sidebar("/спеціальності/")}</div></section>'
 
 def specialty(p):
     slug,name,desc,short,presentation=p
@@ -924,14 +942,14 @@ def specialty(p):
     related=9911 if slug=='будівництво' else 9767
     content=''
     if slug=='будівництво':
-        source=BeautifulSoup(BY_ID[9911]['content']['rendered'],'html.parser')
+        source=BeautifulSoup(BY_ID.get(9911, {}).get('content', {}).get('rendered', ''),'html.parser')
         paragraphs=[n for n in source.find_all('p') if len(n.get_text(strip=True))>120]
         content=''.join(f'<p>{escape(n.get_text(" ",strip=True))}</p>' for n in paragraphs[:3])
-    return page_heading(name,desc,('/спеціальності/','Спеціальності'))+f'<div class="container page-content content-columns"><section><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійна програма</p></div></div><div class="prose">{content}</div><h2 class="subheading">Програма та практична підготовка</h2>{doc_link("Презентація напряму «"+short+"»",original.get("url","/спеціальності/"))}{doc_link(title(BY_ID[related]),ROUTES[related])}{doc_link("Освітньо-професійні програми",ROUTES[820])}<div class="inline-cta"><h2>Готовий до наступного кроку?</h2><p>Переглянь умови вступу та звернися до приймальної комісії.</p>{button("/вступнику/","Як вступити")}</div></section>{sidebar("/спеціальності/")}</div>'
+    return page_heading(name,desc,('/спеціальності/','Спеціальності'))+f'<div class="container page-content content-columns"><section><div class="info-banner">{icon("cap")}<div><strong>G19 Будівництво та цивільна інженерія</strong><p>Освітньо-професійна програма</p></div></div><div class="prose">{content}</div><h2 class="subheading">Програма та практична підготовка</h2>{doc_link("Презентація напряму «"+short+"»",original.get("url","/спеціальності/"))}{(doc_link(title(BY_ID[related]),ROUTES[related]) if related in BY_ID else "")}{doc_link("Освітньо-професійні програми",ROUTES.get(820, "/документи/"))}<div class="inline-cta"><h2>Готовий до наступного кроку?</h2><p>Переглянь умови вступу та звернися до приймальної комісії.</p>{button("/вступнику/","Як вступити")}</div></section>{sidebar("/спеціальності/")}</div>'
 
 def about():
     material_target = ROUTES.get(814, '/навчально-матеріальна-база-2/') + '#material-base-gallery'
-    return page_heading('Про коледж','Освіта, творчість і професійний досвід у центрі Житомира.')+f'''<div class="container page-content"><div class="about-intro"><img src="{CAMPUS}" alt="{FULL_DISPLAY}" width="800" height="560"><div><p class="eyebrow">Знайомся з {ABBR}</p><h2>Відбудовувати.<br>Створювати.<br>Рухатися вперед.</h2><p>{FULL_DISPLAY} готує фахівців для будівельної галузі.</p><p>Історія закладу почалася 26 вересня 1945 року зі створення Житомирського будівельного технікуму. Сьогодні студентське містечко коледжу розташоване в центрі Житомира.</p>{link(ROUTES[1480],'Історія коледжу '+icon('arrow'),'text-link')}</div></div><div class="facts"><div>{link(ROUTES[1480],'<strong class="display-number">1945</strong>','fact-number-link')}<span>рік заснування</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>навчально-лабораторні корпуси</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>студентські гуртожитки</span></div></div><div class="content-columns"><section><h2 class="subheading">Познайомся з коледжем ближче</h2>{resource_groups(menu('ПРО КОЛЕДЖ'))}</section>{sidebar('/про-коледж/')}</div></div>'''
+    return page_heading('Про коледж','Освіта, творчість і професійний досвід у центрі Житомира.')+f'''<div class="container page-content"><div class="about-intro"><img src="{CAMPUS}" alt="{FULL_DISPLAY}" width="800" height="560"><div><p class="eyebrow">Знайомся з {ABBR}</p><h2>Відбудовувати.<br>Створювати.<br>Рухатися вперед.</h2><p>{FULL_DISPLAY} готує фахівців для будівельної галузі.</p><p>Історія закладу почалася 26 вересня 1945 року зі створення Житомирського будівельного технікуму. Сьогодні студентське містечко коледжу розташоване в центрі Житомира.</p>{link(ROUTES.get(1480, "/документи/"),'Історія коледжу '+icon('arrow'),'text-link')}</div></div><div class="facts"><div>{link(ROUTES.get(1480, "/документи/"),'<strong class="display-number">1945</strong>','fact-number-link')}<span>рік заснування</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>навчально-лабораторні корпуси</span></div><div>{link(material_target,'<strong class="display-number">2</strong>','fact-number-link')}<span>студентські гуртожитки</span></div></div><div class="content-columns"><section><h2 class="subheading">Познайомся з коледжем ближче</h2>{resource_groups(menu('ПРО КОЛЕДЖ'))}</section>{sidebar('/про-коледж/')}</div></div>'''
 
 def contacts():
     maps='https://www.google.com/maps/search/?api=1&query='+quote('ФКБАД Житомир Степана Бандери 6')
@@ -942,14 +960,15 @@ DOCUMENTS=[]
 seen_docs=set()
 def add_doc(t,u,category):
     url=local_url(u)
-    if not url or url in seen_docs or len(clean_text(t))<4:return
-    if not (url.startswith('/uploads/') or any(k in url for k in ['drive.google.com','docs.google.com','.pdf','.doc','.docx','.xls','.xlsx','.ppt','.pptx','zakon.rada.gov.ua'])):return
+    if not url or url in seen_docs or not clean_text(t):return
     seen_docs.add(url);DOCUMENTS.append({'title':clean_text(t),'url':url,'category':category})
-for group in MENUS:
-    for item in flatten(group.get('children',[])): add_doc(item['label'],item['url'],group['label'].capitalize())
-for pid in [591,797,798,796,1079,820,8327,8535]:
-    for a in BeautifulSoup(BY_ID[pid]['content']['rendered'],'html.parser').select('a[href]'):
-        add_doc(a.get_text(' ',strip=True),a['href'],title(BY_ID[pid]))
+if not (CONTENT/'documents').is_dir():
+    for group in MENUS:
+        for item in flatten(group.get('children',[])): add_doc(item['label'],item['url'],group['label'].capitalize())
+    for pid in [591,797,798,796,1079,820,8327,8535]:
+        if pid not in BY_ID: continue
+        for a in BeautifulSoup(BY_ID[pid]['content']['rendered'],'html.parser').select('a[href]'):
+            add_doc(a.get_text(' ',strip=True),a['href'],title(BY_ID[pid]))
 for document_file in (CONTENT/'documents').rglob('*.json'):
     document_data = json.loads(document_file.read_text(encoding='utf-8'))
     if document_data.get('published', True):
@@ -1073,7 +1092,27 @@ def student_government():
     return heading+f'<div class="container page-content council-page">{intro}{council_board()}{activity}{cta}</div>'
 
 CUSTOM={'/вступнику/':('Вступнику',admissions),'/студенту/':('Студенту',students),'/спеціальності/':('Спеціальності',programs_page),'/про-коледж/':('Про коледж',about),'/контакти/':('Контакти',contacts),'/документи/':('Документи',documents),'/пошук/':('Пошук',search_page),'/студентське-самоврядування/':('Студентське самоврядування',student_government),'/політика-конфіденційності/':('Політика конфіденційності',privacy_policy),'/умови-користування/':('Умови користування',terms_policy),'/політика-cookie/':('Політика cookies',cookie_policy),'/повернення-коштів/':('Політика платежів і повернення коштів',refund_policy),SCHEDULE:('Розклад занять',lambda:(ROOT/'src/schedule.html').read_text(encoding='utf-8'))}
-for path,(name,render) in CUSTOM.items():write(path,shell(name,render(),path))
+CMS_LAYOUT_ROUTES = {'/про-коледж/', '/студенту/', '/вступнику/', '/документи/', '/контакти/', '/спеціальності/'}
+for path,(name,render) in CUSTOM.items():
+    record = next((p for p in PAGES if ROUTES[p['id']] == path), None)
+    if path in CMS_LAYOUT_ROUTES and not record: continue
+    body = render()
+    if record and record.get('_visual_layout'):
+        edited = BeautifulSoup(record['content']['rendered'], 'html.parser')
+        defaults = BeautifulSoup(body, 'html.parser')
+        for component, selector in {'programs':'.program-grid', 'documents':'.document-catalog', 'resources':'.resource-group', 'sidebar':'.page-sidebar', 'status':'.results-status', 'filters':'.filter-bar'}.items():
+            for index, node in enumerate(defaults.select(selector)):
+                placeholder = edited.find(attrs={'data-cms-component':component + '-' + str(index)})
+                if placeholder: placeholder.replace_with(node)
+        for dangerous in edited.select('script,style'): dangerous.decompose()
+        for tag in edited.find_all(True):
+            for attr in list(tag.attrs):
+                if attr.lower().startswith('on'): del tag[attr]
+        page_title = edited.select_one('.page-heading h1')
+        if page_title: page_title.string = title(record)
+        body = str(edited)
+        name = title(record)
+    write(path,shell(name,body,path))
 for p in PROGRAMS:
     path='/спеціальності/'+p[0]+'/'
     write(path,shell(p[1],specialty(p),path,p[2]))
@@ -1118,6 +1157,7 @@ def library_page():
         return
     data = json.loads(data_path.read_text(encoding='utf-8'))
     sections = data.get('pages', {})
+    intro = data.get('intro', {})
     def esc(value): return escape(str(value or ''))
     def photo_carousel(images, extra_class='', label='Фотографії бібліотеки'):
         if not images: return ''
@@ -1133,6 +1173,16 @@ def library_page():
         labels = {'news': 'Фото до новин бібліотеки', 'events': 'Фото заходів бібліотеки'}
         return photo_carousel(photos, 'library-gallery '+extra_class, labels.get(section, 'Фотографії бібліотеки')) if photos else ''
     def book_records(section):
+        if 'books' in sections.get(section, {}):
+            cards = []
+            for item in sections[section]['books']:
+                if not item.get('title'): continue
+                cover = item.get('cover')
+                cover_html = f'<img src="{esc(cover)}" alt="{esc(item.get("alt") or item["title"])}" loading="lazy">' if cover else ''
+                description = str(item.get('description') or '')
+                teaser = description[:187].rsplit(' ', 1)[0]+'…' if len(description) > 190 else description
+                cards.append(f'<article class="library-book">{cover_html}<div class="library-book-info"><small>{esc(item.get("code"))}</small><h3>{esc(item["title"])}</h3><p class="library-book-teaser">{esc(teaser)}</p><details class="library-book-record"><summary>Переглянути {icon("arrow")}</summary><div><p>{esc(item.get("citation"))}</p><p>{esc(description)}</p></div></details></div></article>')
+            return cards
         blocks = sections.get(section, {}).get('blocks', [])
         covers = sections.get(section, {}).get('images', [])
         records, current = [], []
@@ -1172,9 +1222,13 @@ def library_page():
     event_text = ' '.join(event_blocks)
     documents = data.get('documents', [])
     def pdf_viewer(item):
-        return f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(item["title"])}</strong>{icon("arrow")}</summary><div class="library-pdf"><iframe title="{esc(item["title"])}" src="{esc(item["url"])}#view=FitH" loading="lazy"></iframe><a href="{esc(item["url"])}" download>Завантажити PDF</a></div></details>'
-    arrivals_pdf = next((item for item in documents if '2026' in item['title']), None)
-    rule_pdfs = [item for item in documents if item is not arrivals_pdf]
+        url = local_url(item.get('url', ''))
+        if not url: return ''
+        drive_id = re.search(r'drive\.google\.com/(?:file/)?d/([^/]+)', url)
+        embed = f'https://drive.google.com/file/d/{drive_id.group(1)}/preview' if drive_id else url.split('#')[0] + '#view=FitH'
+        return f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(item["title"])}</strong>{icon("arrow")}</summary><div class="library-pdf"><iframe title="{esc(item["title"])}" src="{esc(embed)}" loading="lazy"></iframe><a href="{esc(url)}" download>Завантажити документ</a></div></details>'
+    arrivals_pdf = next((item for item in documents if item.get('section') == 'arrivals'), None)
+    rule_pdfs = [item for item in documents if item.get('section', 'rules') == 'rules']
     pdf_cards = ''.join(pdf_viewer(item) for item in rule_pdfs)
     docs = data.get('word_documents', {})
     word_ids = {label: (re.search(r'/d/([^/]+)', url).group(1) if re.search(r'/d/([^/]+)', url) else url) for label, url in docs.items()}
@@ -1213,7 +1267,11 @@ def library_page():
          'У портфоліо збережені нагороди й сертифікати працівників бібліотеки. Вони відображають участь у професійних подіях на час підготовки презентації.',
          [33, 34, 35]),
     ]
+    portfolio_stories = data.get('stories', portfolio_stories)
     def portfolio_story_html(story):
+        if isinstance(story, dict):
+            carousel = photo_carousel(story.get('images', []), 'library-portfolio-photos', f'Фото до розділу: {story.get("title", "")}')
+            return f'<article class="library-portfolio-story"><div class="library-portfolio-copy"><h3>{esc(story.get("title"))}</h3><p>{esc(story.get("text"))}</p></div>{carousel}</article>'
         title, summary, slide_numbers = story
         images = []
         seen = set()
@@ -1229,8 +1287,9 @@ def library_page():
                 f'<div class="library-portfolio-copy"><h3>{esc(title)}</h3><p>{esc(summary)}</p></div>'
                 f'{carousel}</article>')
     portfolio_html = ''.join(portfolio_story_html(story) for story in portfolio_stories)
-    library_html = page_heading('Головна сторінка бібліотеки','Книги, нові надходження, події та документи бібліотеки — в одному просторі.') + f'''<div class="container library-page">
-      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>Простір для навчання, пошуку й відкриттів</h2><p>Бібліотека ВСП «Фаховий коледж будівництва, архітектури та дизайну Поліського національного університету» поєднує абонемент, читальну залу та електронні інформаційні ресурси. Вона допомагає студентам і викладачам знаходити навчальну, фахову та художню літературу, готує тематичні добірки й підтримує культурне життя коледжу.</p><a class="text-link" href="#library-portfolio">Познайомитися з бібліотекою {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
+    library_title = intro.get('title', 'Головна сторінка бібліотеки')
+    library_html = page_heading(library_title,intro.get('lead', '')) + f'''<div class="container library-page">
+      <section class="library-intro"><div class="library-intro-copy"><p class="eyebrow">Бібліотека коледжу</p><h2>{esc(intro.get('heading'))}</h2><p>{esc(intro.get('description'))}</p><a class="text-link" href="#library-portfolio">Познайомитися з бібліотекою {icon('arrow')}</a></div><div class="library-intro-stat"><strong class="display-number" aria-label="{len(arrivals)} нових видань">{len(arrivals)}</strong><span>нових видань<br>у каталозі</span></div></section>
       <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{index == 0}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
       <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">Бібліотека</h2><p>Люди, книжки й події, які творили її історію. Архівні світлини та відомості взято з презентації 2017 року; цифри й персональні дані описують саме той час.</p></div><div class="library-portfolio-list">{portfolio_html}</div></section>
       <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
@@ -1242,7 +1301,44 @@ def library_page():
       <dialog class="library-lightbox" aria-label="Перегляд фотографій"><button type="button" data-lightbox-close class="library-lightbox-close" aria-label="Закрити">×</button><button type="button" data-lightbox-prev class="library-lightbox-prev" aria-label="Попереднє фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="library-lightbox-content"><img alt="" data-lightbox-image><div class="library-lightbox-tools"><button type="button" data-zoom-out aria-label="Зменшити">−</button><button type="button" data-zoom-reset aria-label="Скинути масштаб">100%</button><button type="button" data-zoom-in aria-label="Збільшити">+</button></div></div><button type="button" data-lightbox-next class="library-lightbox-next" aria-label="Наступне фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></dialog>
       <script>(function(){{const root=document.querySelector('.library-page');if(!root)return;const tabs=[...root.querySelectorAll('[data-library-tab]')];const panels=tabs.map(tab=>root.querySelector('#'+tab.dataset.libraryTab)),tablist=root.querySelector('.library-sections');function moveTabHighlight(tab){{if(!tab||!tablist)return;tablist.style.setProperty('--tab-glow-x',tab.offsetLeft+'px');tablist.style.setProperty('--tab-glow-y',tab.offsetTop+'px');tablist.style.setProperty('--tab-glow-width',tab.offsetWidth+'px');tablist.style.setProperty('--tab-glow-height',tab.offsetHeight+'px');tablist.dataset.glowReady='true'}}function activate(index,focus){{tabs.forEach((tab,i)=>{{const active=i===index;tab.setAttribute('aria-selected',active);tab.tabIndex=active?0:-1;panels[i].hidden=!active}});moveTabHighlight(tabs[index]);if(focus)tabs[index].focus()}}tabs.forEach((tab,index)=>{{tab.addEventListener('click',()=>activate(index,false));tab.addEventListener('keydown',event=>{{let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();activate(next,true)}})}});moveTabHighlight(tabs.find(tab=>tab.getAttribute('aria-selected')==='true'));window.addEventListener('resize',()=>moveTabHighlight(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')));const lightbox=root.querySelector('.library-lightbox'),lightboxImage=root.querySelector('[data-lightbox-image]');let activeCarousel=null,zoom=1;function fitCarouselPhoto(carousel,index=carousel._slideOrder?.[Number(carousel.dataset.index)]??Number(carousel.dataset.index)){{const slide=carousel.querySelectorAll('.library-carousel-slide')[index],image=slide?.querySelector('img'),stage=carousel.querySelector('.library-carousel-stage');if(!image||!stage||!image.naturalWidth)return;const style=getComputedStyle(slide),maxWidth=Math.max(1,stage.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-8),maxHeight=Math.max(1,stage.clientHeight-12),scale=Math.min(maxWidth/image.naturalWidth,maxHeight/image.naturalHeight);const width=Math.round(image.naturalWidth*scale),height=Math.round(image.naturalHeight*scale);image.style.width=width+'px';image.style.height=height+'px';const open=slide.querySelector('[data-lightbox-open]');if(open){{open.style.width=width+'px';open.style.height=height+'px'}}}}function showSlide(carousel,index){{const slides=[...carousel.querySelectorAll('.library-carousel-slide')],length=slides.length;if(!length)return;const previousIndex=Number(carousel.dataset.index),next=((index%length)+length)%length,direction=Math.sign(index-previousIndex)||1,previous=slides[carousel._slideOrder?.[previousIndex]??previousIndex],target=slides[carousel._slideOrder?.[next]??next],animationId=(carousel._slideAnimation||0)+1;carousel._slideAnimation=animationId;slides.forEach(slide=>{{slide.getAnimations().forEach(animation=>animation.cancel());slide.hidden=slide!==previous&&slide!==target}});carousel.dataset.index=String(next);target.hidden=false;if(previous!==target){{const finish=()=>{{if(carousel._slideAnimation!==animationId)return;previous.hidden=true;previous.getAnimations().forEach(animation=>animation.cancel());target.getAnimations().forEach(animation=>animation.cancel())}};if(matchMedia('(prefers-reduced-motion: reduce)').matches||!previous.animate)finish();else{{const distance=carousel.querySelector('.library-carousel-stage').getBoundingClientRect().width,options={{duration:760,easing:'cubic-bezier(.22,.72,.25,1)',fill:'both'}},outgoing=previous.animate([{{transform:'translate3d(0,0,0)'}},{{transform:'translate3d('+(-direction*distance)+'px,0,0)'}}],options),incoming=target.animate([{{transform:'translate3d('+(direction*distance)+'px,0,0)'}},{{transform:'translate3d(0,0,0)'}}],options);Promise.all([outgoing.finished,incoming.finished]).then(finish).catch(()=>{{}})}}}}carousel.querySelector('[data-carousel-count]').textContent=(next+1)+' / '+length;fitCarouselPhoto(carousel,carousel._slideOrder?.[next]??next)}}root.querySelectorAll('[data-library-carousel]').forEach(carousel=>{{carousel.dataset.index='0';const stage=carousel.querySelector('.library-carousel-stage'),slideTotal=carousel.querySelectorAll('.library-carousel-slide').length;carousel._slideOrder=Array.from({{length:slideTotal}},(_,i)=>i);carousel.querySelectorAll('.library-carousel-slide').forEach((slide,index)=>slide.hidden=index!==carousel._slideOrder[0]);carousel.querySelector('[data-carousel-count]').textContent='1 / '+slideTotal;carousel.querySelectorAll('.library-carousel-slide img').forEach((image,index)=>image.addEventListener('load',()=>{{if(index===carousel._slideOrder[Number(carousel.dataset.index)])fitCarouselPhoto(carousel,index)}}));if('ResizeObserver'in window)new ResizeObserver(()=>fitCarouselPhoto(carousel)).observe(stage);fitCarouselPhoto(carousel,carousel._slideOrder[0]);carousel.querySelector('[data-carousel-prev]').addEventListener('click',()=>showSlide(carousel,Number(carousel.dataset.index)-1));carousel.querySelector('[data-carousel-next]').addEventListener('click',()=>showSlide(carousel,Number(carousel.dataset.index)+1));let touchStart=null,ignoreNextClick=false;stage.addEventListener('pointerdown',event=>{{if((event.pointerType==='mouse'&&event.button!==0)||event.target.closest('.library-carousel-arrow'))return;touchStart={{x:event.clientX,y:event.clientY}};stage.dataset.dragging='true'}});window.addEventListener('pointerup',event=>{{if(!touchStart)return;const dx=event.clientX-touchStart.x,dy=event.clientY-touchStart.y;touchStart=null;delete stage.dataset.dragging;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.2){{ignoreNextClick=true;showSlide(carousel,Number(carousel.dataset.index)+(dx<0?1:-1));setTimeout(()=>ignoreNextClick=false,450)}}}});stage.addEventListener('pointercancel',()=>{{touchStart=null;delete stage.dataset.dragging}});stage.addEventListener('click',event=>{{if(ignoreNextClick||!event.target.closest('[data-lightbox-open]'))return;activeCarousel=carousel;zoom=1;syncZoom();updateLightbox();lightbox.showModal()}})}});function updateLightbox(){{const slides=[...activeCarousel.querySelectorAll('.library-carousel-slide')],slide=slides[activeCarousel._slideOrder?.[Number(activeCarousel.dataset.index)]??Number(activeCarousel.dataset.index)],image=slide.querySelector('img');lightboxImage.src=image.currentSrc||image.src;lightboxImage.alt=image.alt;lightbox.querySelector('[data-lightbox-prev]').disabled=slides.length<2;lightbox.querySelector('[data-lightbox-next]').disabled=slides.length<2}}function syncZoom(){{lightboxImage.style.transform='scale('+zoom+')';lightbox.querySelector('[data-zoom-reset]').textContent=Math.round(zoom*100)+'%'}}function stepLightbox(direction){{showSlide(activeCarousel,Number(activeCarousel.dataset.index)+direction);zoom=1;syncZoom();updateLightbox()}}root.querySelector('[data-lightbox-close]').addEventListener('click',()=>lightbox.close());root.querySelector('[data-lightbox-prev]').addEventListener('click',()=>stepLightbox(-1));root.querySelector('[data-lightbox-next]').addEventListener('click',()=>stepLightbox(1));root.querySelector('[data-zoom-in]').addEventListener('click',()=>{{zoom=Math.min(3,zoom+.25);syncZoom()}});root.querySelector('[data-zoom-out]').addEventListener('click',()=>{{zoom=Math.max(1,zoom-.25);syncZoom()}});root.querySelector('[data-zoom-reset]').addEventListener('click',()=>{{zoom=1;syncZoom()}});lightboxImage.addEventListener('dblclick',()=>{{zoom=zoom>1?1:2;syncZoom()}});lightbox.addEventListener('click',event=>{{if(event.target===lightbox)lightbox.close()}});let dialogTouch=null;lightbox.addEventListener('pointerdown',event=>{{dialogTouch={{x:event.clientX,y:event.clientY}}}});lightbox.addEventListener('pointerup',event=>{{if(!dialogTouch||zoom>1)return;const dx=event.clientX-dialogTouch.x,dy=event.clientY-dialogTouch.y;dialogTouch=null;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.2)stepLightbox(dx<0?1:-1)}});document.addEventListener('keydown',event=>{{if(!lightbox.open)return;if(event.key==='ArrowLeft')stepLightbox(-1);if(event.key==='ArrowRight')stepLightbox(1)}})}})();</script>
       </div>'''
-    write('/бібліотека/', shell('Головна сторінка бібліотеки', library_html, '/бібліотека/', 'Бібліотека коледжу: нові надходження, виставки, періодика, події та документи.'))
+    # All section headings, paragraphs, files and photographs come from the CMS.
+    library_dom = BeautifulSoup(library_html, 'html.parser')
+    section_ids = {'home':'library-about', 'news':'library-news', 'exhibition':'library-exhibition',
+                   'arrivals':'library-new-books', 'periodicals':'library-periodicals', 'rules':'library-rules', 'events':'library-events'}
+    for key, section_id in section_ids.items():
+        section_data = sections.get(key, {})
+        section_tag = library_dom.find(id=section_id)
+        if not section_tag: continue
+        heading = section_tag.select_one('.library-section-heading h2')
+        if heading and section_data.get('title'): heading.string = section_data['title']
+        tab = library_dom.find(id='tab-' + section_id)
+        if tab and section_data.get('title'): tab.string = section_data['title']
+        if key == 'home':
+            description = section_tag.select_one('.library-section-heading p')
+            if description: description.string = intro.get('about_description', '')
+        elif key == 'news':
+            copy = section_tag.select_one('.library-story>div')
+            if copy:
+                copy.clear()
+                copy.append(BeautifulSoup(''.join(f'<p>{esc(text)}</p>' for text in section_data.get('blocks', [])), 'html.parser'))
+        elif key == 'events':
+            copy = section_tag.select_one('.library-event-copy')
+            if copy:
+                copy.clear()
+                copy.append(BeautifulSoup(''.join(f'<p>{esc(text)}</p>' for text in section_data.get('blocks', [])), 'html.parser'))
+        if section_data.get('description'):
+            description = library_dom.new_tag('p')
+            description.string = section_data['description']
+            section_tag.select_one('.library-section-heading').append(description)
+        additional_docs = [{'title': item.get('label', ''), 'url': item.get('url', '')} for item in section_data.get('files', [])]
+        if key not in ('rules', 'arrivals'):
+            additional_docs += [item for item in documents if item.get('section') == key]
+        elif key == 'arrivals':
+            additional_docs += [item for item in documents if item.get('section') == key and item is not arrivals_pdf]
+        if additional_docs:
+            section_tag.append(BeautifulSoup(''.join(pdf_viewer(item) for item in additional_docs), 'html.parser'))
+    library_html = str(library_dom)
+    write('/бібліотека/', shell(library_title, library_html, '/бібліотека/', intro.get('lead', '')))
     SEARCH.append({'title':'Головна сторінка бібліотеки','url':'/бібліотека/','type':'Сторінка','text':'Бібліотека · Книги · Нові надходження · Виставки · Періодика · Документи'})
 
 library_page()
@@ -1275,7 +1371,7 @@ index_navigation(NAVIGATION)
 
 (OUT/'search-index.json').write_text(json.dumps(SEARCH,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
 (OUT/'route-map.json').write_text(json.dumps({str(k):v for k,v in ROUTES.items()},ensure_ascii=False),encoding='utf-8')
-(OUT/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n',encoding='utf-8')
+(OUT/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/admin/*\n  Cache-Control: no-cache, must-revalidate\n',encoding='utf-8')
 long_dashes = str.maketrans({'—':'-', '–':'-', '―':'-'})
 text_outputs = {'.html','.css','.js','.json','.xml','.webmanifest','.txt','.svg','.md','.yml','.yaml'}
 for output in OUT.rglob('*'):
