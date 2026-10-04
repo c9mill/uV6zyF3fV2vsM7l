@@ -652,3 +652,16 @@ html[data-page-palette] .interior-arrived{animation:interior-arrive 650ms cubic-
 .news-card-carousel .news-photo-count{display:none}
 /* Legacy photographs keep their captions and order while opening the shared viewer. */
 .prose img:not(.news-photo-carousel img):not(a img){display:block;max-width:100%;max-height:min(70vh,700px);width:auto;height:auto;margin:18px auto;object-fit:contain;border-radius:clamp(12px,1.5vw,22px);cursor:zoom-in}
+
+/* Keep the visual layout on low-power devices while removing the effects that
+   force repeated full-page repaints. The class is added by motion.js from
+   device capabilities and connection preferences. */
+html.low-power .cosmic-backdrop :is(.cosmic-nebula,.cosmic-dust,.cosmic-glints),
+html.low-power .cosmic-backdrop::before,
+html.low-power .cosmic-backdrop::after{animation:none!important}
+html.low-power .motion-cursor{display:none!important}
+html.low-power :is(.program-deck .program-card,.home-page .news-grid .news-card,.council-activity-grid .council-activity-card){transform:none!important}
+html.low-power :is(.program-card,.news-card,.resource-tile,.page-sidebar,.sidebar-help,.resource-group,.document-link,.document-row,.search-result,.filter-bar,.empty-state,.info-banner,.inline-cta,.admission-intro,.steps>div,.footer-partner,.editorial-section,.contact-details>div,.library-intro,.library-book,.library-portfolio-slide,.library-document,.library-event,.library-source-note,.schedule-sidebar,.schedule-main,.schedule-week td,.news-photo-stage){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.low-power main>.section:not(:first-child),html.low-power main>.news-section,html.low-power main>.future-invitation,html.low-power .footer{content-visibility:auto;contain-intrinsic-size:1px 560px}
+html.low-power .cosmic-dust,html.low-power .cosmic-glints{opacity:.35}
+html.low-power .motion-pending{opacity:1!important;transform:none!important}
