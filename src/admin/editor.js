@@ -107,10 +107,10 @@
     render() {
       const data = plain(this.props.entry.get('data')), intro = data.intro || {}, sections = data.pages || {};
       const key = this.state.section, section = sections[key] || {};
-      const books = (section.books || []).map((book, index) => h('article', {key:index, className:'preview-book'},
+      const books = (section.books || []).map((book, index) => h('article', {key:'book-'+index, className:'preview-book'},
         photo(this.props, book.cover, book.alt || book.title), h('div', {}, h('small', {}, book.code), h('h3', {}, book.title),
           h('p', {}, book.description), h('details', {}, h('summary', {}, 'Бібліографічний опис'), h('p', {}, book.citation)))));
-      const stories = key === 'home' ? (data.stories || []).map((story, index) => h('article', {key:index, className:'preview-story'},
+      const stories = key === 'home' ? (data.stories || []).map((story, index) => h('article', {key:'story-'+index, className:'preview-story'},
         h('div', {}, h('h2', {}, story.title), h('p', {}, story.text)),
         h(PreviewGallery, {assetProps:this.props, images:story.images}))) : [];
       const files = [...(section.files || []).map(item => ({title:item.label, url:item.url})), ...(data.documents || []).filter(item => item.section === key)];
@@ -120,9 +120,9 @@
         h('nav', {className:'preview-tabs', 'aria-label':'Розділи бібліотеки'}, ...Object.keys(sections).map(id => h('button', {
           key:id, type:'button', 'aria-pressed':key === id, onClick:() => this.setState({section:id})}, sections[id].title || id))),
         h('h2', {}, section.title), h('p', {}, section.description || (key === 'home' ? intro.about_description : '')),
-        ...stories, ...(section.blocks || []).map((text,index) => h('p', {key:index}, text)),
-        h(PreviewGallery, {assetProps:this.props, images:section.images}),
-        ...books, ...files.map((file,index) => h('details', {key:index}, h('summary', {}, file.title),
+        ...stories, ...(section.blocks || []).map((text,index) => h('p', {key:'paragraph-'+index}, text)),
+        h(PreviewGallery, {key:'gallery-'+key, assetProps:this.props, images:section.images}),
+        ...books, ...files.map((file,index) => h('details', {key:'file-'+index}, h('summary', {}, file.title),
           h('a', {href:media(this.props, file.url), target:'_blank', rel:'noopener'}, 'Переглянути документ'))));
     }
   });
