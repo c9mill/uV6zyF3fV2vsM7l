@@ -47,7 +47,7 @@ const output = process.argv[3] || 'reports/performance';
       cardEntrances: window.motionStarts.filter(item => /program-card|news-card/.test(item.target)).length,
       visibleCardAnimations: window.motionPainted.filter(item => item.transform !== 'none' && Number(item.opacity) < 1).length,
       animationProperties: [...new Set(window.motionStarts.flatMap(item => item.properties))],
-      ambientSize: (() => { const glow = document.querySelector('.motion-atmosphere'); return glow ? { width: glow.offsetWidth, height: glow.offsetHeight } : null; })()
+      strayGlow: !!document.querySelector('.motion-atmosphere,.motion-glow')
     }));
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.locator('.menu-toggle').click();
@@ -55,7 +55,6 @@ const output = process.argv[3] || 'reports/performance';
     await page.locator('.navigation-catalog > details > summary').first().click();
     await page.waitForTimeout(350);
     const menuWorks = mobile ? await page.locator('.navigation-catalog > details[open]').count() > 0 : await page.locator('.navigation-detail h2').count() > 0;
-    const ambientPausedInMenu = await page.evaluate(() => getComputedStyle(document.querySelector('.motion-glow')).animationPlayState === 'paused');
     const menuEntrance = await page.evaluate(() => window.motionStarts.some(item => /navigation-detail|navigation-children/.test(String(item.target))));
     await page.screenshot({ path: `${output}/${name}-menu.png` });
     await page.locator('.menu-toggle').click();
@@ -94,11 +93,11 @@ const output = process.argv[3] || 'reports/performance';
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.waitForTimeout(350);
     const reducedMotionWorks = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length === 0);
-    reports.push({ device: name, cpuSlowdown: 6, idleTaskMs: Math.round((afterIdle.TaskDuration - initial.TaskDuration) * 1000), idleAnimations: beforeIdle.animations, scrollTaskMs: Math.round((afterScroll.TaskDuration - afterIdle.TaskDuration) * 1000), scrollLayoutMs: Math.round((afterScroll.LayoutDuration - afterIdle.LayoutDuration) * 1000), ...scroll, ambientPausedInMenu, menuEntrance, reducedMotionWorks, menuWorks, recordWorks, galleryWorks, swipeWorks, deferredBefore, startedBefore, documentWorks, errors });
+    reports.push({ device: name, cpuSlowdown: 6, idleTaskMs: Math.round((afterIdle.TaskDuration - initial.TaskDuration) * 1000), idleAnimations: beforeIdle.animations, scrollTaskMs: Math.round((afterScroll.TaskDuration - afterIdle.TaskDuration) * 1000), scrollLayoutMs: Math.round((afterScroll.LayoutDuration - afterIdle.LayoutDuration) * 1000), ...scroll, menuEntrance, reducedMotionWorks, menuWorks, recordWorks, galleryWorks, swipeWorks, deferredBefore, startedBefore, documentWorks, errors });
     await context.close();
   }
   fs.writeFileSync(`${output}/results.json`, JSON.stringify(reports, null, 2));
   console.log(JSON.stringify(reports, null, 2));
-  if (reports.some(r => r.errors.length || !r.menuWorks || !r.menuEntrance || !r.recordWorks || !r.galleryWorks || !r.swipeWorks || !r.documentWorks || !r.visibleCardAnimations || !r.ambientPausedInMenu || !r.reducedMotionWorks || r.animationProperties.some(p => !['opacity', 'transform'].includes(p)) || r.startedBefore || r.overflow)) process.exitCode = 1;
+  if (reports.some(r => r.errors.length || !r.menuWorks || !r.menuEntrance || !r.recordWorks || !r.galleryWorks || !r.swipeWorks || !r.documentWorks || !r.visibleCardAnimations || r.strayGlow || !r.reducedMotionWorks || r.animationProperties.some(p => !['opacity', 'transform'].includes(p)) || r.startedBefore || r.overflow)) process.exitCode = 1;
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

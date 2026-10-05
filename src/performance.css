@@ -42,20 +42,6 @@ html .hero-word,html .display-number,html .facts strong{filter:none!important}
 }
 ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 
-/* A prepainted, modest-size glow: only its transform and opacity change. */
-html .cosmic-backdrop>.motion-atmosphere{inset:auto;left:calc(50% - 260px);top:26%;width:520px;height:340px;contain:strict;pointer-events:none}
-html .motion-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 46% 62%,transparent 30%,color-mix(in srgb,var(--accent) 24%,transparent) 46%,color-mix(in srgb,var(--accent) 10%,transparent) 56%,transparent 70%),radial-gradient(ellipse at 74% 32%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 64%);opacity:.7}
-@keyframes atmosphere-breathe{from{transform:translate3d(-16px,8px,0) rotate(-5deg);opacity:.45}to{transform:translate3d(22px,-12px,0) rotate(5deg);opacity:.85}}
-@keyframes atmosphere-scroll{from{transform:translate3d(-60px,-65px,0)}to{transform:translate3d(80px,90px,0)}}
-@media(prefers-reduced-motion:no-preference){
-  html .motion-glow{animation:atmosphere-breathe 26s ease-in-out infinite alternate}
-  @supports(animation-timeline:scroll()){
-    html .motion-atmosphere{animation:atmosphere-scroll 1s linear both;animation-timeline:scroll(root block)}
-  }
-}
-html.motion-paused :is(.motion-glow,.motion-atmosphere){animation-play-state:paused}
-@media(max-width:720px){html .cosmic-backdrop>.motion-atmosphere{left:calc(50% - 180px);width:360px;height:250px}}
-html.motion-lite .cosmic-backdrop>.motion-atmosphere{left:calc(50% - 180px);width:360px;height:250px}
 /* Hover feedback stays local, and gallery arrows retain a fixed click target. */
 @media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
   html :is(.button,.resource-tile):hover{transform:translate3d(0,-3px,0)}
@@ -66,4 +52,3 @@ html.motion-lite .cosmic-backdrop>.motion-atmosphere{left:calc(50% - 180px);widt
   html .site-header .mobile-nav{transform:none!important;transition:none!important}
   html :is(.button,.icon-button,.resource-tile,.document-link,.document-row,.quick-links>a,.student-resources>a,.section-explorer>a){transition:none!important}
 }
-@media print{html .motion-atmosphere{display:none!important}}

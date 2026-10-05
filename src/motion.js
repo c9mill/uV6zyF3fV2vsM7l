@@ -21,31 +21,14 @@
     animation.finished.then(finish, finish);
   }
 
-  // Two bounded textures replace the former full-screen blurred wave layers.
-  // The native scroll timeline moves the outer layer; the inner glow breathes.
-  const backdrop = document.querySelector('.cosmic-backdrop');
-  if (backdrop) {
-    const atmosphere = document.createElement('div');
-    atmosphere.className = 'motion-atmosphere';
-    const glow = document.createElement('div');
-    glow.className = 'motion-glow';
-    atmosphere.append(glow);backdrop.append(atmosphere);
-  }
-  function syncAmbient() {
-    root.classList.toggle('motion-paused', !allowed() || document.body.classList.contains('menu-open'));
-  }
   document.addEventListener('visibilitychange', () => {
-    syncAmbient();
     if (document.hidden) for (const animation of animations.values()) animation.finish();
   });
-  new MutationObserver(syncAmbient).observe(document.body, { attributes: true, attributeFilter: ['class'] });
   preference.addEventListener('change', () => {
-    syncAmbient();
     if (preference.matches) for (const animation of animations.values()) animation.finish();
   });
-  window.addEventListener('beforeprint', () => { printing = true;syncAmbient();for (const animation of animations.values()) animation.finish(); });
-  window.addEventListener('afterprint', () => { printing = false;syncAmbient(); });
-  syncAmbient();
+  window.addEventListener('beforeprint', () => { printing = true;for (const animation of animations.values()) animation.finish(); });
+  window.addEventListener('afterprint', () => { printing = false; });
 
   document.querySelectorAll('.program-grid,.home-page .news-grid,.council-activity-grid')
     .forEach(grid => grid.classList.add('program-deck'));
