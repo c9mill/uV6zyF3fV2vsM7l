@@ -604,6 +604,10 @@ def write(path,content,standalone=False):
         content = content.replace('<html lang="uk"', f'<html lang="uk" data-section-theme="{theme}" data-page-palette="{hue}" style="--page-hue:{hue};--page-companion:{hue}"', 1)
         # A navigation strip links to real content headings, never invented sections.
         page = BeautifulSoup(content, 'html.parser')
+        # Keep headings direct, including pages restored from visual CMS layouts.
+        # Section copy and authored article text remain part of the page body.
+        for caption in page.select('.breadcrumbs,.page-lead'):
+            caption.decompose()
         main = page.select_one('main')
         page_heading = page.select_one('.page-heading')
         for image in page.select('img[src]'):
@@ -759,9 +763,7 @@ if '--preview' in sys.argv:
     print('Homepage ready');sys.exit(0)
 
 def page_heading(t,desc='',parent=None):
-    crumb = '<a href="/">Головна</a><span>/</span>'
-    if parent: crumb += f'<a href="{parent[0]}">{parent[1]}</a><span>/</span>'
-    return f'<div class="page-heading container"><nav class="breadcrumbs" aria-label="Навігаційний шлях">{crumb}<span aria-current="page">{escape(t)}</span></nav><h1>{escape(t)}</h1>'+ (f'<p class="page-lead">{escape(desc)}</p>' if desc else '')+'</div>'
+    return f'<div class="page-heading container"><h1>{escape(t)}</h1></div>'
 
 def doc_link(label,url,category=''):
     url = local_url(url)
