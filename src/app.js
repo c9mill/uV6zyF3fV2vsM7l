@@ -2,18 +2,13 @@ const navigationChevron = '<svg class="icon nav-chevron" viewBox="0 0 24 24" fil
 const actions=document.querySelector('.header-actions');
 // Make the static site installable as FKBAD without changing page navigation.
 if('serviceWorker' in navigator && window.isSecureContext){
-  const hadController=!!navigator.serviceWorker.controller;
-  let refreshing=false;
-  try{
-    refreshing=sessionStorage.getItem('fkbad-sw-refresh')==='1';
-    if(refreshing)sessionStorage.removeItem('fkbad-sw-refresh');
-  }catch{}
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(!hadController||refreshing)return;
-    try{sessionStorage.setItem('fkbad-sw-refresh','1')}catch{}
-    location.reload();
-  });
-  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{}),{once:true});
+  // Versioned page assets already update safely. Do not reload a working page
+  // when the worker activates, or compete with first-screen loading.
+  window.addEventListener('load',()=>{
+    const register=()=>navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'}).catch(()=>{});
+    if('requestIdleCallback' in window)requestIdleCallback(register,{timeout:5000});
+    else setTimeout(register,2000);
+  },{once:true});
 }
 // Discard the old reverse-translation preference before loading the widget.
 if(document.cookie.split(';').some(cookie=>/^googtrans=\/[^/]+\/uk$/.test(cookie.trim()))){
@@ -223,7 +218,7 @@ function closeMenu(){
  document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.classList.remove('is-open');menuBackdrop.style.pointerEvents='none';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=false);
  const previous=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,savedScroll);document.documentElement.style.scrollBehavior=previous;
- menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:520);
+ menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:160);
 }
 menuButton?.addEventListener('click',()=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
@@ -417,42 +412,23 @@ if(newsForm){
    function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)||'<div class="news-image"><div class="news-placeholder">ВСП ФКБАД Поліського університету</div></div>'}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину ${navigationChevron}</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
- newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',()=>filterNews());
+ newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',debounce(filterNews));
 }
 
-// Original typewriter treatment for empty search fields: type, pause, then erase.
-function startTypewriter(input,phrases){
- if(!input||input.value)return;
- const fallback=input.placeholder;let phrase=0,position=0,deleting=false,stopped=false,timer;
- const stop=()=>{stopped=true;clearTimeout(timer);input.placeholder=fallback;};
- const resume=()=>{if(input.value)return;stopped=false;position=0;deleting=false;tick();};
- input.addEventListener('focus',stop);input.addEventListener('input',stop);input.addEventListener('blur',resume);
- function tick(){if(stopped||input.value)return;const text=phrases[phrase];position+=deleting?-1:1;input.placeholder=text.slice(0,position);let delay=deleting?38:72;
-  if(!deleting&&position>=text.length){deleting=true;delay=1450;}else if(deleting&&position<=0){deleting=false;phrase=(phrase+1)%phrases.length;delay=280;}
-  timer=setTimeout(tick,delay);
- }
- tick();
-}
-document.querySelectorAll('.header-search input').forEach(input=>startTypewriter(input,['Пошук на сайті','Знайди потрібний розділ','Наприклад, розклад…']));
-startTypewriter(document.querySelector('#site-query'),['Наприклад, розклад…','Знайди новину або документ']);
-startTypewriter(document.querySelector('#news-query'),['Пошук у новинах…','Знайди подію або досягнення']);
+// Search uses the native input without animation timers or duplicate characters.
 
-// Animate the characters the visitor actually types, while keeping the native input for editing and accessibility.
-function bindTypedInput(input){
- if(!input)return;const host=input.closest('.header-search,.search-field');if(!host)return;
- const echo=document.createElement('span');echo.className='typed-echo';echo.setAttribute('aria-hidden','true');host.append(echo);
- let previous='',removeTimer;
- function render(value){
-  clearTimeout(removeTimer);echo.querySelectorAll('.typed-letter-removing').forEach(letter=>letter.remove());
-  if(!value){host.classList.remove('has-typed-text');const oldLetters=[...echo.children];oldLetters.forEach((letter,index)=>{letter.className='typed-letter typed-letter-removing';letter.style.setProperty('--scatter-x',`${(index%2?-1:1)*(18+Math.random()*28)}px`);letter.style.setProperty('--scatter-y',`${-12-Math.random()*25}px`);letter.style.setProperty('--scatter-r',`${(index%2?-1:1)*(10+Math.random()*25)}deg`);});removeTimer=setTimeout(()=>echo.replaceChildren(),520);previous='';return;}
-  host.classList.add('has-typed-text');const chars=[...value],old=[...previous];let start=0;while(start<chars.length&&start<old.length&&chars[start]===old[start])start++;
-  const fragment=document.createDocumentFragment();chars.forEach((char,index)=>{const letter=document.createElement('span');letter.textContent=char===' '?'\u00a0':char;if(index>=start){letter.className='typed-letter typed-letter-new';letter.style.setProperty('--typed-index',index-start);}fragment.append(letter);});
-  if(old.length>chars.length){old.slice(chars.length).forEach((char,index)=>{const letter=document.createElement('span');letter.className='typed-letter typed-letter-removing';letter.textContent=char===' '?'\u00a0':char;letter.style.setProperty('--scatter-x',`${(index%2?-1:1)*(18+Math.random()*28)}px`);letter.style.setProperty('--scatter-y',`${-12-Math.random()*25}px`);letter.style.setProperty('--scatter-r',`${(index%2?-1:1)*(10+Math.random()*25)}deg`);fragment.append(letter);});}
-  echo.replaceChildren(fragment);if(old.length>chars.length)removeTimer=setTimeout(()=>echo.querySelectorAll('.typed-letter-removing').forEach(letter=>letter.remove()),520);previous=value;
+// External PDF/video viewers load on demand, including nested document groups.
+document.addEventListener('toggle',event=>{
+ const disclosure=event.target;
+ if(disclosure.tagName!=='DETAILS'||!disclosure.open)return;
+ for(const frame of disclosure.querySelectorAll('iframe[data-deferred-src]')){
+  let visible=true;
+  for(let parent=frame.parentElement;parent;parent=parent.parentElement){
+   if(parent.tagName==='DETAILS'&&!parent.open){visible=false;break;}
+  }
+  if(visible){frame.src=frame.dataset.deferredSrc;delete frame.dataset.deferredSrc;}
  }
- input.addEventListener('input',()=>render(input.value));input.addEventListener('focus',()=>render(input.value));render(input.value);
-}
-document.querySelectorAll('.header-search input,.search-field input').forEach(bindTypedInput);
+},true);
 
 document.querySelector('[data-share]')?.addEventListener('click',async()=>{
  const status=document.querySelector('.share-status');

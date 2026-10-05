@@ -595,12 +595,21 @@ def write(path,content,standalone=False):
         library_imports = ''
         content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
     if '<main' in content:
-        content = content.replace('</head>', '<link rel="stylesheet" href="/section-colors.css"></head>', 1)
+        content = content.replace('</head>', '<link rel="stylesheet" href="/section-colors.css"><link rel="stylesheet" href="/performance.css"></head>', 1)
         canonical = SITE_ORIGIN + quote(unquote(path), safe='/')
         content = content.replace('</head>', f'<link rel="canonical" href="{canonical}"><meta property="og:url" content="{canonical}"></head>', 1)
         content = re.sub(r'(<a\b[^>]*?href=")(/[^"#]*)(")',
                          lambda match: match.group(0) + f' data-link-theme="{page_theme(match.group(2))}"', content)
-    for asset in ['section-colors.css','refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']:
+    # Documents inside closed disclosures do not start external viewers at page load.
+    if '<iframe' in content and '<details' in content:
+        document = BeautifulSoup(content, 'html.parser')
+        for frame in document.select('details iframe[src]'):
+            if any(not parent.has_attr('open') for parent in frame.find_parents('details')):
+                frame['data-deferred-src'] = frame['src']
+                del frame['src']
+        content = str(document)
+    content = re.sub(r'<script\b[^>]*\bsrc="/vendor/lenis\.min\.js"[^>]*></script>', '', content)
+    for asset in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -667,7 +676,7 @@ def home():
     news_grid.append(BeautifulSoup(''.join(news_card(p) for p in POSTS[:max(1,min(10,int(HOME_SETTINGS.get('news_count',5))))]),'html.parser'))
     return str(page)
 
-for filename in ['section-colors.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['section-colors.css','performance.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -685,12 +694,12 @@ shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,
 # versioned assets. Pages and the live schedule remain network-first/fresh.
-PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','section-colors.css','styles.css','experience.css','motion.css','refinement.css','app.js','experience.js','motion.js'])).hexdigest()[:12]
+PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','section-colors.css','performance.css','styles.css','experience.css','motion.css','refinement.css','app.js','experience.js','motion.js'])).hexdigest()[:12]
 def asset_url(filename):
     revision = hashlib.sha256((ROOT/'src'/filename).read_bytes()).hexdigest()[:12]
     return f'/{filename}?v={revision}'
 pwa_precache = ['/', '/offline.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png']
-pwa_precache += [asset_url(name) for name in ['section-colors.css','refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js','vendor/lenis.min.js','cosmos.svg']]
+pwa_precache += [asset_url(name) for name in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js']]
 service_worker = (ROOT/'src/sw.js').read_text(encoding='utf-8')
 service_worker = service_worker.replace('__PWA_VERSION__', PWA_VERSION).replace('__PWA_PRECACHE__', json.dumps(pwa_precache, ensure_ascii=False))
 (OUT/'sw.js').write_text(service_worker, encoding='utf-8')
@@ -1374,6 +1383,19 @@ def index_navigation(items, parents=(), prefix=''):
         SEARCH.append({'title':label,'url':target,'type':'Розділ','text':context})
         index_navigation(item.get('children', []), (*parents, label), node_id+'-')
 index_navigation(NAVIGATION)
+
+# Menu aliases enrich the existing page record instead of making search scan
+# and render the same destination repeatedly.
+search_by_url = {}
+for record in SEARCH:
+    existing = search_by_url.get(record['url'])
+    if existing is None:
+        search_by_url[record['url']] = dict(record)
+    else:
+        for value in (record.get('title', ''), record.get('text', '')):
+            if value and value not in existing.get('text', ''):
+                existing['text'] = existing.get('text', '') + ' · ' + value
+SEARCH = list(search_by_url.values())
 
 (OUT/'search-index.json').write_text(json.dumps(SEARCH,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
 (OUT/'route-map.json').write_text(json.dumps({str(k):v for k,v in ROUTES.items()},ensure_ascii=False),encoding='utf-8')

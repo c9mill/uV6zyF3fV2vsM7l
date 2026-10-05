@@ -1,0 +1,49 @@
+/* Shared rendering budget: static gradients, native scroll and short local feedback. */
+html{scroll-behavior:auto!important}
+html *,html *::before,html *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;will-change:auto!important}
+html::before,html::after,body::before,body::after,main::after,.footer::after,.cosmic-backdrop::before,.cosmic-backdrop::after{content:none!important;display:none!important}
+html .cosmic-backdrop>div{inset:0;animation:none!important;filter:none!important;transform:none!important;mix-blend-mode:normal!important}
+html .cosmic-glints{display:none}
+html .cosmic-nebula{opacity:.7}
+html .cosmic-dust{background-image:url('/assets/cosmos.webp')!important;opacity:.35}
+html body{animation:none!important}
+html .motion-cursor{display:none!important}
+/* Fixed background colors avoid full-viewport blur under sticky navigation. */
+html .site-header{background:var(--canvas)!important;transition:none!important;animation:none!important}
+html dialog::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html .header-inner{transition:none!important}
+html .menu-backdrop{background:color-mix(in srgb,var(--canvas) 78%,transparent)}
+html .site-header .mobile-nav{transform:none!important;transition:opacity 160ms ease!important}
+html .site-header .mobile-nav.is-open{transform:none!important}
+html .site-header .mobile-nav :is(a,summary){opacity:1!important;transform:none!important;transition:color 120ms ease,background-color 120ms ease!important;transition-delay:0s!important}
+/* Cards stay in their layout while scrolling; never fold and re-open on every pass. */
+html :is(.home-stage,.deck-heading,.program-card,.news-card,.council-activity-card,.interior-card,.motion-pending,.motion-enter,.card-reveal-target,.card-reveal-visible){opacity:1;transform:none;translate:none!important;scale:none!important;clip-path:none!important;filter:none!important;animation:none!important;transition:background-color 120ms ease,color 120ms ease!important}
+html :is(.program-card,.news-card,.resource-tile):hover{transform:none!important}
+html :is(.program-card,.news-card,.resource-tile,.resource-group,.document-link,.document-row,.search-result,.page-sidebar,.sidebar-help,.contact-details>div,.steps>div,.library-book,.library-event,.library-document,.schedule-lesson,.schedule-week td){box-shadow:none!important}
+html :is(.program-card,.news-card,.resource-tile,.resource-group,.document-link,.document-row,.search-result,.steps>div,.library-event,.schedule-lesson,.schedule-week td)::before{content:none!important}
+html :is(.hero-copy>* , .hero-visual,.page-heading h1,.page-heading .page-lead,.schedule-heading,.schedule-sidebar,.schedule-main,#schedule-table){animation:none!important}
+html .hero-photo{transform:none!important;transition:none!important}
+html .navigation-detail-animated>*{animation:none!important}
+/* Only the small menu content fades; its height is laid out once by native details. */
+@keyframes content-fade{from{opacity:.6}to{opacity:1}}
+@media(prefers-reduced-motion:no-preference){
+  html .navigation-detail-animated{animation:content-fade 160ms ease-out}
+  html details[open]>.navigation-children,html details[open]>div{animation:content-fade 160ms ease-out}
+}
+html details{transition:none!important}
+html :is(.button,.icon-button,.resource-tile,.document-link,.document-row,.quick-links>a,.student-resources>a,.section-explorer>a){transform:none!important;translate:none!important;scale:none!important;transition:background-color 120ms ease,color 120ms ease!important}
+html :is(.button,.text-link,.program-bottom,.document-link,.quick-links>a,.resource-tile,.student-resources>a) .icon{transition:none!important}
+/* CSS clamps replace the ResizeObserver/line-height feedback loop on news cards. */
+html .news-excerpt{flex:none;min-height:0;height:auto}
+html .news-excerpt>span{position:static;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+html .home-page .news-excerpt>span{-webkit-line-clamp:2}
+html .theme-changing,html .theme-changing *{transition:none!important}
+html .typed-echo{display:none!important}
+html .has-typed-text input{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
+html .hero-word,html .display-number,html .facts strong{filter:none!important}
+html.low-power .navigation-detail-animated,html.low-power details[open]>div{animation:none!important}
+/* Native content skipping renders below-the-fold sections only when needed. */
+@supports(content-visibility:auto){
+  .home-page main>.section,.home-page main>.news-section,.home-page main>.future-invitation{content-visibility:auto;contain-intrinsic-size:auto 640px}
+}
+::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}

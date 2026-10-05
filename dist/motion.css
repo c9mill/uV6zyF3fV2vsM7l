@@ -1,15 +1,4 @@
-/* Motion only: palette, typography, image proportions and card layout stay in experience.css. */
-html.lenis,html.lenis body{height:auto}
-html.lenis.lenis-smooth{scroll-behavior:auto!important}
-.lenis.lenis-stopped{overflow:clip}
-.lenis [data-lenis-prevent]{overscroll-behavior:contain}
-.motion-cursor{display:none}
-.program-deck{position:relative;isolation:isolate}
-.program-deck>.program-card,.program-deck>.news-card,.program-deck>.council-activity-card{position:relative;transform-origin:center;transition:transform 340ms cubic-bezier(.22,.61,.36,1),box-shadow 340ms ease;opacity:1;translate:none;animation:none;will-change:transform}
-.deck-heading{transform-origin:left bottom;transition:transform 340ms cubic-bezier(.22,.61,.36,1),opacity 340ms ease;will-change:transform,opacity}
-.home-stage{transform-origin:center top;transition:opacity 620ms cubic-bezier(.22,.61,.36,1),transform 820ms cubic-bezier(.16,1,.3,1),clip-path 820ms cubic-bezier(.16,1,.3,1)}
-.motion-enabled .home-stage:not(.is-open){opacity:.68;transform:translate3d(0,32px,0) scale(.972);clip-path:inset(0 2.5% 0 2.5% round 28px);will-change:opacity,transform,clip-path}
-.motion-enabled .home-stage.is-open{opacity:1;transform:none;clip-path:inset(0 round 0)}
+/* Native navigation and compact cards. Rendering optimizations live in performance.css. */
 @media(max-width:720px){
  .program-grid.program-deck{grid-template-columns:1fr;gap:10px}
  .program-deck>.program-card{min-height:0;padding:14px 16px 12px;border-radius:18px}
@@ -25,120 +14,14 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
  .program-deck .program-bottom{font-size:.72rem;margin:0;padding:0;border:0;min-height:0}
  .program-deck .program-bottom>.icon{width:16px;height:16px}
 }
-@media(prefers-reduced-motion:reduce){.program-deck>.program-card,.program-deck>.news-card,.program-deck>.council-activity-card,.deck-heading{transform:none!important;opacity:1!important;transition:none}}
-@media print{.program-deck>.program-card,.program-deck>.news-card,.program-deck>.council-activity-card{transform:none!important}.program-deck .program-card>p{display:block}}
-/* Touch devices use the browser's native scrolling and a lighter static backdrop. */
-@media(hover:none),(pointer:coarse){
- html{scroll-behavior:auto}
- .motion-enabled .home-stage{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important;will-change:auto}
- body:before,body:after{animation:none!important;will-change:auto;inset:0;transform:none}
- .cosmic-dust{animation:cosmic-drift 150s ease-in-out infinite alternate!important;will-change:transform;transform:none}
- .cosmic-nebula{filter:none;animation:cosmic-nebula-breathe 90s ease-in-out infinite alternate;will-change:transform}
- .site-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--canvas)!important}
- .hero-note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
- .hero-photo{transform:none!important;transition:none!important}
- ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
-}
-@media(prefers-reduced-motion:reduce){.cosmic-nebula,.cosmic-dust,.cosmic-glints{animation:none!important;will-change:auto}}
-/* One window transition at every width, anchored to the menu button. */
-.site-header .mobile-nav{opacity:0;transform:translate3d(0,-14px,0) scale(.92);transform-origin:calc(100% - 32px) 0;transition:opacity 300ms ease,transform 520ms cubic-bezier(.22,1,.36,1);pointer-events:none}
-.site-header .mobile-nav.is-open{opacity:1;transform:translate3d(0,0,0) scale(1);pointer-events:auto}
-.site-header .mobile-nav>a{opacity:0;transform:translateY(8px);transition:opacity 200ms ease,transform 350ms cubic-bezier(.22,1,.36,1);transition-delay:0ms}
-.site-header .mobile-nav.is-open>a{opacity:1;transform:none;transition-delay:calc(min(var(--menu-index,0),6)*24ms + 55ms)}
-.site-header .menu-toggle span{transition:transform 450ms cubic-bezier(.22,1,.36,1)}
-.site-header .menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
-.site-header .menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
-.menu-backdrop{opacity:0;transition:opacity 420ms ease}.menu-backdrop.is-open{opacity:1}
-.site-header .mobile-nav .header-search{display:flex;position:relative;opacity:1;transform:none;flex:none;min-height:48px;width:100%;max-width:none;margin:0 0 14px}
+
+/* One opacity-only menu transition. */
+.site-header .mobile-nav{opacity:0;pointer-events:none;transition:opacity 160ms ease}
+.site-header .mobile-nav.is-open{opacity:1;pointer-events:auto}
+.menu-backdrop{opacity:0;transition:opacity 160ms ease}.menu-backdrop.is-open{opacity:1}
+.site-header .mobile-nav .header-search{display:flex;min-height:48px;width:100%;max-width:none;margin:0 0 14px}
 @media(min-width:721px){.site-header .mobile-nav .header-search{display:none}}
-@media(max-width:720px){
-  .site-header .header-inner>.header-search{display:none}
-  .site-header .mobile-nav{max-height:calc(100svh - 130px - env(safe-area-inset-top));scroll-padding-top:12px}
-}
-@media(prefers-reduced-motion:reduce){.site-header .mobile-nav,.site-header .mobile-nav>a,.menu-backdrop{transition:none}}
-@media(prefers-reduced-motion:no-preference){
-  :root{--motion-ease:cubic-bezier(.19,1,.22,1)}
-  .hero-copy>.eyebrow,.hero-copy>.institution,.hero-copy>h1,.hero-copy>.hero-subtitle,.hero-copy>.hero-description,.hero-copy>.button-row{animation:motion-copy 1050ms var(--motion-ease) both}
-  .hero-copy>.institution{animation-delay:45ms}.hero-copy>h1{animation-delay:90ms}.hero-copy>.hero-subtitle{animation-delay:140ms}.hero-copy>.hero-description{animation-delay:185ms}.hero-copy>.button-row{animation-delay:230ms}
-  .hero-visual{animation:motion-hero 1250ms var(--motion-ease) both}
-  .page-heading h1{animation:motion-copy 1000ms var(--motion-ease) both}
-  .page-heading .page-lead{animation:motion-copy 1000ms 90ms var(--motion-ease) both}
-  .schedule-heading,.schedule-sidebar,.schedule-main{animation:motion-copy 1000ms var(--motion-ease) both}
-  .schedule-sidebar{animation-delay:60ms}.schedule-main{animation-delay:120ms}
-  #schedule-table:not([aria-busy="true"]){animation:motion-copy 550ms var(--motion-ease) both}
-  .motion-pending{opacity:0;translate:0 38px}
-  .motion-enter{animation:motion-rise 1000ms var(--motion-delay,0ms) var(--motion-ease) both}
-  .program-deck>.news-card.motion-enter{animation:motion-rise 1000ms var(--motion-delay,0ms) var(--motion-ease) both}
-  .motion-enter[data-motion="heading"]{animation-name:motion-heading;animation-duration:1150ms}
-  .motion-enter[data-motion="media"]{animation-name:motion-media;animation-duration:1200ms}
-  .motion-enter[data-motion="line"]{animation-duration:900ms}
-  .motion-pending:focus-within{opacity:1;translate:none}
-  .motion-magnet{translate:var(--magnet-x,0px) var(--magnet-y,0px);transition:translate 550ms var(--motion-ease),transform 450ms var(--motion-ease),background 250ms,box-shadow 450ms}
-  .button .icon,.text-link .icon,.program-bottom .icon{transition:transform 600ms var(--motion-ease)}
-  .button:active{scale:.975}
-  .hero-photo{transform:translate3d(var(--photo-x,0px),calc(var(--photo-y,0px) + var(--scroll-drift,0px)),0) scale(1.035);transition:transform 850ms var(--motion-ease)}
-  [data-motion-parallax]{translate:0 var(--media-drift,0px);transition:translate 650ms var(--motion-ease)}
-  @keyframes motion-copy{from{opacity:0;translate:0 32px}to{opacity:1;translate:0 0}}
-  @keyframes motion-hero{from{opacity:0;translate:0 28px;scale:.97}to{opacity:1;translate:0 0;scale:1}}
-  @keyframes motion-rise{from{opacity:0;translate:0 38px}to{opacity:1;translate:0 0}}
-  @keyframes motion-heading{from{opacity:0;translate:0 36px;clip-path:inset(0 0 100% 0)}to{opacity:1;translate:0 0;clip-path:inset(-12px)}}
-  @keyframes motion-media{from{opacity:0;translate:0 36px;scale:.975}to{opacity:1;translate:0 0;scale:1}}
-  ::view-transition-old(root){animation:180ms ease-out both dissolve}
-  ::view-transition-new(root){animation:500ms var(--motion-ease) both motion-copy}
-}
-@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-  .motion-cursor{display:block;position:fixed;left:0;top:0;z-index:100;pointer-events:none;opacity:0;transition:opacity 200ms;contain:layout style}
-  .motion-cursor:before{content:"";position:absolute;width:22px;height:22px;left:-11px;top:-11px;border:1px solid var(--accent);border-radius:50%;opacity:.5;transition:scale 500ms var(--motion-ease),background 300ms,opacity 300ms}
-  .motion-cursor.is-visible{opacity:1}.motion-cursor.is-active:before{scale:1.9;background:color-mix(in srgb,var(--accent) 9%,transparent);opacity:.75}.motion-cursor.is-pressed:before{scale:1.2}
-  .program-card,.news-card,.resource-tile,.document-link,.document-row,.search-result,.steps>div,.resource-group,.footer-partner,.page-sidebar>a,.sidebar-help,.info-banner,.inline-cta,.contact-details>div,.library-book,.library-portfolio-slide,.library-document,.library-event,.schedule-week td,.schedule-lesson,.quick-links>a,.student-resources>a,.section-explorer>a,.council-activity-grid article,.council-tab{position:relative;isolation:isolate;transition:transform 600ms var(--motion-ease),box-shadow 600ms var(--motion-ease),background-color 420ms}
-  .program-card:before,.news-card:before,.resource-tile:before,.document-link:before,.document-row:before,.search-result:before,.steps>div:before,.resource-group:before,.footer-partner:before,.page-sidebar>a:before,.sidebar-help:before,.info-banner:before,.inline-cta:before,.contact-details>div:before,.library-book:before,.library-portfolio-slide:before,.library-document:before,.library-event:before,.schedule-week td:before,.schedule-lesson:before,.quick-links>a:before,.student-resources>a:before,.section-explorer>a:before,.council-activity-grid article:before,.council-tab:before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;background:radial-gradient(300px circle at var(--light-x,50%) var(--light-y,50%),color-mix(in srgb,var(--accent) 7%,transparent),transparent 75%);opacity:0;transition:opacity 550ms}
-  .motion-hover:before{opacity:1}
-  .resource-tile:hover,.news-card:hover{transform:translateY(-5px)}
-  .program-card:hover{transform:translateY(-6px)}
-}
-@media(max-width:720px) and (prefers-reduced-motion:no-preference){
-  .motion-enter{animation-duration:750ms;animation-delay:0ms}
-  .program-deck>.news-card.motion-enter{animation-duration:750ms;animation-delay:0ms}
-  .motion-enter[data-motion="heading"],.motion-enter[data-motion="media"]{animation-duration:850ms}
-  .hero-visual{animation-duration:950ms}
-  .hero-copy>h1{animation-delay:50ms}
-}
-@media(prefers-reduced-motion:reduce){
-  .motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}
-  .motion-magnet,[data-motion-parallax]{translate:none!important}.hero-photo{transform:none!important}
-}
-@media print{.motion-pending{opacity:1!important;translate:none!important}.motion-cursor{display:none!important}}
-
-
-
-/* Touch fallback: news cards still animate even when the browser exposes no hover state. */
-@media (hover:none) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference){
- .news-card{animation:motion-rise 900ms var(--motion-delay,0ms) var(--motion-ease) both!important}
- .news-grid>.news-card:nth-child(2){--motion-delay:70ms}
- .news-grid>.news-card:nth-child(3){--motion-delay:140ms}
- .news-grid>.news-card:nth-child(4){--motion-delay:210ms}
-}
-
-/* Guaranteed card reveal, independent from hover and the desktop deck transforms. */
-@keyframes card-reveal-in{from{opacity:0;filter:blur(2px)}to{opacity:1;filter:none}}
-@keyframes card-reveal-mobile{from{opacity:0;translate:0 20px}to{opacity:1;translate:none}}
-@media (hover:none) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference){
- .program-deck>.program-card.card-reveal-target,.program-deck>.news-card.card-reveal-target,.card-reveal-target{opacity:0!important;filter:none!important}
- .program-deck>.program-card.card-reveal-visible,.program-deck>.news-card.card-reveal-visible,.card-reveal-visible{opacity:1!important;animation:card-reveal-in 760ms cubic-bezier(.16,1,.3,1) both!important}
-}
-@media(prefers-reduced-motion:reduce){.card-reveal-target,.card-reveal-visible{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}}
-
-/* Mobile card reveal stays lightweight and does not replace the deck transform. */
-@media (hover:none) and (prefers-reduced-motion:no-preference), (pointer:coarse) and (prefers-reduced-motion:no-preference){
- .program-deck>.program-card.card-reveal-target,.program-deck>.news-card.card-reveal-target,.card-reveal-target{translate:0 20px!important}
- .program-deck>.program-card.card-reveal-visible,.program-deck>.news-card.card-reveal-visible,.card-reveal-visible{opacity:1!important;translate:none!important;animation:card-reveal-mobile 620ms cubic-bezier(.22,1,.36,1) both!important;filter:none!important}
-}
-/* A reduced-motion device must keep cards readable; the deck itself remains static. */
-@media (hover:none),(pointer:coarse){
- .program-deck>.program-card.card-reveal-target,.program-deck>.news-card.card-reveal-target,.card-reveal-target{opacity:1!important;translate:none!important;filter:none!important;animation:none!important}
- .program-deck>.program-card.card-reveal-visible,.program-deck>.news-card.card-reveal-visible,.card-reveal-visible{opacity:1!important;translate:none!important;filter:none!important;animation:none!important}
-}
-
+@media(max-width:720px){.site-header .header-inner>.header-search{display:none}}
 /* Complete institutional navigation, shared by desktop and touch screens. */
 .site-header .mobile-nav{overflow-y:auto;max-height:calc(100dvh - 140px);overscroll-behavior:contain}
 .navigation-tree{display:flex;flex-direction:column;gap:4px;text-align:left}
@@ -157,11 +40,6 @@ html.lenis.lenis-smooth{scroll-behavior:auto!important}
 .site-header .mobile-nav .navigation-tree a{opacity:1;transform:none;transition-delay:0ms}
 
 .navigation-unavailable{padding:12px 14px;font-size:.85rem;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}.navigation-unavailable small{display:block;margin-top:4px;font-size:.72rem}
-
-/* A lightweight brush of light follows homepage scroll without measuring cards. */
-html:has(.home-page) .cosmic-backdrop::after{content:"";position:absolute;inset:-32% -18%;pointer-events:none;opacity:0;filter:blur(34px);background:linear-gradient(172deg,transparent 39%,#8b82ff08 43%,#76a9ff28 47%,#e7a9ff20 50%,#71e4ca1b 53%,transparent 59%);transform:translate3d(0,var(--brush-wave-shift,0px),0) rotate(var(--brush-wave-skew,0deg)) scale(1.08);transition:opacity 240ms ease,transform 760ms cubic-bezier(.16,1,.3,1);will-change:transform,opacity}
-html:has(.home-page) .cosmic-backdrop.scroll-wave-active::after{opacity:.9}
-@media(prefers-reduced-motion:reduce){html:has(.home-page) .cosmic-backdrop::after{display:none}}
 
 /* Compact, touch-draggable alphabet directory. Only the list scrolls. */
 .site-header .mobile-nav.has-alphabet{width:min(600px,100%);padding:18px;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100dvh - 140px)}

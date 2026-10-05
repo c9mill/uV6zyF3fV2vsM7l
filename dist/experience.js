@@ -49,25 +49,7 @@
  }
  document.addEventListener('load',event=>{if(event.target instanceof HTMLImageElement)sizeNewsPhoto(event.target);},true);
  document.querySelectorAll('.news-image img').forEach(sizeNewsPhoto);
- // Flex rows stretch the cards; only the excerpt grows, never the heading.
- // Observe the actual free height so text stops on a complete line at any size.
- const excerptObserver=new ResizeObserver(entries=>{
-  for(const {target,contentRect} of entries){
-   const lineHeight=parseFloat(getComputedStyle(target).lineHeight);
-   target.style.setProperty('--excerpt-lines',Math.max(1,Math.floor((contentRect.height+.25)/lineHeight)));
-  }
- });
- document.querySelectorAll('.news-grid').forEach(grid=>{
-  let observed=new Set();
-  function observeExcerpts(){
-   const current=new Set(grid.querySelectorAll('.news-excerpt'));
-   for(const excerpt of observed)if(!current.has(excerpt))excerptObserver.unobserve(excerpt);
-   for(const excerpt of current)if(!observed.has(excerpt))excerptObserver.observe(excerpt);
-   observed=current;
-  }
-  observeExcerpts();
-  new MutationObserver(observeExcerpts).observe(grid,{childList:true});
- });
+ // News excerpts are clamped in CSS; no resize-triggered layout feedback loop.
 })();
 
 // Internal-page interactions share one light observer and keep all content readable.
@@ -77,7 +59,6 @@
  const nav=document.querySelector('.section-explorer');
  const links=nav?[...nav.querySelectorAll('a')]:[];
  const targets=links.map(link=>document.getElementById(decodeURIComponent(link.hash.slice(1))));
- const reduced=matchMedia('(prefers-reduced-motion:reduce)');
  function mark(index){links.forEach((link,i)=>{if(i===index)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
  if(links.length&&'IntersectionObserver' in window){
   const observer=new IntersectionObserver(entries=>{
@@ -91,15 +72,7 @@
  }
  const cards=document.querySelectorAll('main .editorial-section,main .resource-group,main .resource-tile,main .news-card,main .document-row,main .contact-details>div,main .steps>div');
  cards.forEach(card=>{card.classList.add('interior-card');card.style.setProperty('--card-hue','var(--page-hue)');});
- if('IntersectionObserver' in window){
-  const reveal=new IntersectionObserver(entries=>{
-   for(const entry of entries)if(entry.isIntersecting){
-    if(!reduced.matches)entry.target.classList.add('interior-arrived');
-    reveal.unobserve(entry.target);
-   }
-  },{threshold:.06});
-  cards.forEach(card=>reveal.observe(card));
- }
+ // motion.js owns the sole one-shot reveal observer.
  // Newly filtered news and search results receive the same card treatment.
  ['news-results','search-results'].forEach(id=>{
   const list=document.getElementById(id);if(!list)return;
