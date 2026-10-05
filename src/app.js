@@ -351,7 +351,7 @@ document.body.append(sitePhotoDialog);
 const sitePhotoImage=sitePhotoDialog.querySelector('[data-site-photo-image]');
 function syncSitePhoto(){
  const image=activeSitePhotoImages[sitePhotoIndex];if(!image)return;
- sitePhotoImage.src=image.currentSrc||image.src;sitePhotoImage.alt=image.alt;
+ sitePhotoImage.src=image.dataset.fullSrc||image.currentSrc||image.src;sitePhotoImage.alt=image.alt;
  sitePhotoImage.style.transform=`scale(${sitePhotoZoom})`;
  sitePhotoDialog.querySelector('[data-site-photo-zoom-reset]').textContent=`${Math.round(sitePhotoZoom*100)}%`;
  sitePhotoDialog.querySelector('[data-site-photo-prev]').disabled=activeSitePhotoImages.length<2;
