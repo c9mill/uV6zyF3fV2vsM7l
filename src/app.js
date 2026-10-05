@@ -218,7 +218,7 @@ function closeMenu(){
  document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.classList.remove('is-open');menuBackdrop.style.pointerEvents='none';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=false);
  const previous=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,savedScroll);document.documentElement.style.scrollBehavior=previous;
- menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:160);
+ menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:300);
 }
 menuButton?.addEventListener('click',()=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
