@@ -90,3 +90,99 @@ html body :is(.quick-links,.student-resources,.page-sidebar,.resource-group,.res
 /* The alphabet rail stays still while the filtered list changes. */
 .navigation-alphabet button{transform:none!important;animation:none!important;transition:background-color 120ms ease,color 120ms ease!important}
 .navigation-alphabet{contain:layout style}
+
+/* Shared composition: the same type rhythm and restrained surfaces on every page. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--reading-width:68ch}
+.section{padding-block:clamp(52px,6.5vw,92px)}
+.section-heading{margin-bottom:clamp(24px,3vw,40px);align-items:baseline}
+.section-heading h2,.student-feature h2{font-weight:550;letter-spacing:-.045em;line-height:1.08;text-wrap:balance}
+.page-heading h1{text-wrap:balance;line-height:1.12}
+.prose p,.library-event-copy p{max-width:var(--reading-width)}
+.home-page .hero.hero-centered h1{line-height:1.07;letter-spacing:-.055em;margin-bottom:28px}
+.hero-centered .hero-college-name{max-width:66ch;font-size:.88rem;line-height:1.65;font-weight:450}
+.home-page .hero.hero-centered{padding-block:clamp(48px,5vw,76px)}
+.hero-centered .button-row{gap:12px}
+.hero-centered .button{min-height:54px;padding-inline:25px}
+.site-header .desktop-nav>a,.site-header .nav-group>a{position:relative}
+.site-header .desktop-nav>a::after,.site-header .nav-group>a::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 320ms var(--motion-ease)}
+.site-header .desktop-nav a:is(:hover,:focus-visible,[aria-current])::after{transform:scaleX(1)}
+.site-header .header-search:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+.nav-dropdown a{min-height:44px}
+
+/* Academic names lead; the specialty code is metadata rather than an illustration. */
+html body main .program-grid{gap:clamp(14px,2vw,28px)}
+html body main .program-grid .program-card{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr auto auto;gap:0 16px;min-height:340px;padding:28px;border-radius:20px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 7%,transparent),transparent 70%),color-mix(in srgb,var(--surface) 28%,transparent)!important}
+html body main .program-card .program-top{grid-column:1;grid-row:1;min-height:24px;margin:0}
+html body main .program-card .program-label{padding:0;background:none;border-radius:0;font-size:.78rem;font-weight:500;color:var(--accent)}
+html body main .program-card .program-top>.icon,html body main .program-card .program-art>.icon,html body main .program-card>.eyebrow{display:none}
+html body main .program-card .program-art{position:static;grid-column:2;grid-row:1;width:auto;height:auto;min-height:0;padding:0;margin:0;align-self:center}
+html body main .program-card .program-code{font-size:.8rem;line-height:1.4;font-weight:500;letter-spacing:.02em;opacity:.7}
+html body main .program-card h3{grid-column:1/-1;grid-row:2;align-self:start;max-width:22ch;font-size:clamp(1.45rem,2.1vw,2rem);font-weight:550;line-height:1.18;letter-spacing:-.035em;margin:36px 0 22px;text-wrap:balance}
+html body main .program-card>p{display:block;grid-column:1/-1;grid-row:3;margin:0 0 24px;max-width:40ch;font-size:.9rem;line-height:1.65}
+html body main .program-card .program-bottom{grid-column:1/-1;grid-row:4;min-height:44px;padding:0;gap:16px;font-size:.78rem;font-weight:500}
+.program-bottom>.icon{box-sizing:content-box;padding:10px;border-radius:50%;background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.program-footnote{margin-top:18px;font-size:.78rem}
+
+/* Stories read as an editorial strip, with the original photo proportions. */
+html[data-section-theme] body .news-card,html[data-section-theme] body .news-card:hover{background:transparent!important;box-shadow:none!important;border-radius:0}
+.home-page .news-grid{gap:clamp(16px,1.8vw,26px);align-items:start}
+.home-page .news-grid>.news-card{padding:0;min-width:0}
+.news-card .news-image,.home-page .news-card .news-image{height:auto;aspect-ratio:auto;border-radius:14px;margin-bottom:18px;overflow:hidden}
+.news-card .news-image img{height:auto;max-height:none;aspect-ratio:auto;object-fit:contain;border-radius:inherit}
+.home-page .news-card :is(.news-meta,h3,.news-excerpt),.home-page .news-card>.text-link{margin-inline:0}
+.home-page .news-card .news-meta{min-height:20px;margin-bottom:10px;font-size:.72rem;gap:8px}
+.news-card .news-meta span,html[data-section-theme] .news-card .news-meta span{background:none;border-radius:0;padding:0;font-weight:400}
+.home-page .news-card .news-meta>span{display:none}
+.home-page .news-card h3{font-size:clamp(1rem,1.3vw,1.15rem);font-weight:550;line-height:1.3;letter-spacing:-.02em;margin-bottom:12px;text-wrap:pretty}
+.home-page .news-card .news-excerpt{font-size:.83rem;line-height:1.6;margin-bottom:16px}
+.news-card h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.news-card .news-image img{transition:transform 650ms var(--motion-ease)}
+
+/* A short library introduction sits beside a useful catalogue action. */
+html body .library-page .library-intro-compact{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 0 24px;background:transparent!important;box-shadow:none!important;border-radius:0}
+.library-intro-compact .library-intro-copy{max-width:70ch}
+.library-intro-compact .library-intro-copy>p{margin:0;font-size:.9rem;line-height:1.7}
+.library-intro-compact .library-catalog-link{flex:none;border:0;border-radius:999px;padding:12px 18px;min-height:44px;background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font:inherit;font-size:.84rem;gap:8px;cursor:pointer}
+.library-catalog-link strong{font-weight:600;font-variant-numeric:tabular-nums}
+.library-page>.library-sections{gap:6px;margin-bottom:8px;padding-bottom:6px}
+.library-page .library-sections>button{min-height:44px;font-size:.82rem}
+.library-page .library-portfolio-heading{margin:12px 0 28px}
+.library-page .library-portfolio-heading h2{font-size:clamp(2rem,3.8vw,3.5rem);letter-spacing:-.04em}
+.library-page .library-portfolio-heading>p{font-size:.92rem;max-width:74ch}
+
+/* Institutional links form a quiet directory, not a second set of feature cards. */
+.footer-partners{padding-bottom:40px}
+.footer-partners-heading{margin-bottom:20px}
+.footer-partners-heading h2{font-size:1rem;font-weight:500;letter-spacing:0;color:var(--muted)}
+.footer-partners-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 24px}
+html body .footer .footer-partner{display:grid;grid-template-columns:36px minmax(0,1fr) 14px;align-items:center;gap:12px;min-height:76px;padding:12px 0;border-radius:0;background:transparent!important;box-shadow:none!important;transform:none}
+.footer .footer-partner img{width:32px;height:36px;object-fit:contain;background:transparent;padding:0;border-radius:0}
+.footer .footer-partner span:not(.footer-partner-arrow){font-size:.74rem;font-weight:400;line-height:1.5}
+.footer .footer-partner-arrow{position:static;margin:0;opacity:.55}
+.footer .footer-partner-arrow .icon{width:14px;height:14px}
+.footer .footer-signature{padding-block:16px;font-size:clamp(3rem,11vw,10rem);line-height:1.15;opacity:.4;letter-spacing:-.045em}
+
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ .news-card .news-image:hover img{transform:scale(1.025)}
+ .program-card:hover .program-bottom>.icon{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+ .library-catalog-link:hover{background:color-mix(in srgb,var(--accent) 17%,transparent)}
+}
+@media(max-width:1100px){.footer-partners-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){
+ .home-page .hero.hero-centered h1{line-height:1.13;margin-bottom:24px}
+ .hero-centered .hero-college-name{font-size:.78rem;max-width:36ch;line-height:1.6}
+ .hero-centered .button{min-height:48px;padding-inline:16px}
+ html body main .program-grid{grid-template-columns:1fr;gap:12px}
+ html body main .program-grid .program-card{min-height:0;padding:22px;border-radius:16px}
+ html body main .program-card h3{font-size:1.5rem;max-width:26ch;margin:22px 0 14px}
+ html body main .program-card>p{font-size:.85rem;margin-bottom:18px}
+ .home-page .news-card h3{font-size:1.2rem}
+ .home-page .news-card .news-meta{font-size:.76rem}
+ .home-page .news-grid{row-gap:34px}
+ html body .library-page .library-intro-compact{align-items:flex-start;flex-direction:column;gap:12px;padding:12px 0 20px}
+ .library-intro-compact .library-intro-copy>p{font-size:.85rem}
+ .footer-partners-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px}
+ .footer .footer-grid{gap:28px}
+}
+@media(max-width:380px){.footer-partners-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.news-card .news-image img,.site-header .desktop-nav a::after{transition:none;transform:none}}
