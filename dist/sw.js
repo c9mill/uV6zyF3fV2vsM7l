@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
-const VERSION = '7c3f38e9cc87';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=cb10bdd69abb", "/performance.css?v=6d44e952d5d1", "/refinement.css?v=392adfb0bcc7", "/styles.css?v=c3c4f6bf19d2", "/experience.css?v=9fb74bb4af32", "/app.js?v=163c2aaed96c", "/experience.js?v=7e5fb422b361", "/motion.css?v=3ec109a25c7d", "/motion.js?v=3fc52466b6f3"];
+const VERSION = 'a2bef5fda021';
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=073784e07376", "/performance.css?v=6d44e952d5d1", "/refinement.css?v=98955e49c967", "/styles.css?v=5b436d9fdb3c", "/experience.css?v=744f8a6ecf9f", "/app.js?v=e5d037d4bba3", "/experience.js?v=090fd8df95fd", "/motion.css?v=3ec109a25c7d", "/motion.js?v=3fc52466b6f3"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';
