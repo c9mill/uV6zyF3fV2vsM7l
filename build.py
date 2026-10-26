@@ -563,7 +563,7 @@ def shell(title_text,body,path='/',description='',article=False):
     title_text = normalize_name_text(title_text)
     desc = normalize_name_text(description or f'{FULL_DISPLAY} у Житомирі: спеціальності, вступ, новини та студентське життя.')
     body_classes = ('home-page' if path=='/' else 'inner-page') + (' is-article' if article else '') + (' core-page' if not article and path != '/новини/' else '') + (' social-support-page' if path == '/соціальне-забезпечення/' else '')
-    return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><link rel="stylesheet" href="/refinement.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script></head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
+    return f'''<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>{THEME_INIT}</script><title>{escape(title_text)} — {ABBR}</title><meta name="description" content="{escape(desc[:180],quote=True)}"><meta property="og:title" content="{escape(title_text,quote=True)} — {ABBR}"><meta property="og:description" content="{escape(desc[:180],quote=True)}"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:locale" content="uk_UA"><meta name="theme-color" content="#204ed8"><meta name="application-name" content="FKBAD"><meta name="apple-mobile-web-app-title" content="FKBAD"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"><link rel="icon" href="{FAVICON}" type="image/webp"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><link rel="stylesheet" href="/motion.css"><link rel="stylesheet" href="/refinement.css"><script src="/app.js" defer></script><script src="/experience.js" defer></script><script src="/vendor/lenis.min.js" defer></script><script src="/motion.js" defer></script><script src="/kinetic.js" defer></script></head><body class="{body_classes}"><div class="cosmic-backdrop" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-dust"></div><div class="cosmic-glints"></div></div>{header(path)}<main id="main">{body}</main>{footer()}<button class="back-top icon-button" aria-label="Повернутися нагору" type="button">{icon("arrow")}</button></body></html>'''
 WRITTEN = []
 THEME_HUES = {'blue': 205, 'yellow': 48, 'green': 142}
 ROUTE_THEMES = {'/': 'blue', '/про-коледж': 'blue', '/документи': 'blue',
@@ -613,8 +613,16 @@ def write(path,content,standalone=False):
         for caption in page.select('.breadcrumbs,.page-lead'):
             caption.decompose()
         main = page.select_one('main')
+        if main:
+            for content_list in main.select('ul,ol'):
+                if content_list.find_parent(['nav', 'aside']) or content_list.get('role') in ('menu', 'menubar', 'listbox', 'tablist'):
+                    continue
+                content_list['class'] = list(dict.fromkeys([*content_list.get('class', []), 'content-list']))
         page_heading = page.select_one('.page-heading')
         for image in page.select('img[src]'):
+            if image.has_attr('data-preserve-original'):
+                image.attrs.setdefault('decoding', 'async')
+                continue
             variants = optimized_photo(image['src'])
             if variants:
                 small, full = variants
@@ -653,7 +661,7 @@ def write(path,content,standalone=False):
         library_imports = ''
         content = content.replace('</head>', '<style>'+library_styles+'</style>'+library_imports+'</head>', 1)
     if '<main' in content:
-        content = content.replace('</head>', '<link rel="stylesheet" href="/section-colors.css"><link rel="stylesheet" href="/performance.css"></head>', 1)
+        content = content.replace('</head>', '<link rel="stylesheet" href="/section-colors.css"><link rel="stylesheet" href="/performance.css"><link rel="stylesheet" href="/kinetic.css"></head>', 1)
         canonical = SITE_ORIGIN + quote(unquote(path), safe='/')
         content = content.replace('</head>', f'<link rel="canonical" href="{canonical}"><meta property="og:url" content="{canonical}"></head>', 1)
         content = re.sub(r'(<a\b[^>]*?href=")(/[^"#]*)(")',
@@ -667,7 +675,7 @@ def write(path,content,standalone=False):
                 del frame['src']
         content = str(document)
     content = re.sub(r'<script\b[^>]*\bsrc="/vendor/lenis\.min\.js"[^>]*></script>', '', content)
-    for asset in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg']:
+    for asset in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','schedule.css','schedule.js','motion.css','motion.js','kinetic.css','kinetic.js','cosmos.svg']:
         revision = hashlib.sha256((ROOT/'src'/asset).read_bytes()).hexdigest()[:12]
         content = content.replace(f'"/{asset}"', f'"/{asset}?v={revision}"')
     content = content.replace('width=device-width, initial-scale=1"', 'width=device-width, initial-scale=1, viewport-fit=cover"')
@@ -734,7 +742,7 @@ def home():
     news_grid.append(BeautifulSoup(''.join(news_card(p) for p in POSTS[:max(1,min(10,int(HOME_SETTINGS.get('news_count',5))))]),'html.parser'))
     return str(page)
 
-for filename in ['section-colors.css','performance.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
+for filename in ['section-colors.css','performance.css','refinement.css','styles.css','app.js','experience.css','experience.js','schedule.css','schedule.js','motion.css','motion.js','kinetic.css','kinetic.js','cosmos.svg','manifest.webmanifest','offline.html','icons/icon-192.png','icons/icon-512.png']:
     if (ROOT/'src'/filename).exists():
         (OUT/filename).parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/'src'/filename,OUT/filename)
@@ -752,12 +760,12 @@ shutil.copy2(ROOT/'src/vendor/lenis-LICENSE.txt',OUT/'vendor/lenis-LICENSE.txt')
 shutil.copy2(ROOT/'src/schedule-worker.js', OUT/'_worker.js')
 # Fill the service worker's version and precache only the app shell and stable,
 # versioned assets. Pages and the live schedule remain network-first/fresh.
-PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','section-colors.css','performance.css','styles.css','experience.css','motion.css','refinement.css','app.js','experience.js','motion.js'])).hexdigest()[:12]
+PWA_VERSION = hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in ['sw.js','section-colors.css','performance.css','styles.css','experience.css','motion.css','refinement.css','kinetic.css','app.js','experience.js','motion.js','kinetic.js'])).hexdigest()[:12]
 def asset_url(filename):
     revision = hashlib.sha256((ROOT/'src'/filename).read_bytes()).hexdigest()[:12]
     return f'/{filename}?v={revision}'
 pwa_precache = ['/', '/offline.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png']
-pwa_precache += [asset_url(name) for name in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js']]
+pwa_precache += [asset_url(name) for name in ['section-colors.css','performance.css','refinement.css','styles.css','experience.css','app.js','experience.js','motion.css','motion.js','kinetic.css','kinetic.js']]
 service_worker = (ROOT/'src/sw.js').read_text(encoding='utf-8')
 service_worker = service_worker.replace('__PWA_VERSION__', PWA_VERSION).replace('__PWA_PRECACHE__', json.dumps(pwa_precache, ensure_ascii=False))
 (OUT/'sw.js').write_text(service_worker, encoding='utf-8')
@@ -1230,37 +1238,81 @@ def library_page():
     sections = data.get('pages', {})
     intro = data.get('intro', {})
     def esc(value): return escape(str(value or ''))
-    def photo_carousel(images, extra_class='', label='Фотографії бібліотеки'):
+    more_arrow_svg = '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 13 13 3m0 8.65V3H4.35"></path></svg>'
+
+    def more_button_html(label='Детальніше', href='', attrs=''):
+        extra = f' {attrs.strip()}' if attrs else ''
+        if href:
+            return (f'<a class="MoreButton" href="{esc(href)}"{extra}>'
+                    f'<span class="MoreButton__label"><span data-text="{esc(label)}">{esc(label)}</span></span>'
+                    f'<span class="MoreButton__icon">{more_arrow_svg}</span></a>')
+        return (f'<button type="button" class="MoreButton"{extra}>'
+                f'<span class="MoreButton__label"><span data-text="{esc(label)}">{esc(label)}</span></span>'
+                f'<span class="MoreButton__icon">{more_arrow_svg}</span></button>')
+
+    def cuberto_item_html(title_html, text_html, bg_src='', bg_alt='', action_html='', extra_attrs=''):
+        attrs_str = f' {extra_attrs.strip()}' if extra_attrs else ''
+        bg_img = f'<img src="{esc(bg_src)}" alt="{esc(bg_alt or "Матеріали бібліотеки")}" data-preserve-original="true" loading="lazy">' if bg_src else ''
+        action_block = f'<div class="item__action">{action_html}</div>' if action_html else ''
+        return (f'<article class="item"{attrs_str}>'
+                f'<div class="item__fill"></div>'
+                f'<div class="item__bg">{bg_img}</div>'
+                f'<div class="item__head"><div class="item__title"><h3>{title_html}</h3></div></div>'
+                f'<div class="item__accordion"><div class="item__content">'
+                f'<div class="item__text">{text_html}</div>'
+                f'{action_block}'
+                f'</div></div></article>')
+
+    def photo_carousel(images, extra_class='', label='Фотографії бібліотеки', preserve_original=False):
         if not images: return ''
-        slides = ''.join(
-            f'<figure class="library-carousel-slide"{ "" if index == 0 else " hidden" }><button type="button" class="library-carousel-open" data-lightbox-open aria-label="Збільшити фото {index + 1}"><img src="{esc(item["src"])}" alt="{esc(item.get("alt") or "Матеріали бібліотеки")}" loading="lazy"></button>{f"<figcaption>{esc(item['caption'])}</figcaption>" if item.get("caption") else ""}</figure>'
-            for index, item in enumerate(images))
-        return (f'<div class="library-carousel {extra_class}" data-library-carousel aria-label="{esc(label)}">'
-                f'<div class="library-carousel-stage"><button type="button" data-carousel-prev class="library-carousel-arrow" aria-label="Попереднє фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>{slides}'
-                f'<span class="library-carousel-count" data-carousel-count aria-live="polite">1 / {len(images)}</span>'
-                f'<button type="button" data-carousel-next class="library-carousel-arrow" aria-label="Наступне фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div></div>')
+        cards = []
+        for index, item in enumerate(images):
+            src = esc(item.get('src', ''))
+            alt = esc(item.get('alt') or f'Опис {index + 1}')
+            pres = ' data-preserve-original="true"' if preserve_original else ''
+            caption_num = item.get('caption_index', index + 1)
+            cards.append(
+                f'<figure class="library-carousel-slide showcase-card" data-showcase-card>'
+                f'<button type="button" class="library-carousel-open showcase-card__open" data-lightbox-open data-slide-index="{index}" aria-label="Збільшити фото {caption_num}">'
+                f'<img src="{src}" alt="{alt}"{pres} loading="lazy">'
+                f'</button>'
+                f'<figcaption class="showcase-card__desc">Опис {caption_num}</figcaption>'
+                f'</figure>'
+            )
+        slides_html = ''.join(cards)
+        single_cls = ' is-single' if len(images) == 1 else ''
+        return (f'<div class="library-carousel library-showcase{single_cls} {extra_class}" data-library-carousel aria-label="{esc(label)}">'
+                f'<div class="library-carousel-stage showcase-stage"><div class="showcase-editorial" data-showcase-track>{slides_html}</div></div>'
+                f'</div>')
+
     def image_grid(section, extra_class=''):
         photos = sections.get(section, {}).get('images', [])
         labels = {'news': 'Фото до новин бібліотеки', 'events': 'Фото заходів бібліотеки'}
         return photo_carousel(photos, 'library-gallery '+extra_class, labels.get(section, 'Фотографії бібліотеки')) if photos else ''
+
     def book_records(section):
         if 'books' in sections.get(section, {}):
             cards = []
             for item in sections[section]['books']:
                 if not item.get('title'): continue
-                cover = item.get('cover')
-                cover_html = f'<img src="{esc(cover)}" alt="{esc(item.get("alt") or item["title"])}" loading="lazy">' if cover else ''
+                cover = item.get('cover') or ''
+                code = str(item.get('code') or '')
+                citation = str(item.get('citation') or '')
                 description = str(item.get('description') or '')
-                teaser = description[:187].rsplit(' ', 1)[0]+'…' if len(description) > 190 else description
-                cards.append(f'<article class="library-book">{cover_html}<div class="library-book-info"><small>{esc(item.get("code"))}</small><h3>{esc(item["title"])}</h3><p class="library-book-teaser">{esc(teaser)}</p><details class="library-book-record"><summary>Переглянути {icon("arrow")}</summary><div><p>{esc(item.get("citation"))}</p><p>{esc(description)}</p></div></details></div></article>')
+                title_html = f'<span class="item__meta-tag">{esc(code)}</span> {esc(item["title"])}' if code else esc(item['title'])
+                text_parts = []
+                if citation:
+                    text_parts.append(f'<p class="item__citation">{esc(citation)}</p>')
+                if description and description != citation:
+                    text_parts.append(f'<p>{esc(description)}</p>')
+                text_html = ''.join(text_parts) or f'<p>{esc(item["title"])}</p>'
+                action_html = more_button_html('Обкладинка видання', '', f'data-book-cover="{esc(cover)}" data-book-title="{esc(item.get("alt") or item["title"])}"') if cover else ''
+                cards.append(cuberto_item_html(title_html, text_html, cover, item.get('alt') or item['title'], action_html, ''))
             return cards
         blocks = sections.get(section, {}).get('blocks', [])
         covers = sections.get(section, {}).get('images', [])
         records, current = [], []
         for block in blocks:
-            # The source separates classification marks, authors, citations and
-            # annotations into individual text blocks. A short numeric block
-            # starts each bibliographic record.
             starts_record = len(block) < 45 and bool(re.match(r'^\s*[\d(]', block)) and '[Текст]' not in block
             if starts_record:
                 if current: records.append(current)
@@ -1273,19 +1325,21 @@ def library_page():
             citation = next((part for part in item if '[Текст]' in part), '')
             if not citation: continue
             code = item[0]
-            title = re.split(r'\s*\[Текст\]', citation, maxsplit=1)[0]
-            if len(title) > 180: title = title[:177].rsplit(' ', 1)[0]+'…'
+            title_str = re.split(r'\s*\[Текст\]', citation, maxsplit=1)[0]
+            if len(title_str) > 180: title_str = title_str[:177].rsplit(' ', 1)[0]+'…'
             description = ' '.join(part for part in item[1:] if part != citation)
-            cover = covers[len(cards)] if len(cards) < len(covers) else None
-            cover_html = f'<img src="{esc(cover["src"])}" alt="{esc(title)}" loading="lazy">' if cover else ''
-            teaser = description or citation
-            if len(teaser) > 190: teaser = teaser[:187].rsplit(' ', 1)[0]+'…'
-            cards.append(f'<article class="library-book">{cover_html}<div class="library-book-info"><small>{esc(code)}</small><h3>{esc(title)}</h3><p class="library-book-teaser">{esc(teaser)}</p><details class="library-book-record"><summary>Переглянути <span aria-hidden="true">{icon("arrow")}</span></summary><div><p>{esc(citation)}</p>{f"<p>{esc(description)}</p>" if description else ""}<small>У джерелі доступний бібліографічний опис, повного тексту цієї книги немає.</small></div></details></div></article>')
+            cover_obj = covers[len(cards)] if len(cards) < len(covers) else None
+            cover = cover_obj['src'] if cover_obj else ''
+            title_html = f'<span class="item__meta-tag">{esc(code)}</span> {esc(title_str)}'
+            text_html = f'<p class="item__citation">{esc(citation)}</p>' + (f'<p>{esc(description)}</p>' if description else '')
+            action_html = more_button_html('Обкладинка видання', '', f'data-book-cover="{esc(cover)}" data-book-title="{esc(title_str)}"') if cover else ''
+            cards.append(cuberto_item_html(title_html, text_html, cover, title_str, action_html, ''))
         return cards
+
     arrivals = book_records('arrivals')
     exhibition = book_records('exhibition')
-    arrivals_html = ''.join(arrivals)
-    exhibition_html = ''.join(exhibition)
+    arrivals_html = '<div class="items library-book-items" data-library-items>' + ''.join(arrivals) + '</div>'
+    exhibition_html = '<div class="items library-book-items" data-library-items>' + ''.join(exhibition) + '</div>'
     periods = [x for x in sections.get('periodicals', {}).get('blocks', []) if x and x not in ('Передплата періодичних видань', 'Идеи вашого дома', 'Идеи вашего дома')]
     period_html = ''.join(f'<span>{esc(item)}</span>' for item in periods)
     news = sections.get('news', {}).get('blocks', [])
@@ -1304,99 +1358,285 @@ def library_page():
     docs = data.get('word_documents', {})
     word_ids = {label: (re.search(r'/d/([^/]+)', url).group(1) if re.search(r'/d/([^/]+)', url) else url) for label, url in docs.items()}
     word_cards = ''.join(f'<details class="library-document"><summary><span>{icon("file")}</span><strong>{esc(label)}</strong>{icon("arrow")}</summary><div class="library-pdf"><iframe title="{esc(label)}" src="https://drive.google.com/file/d/{word_ids[label]}/preview" loading="lazy"></iframe><p>Цей вихідний документ опублікований у форматі Word; для перегляду він вбудований з бібліотечного сховища.</p></div></details>' for label in docs if label in word_ids)
-    portfolio_slides = {item['number']: item for item in data.get('portfolio_slides', [])}
-    # Keep the college's documentary photographs, but omit the clip art, charts,
-    # ornamental flourishes and outdated contact slide from the 2017 presentation.
-    portfolio_decorations = {
-        'ff5124d9b23777.jpg', 'ad14f5e8f98d52.jpg', '30fbc351e79f7a.jpg',
-        '6a95d443e78f88.jpg', '839ee48d02b90a.jpg', '6f9de36d752561.jpg',
-        '87ec4dfaf6a7c4.jpg', '3e967d1df96b61.jpg', '35927e2c57ed2b.jpg',
-        '8ac9b987be68e3.jpg', '2eed9d3354ad6c.jpg', 'f9d1794a08f1d5.jpg',
-        'fb28ea2996d411.jpg', '9a2576845646de.jpg', '82b724dec52fef.jpg',
-        'd86444e4024691.jpg', '481c2aaf9468be.jpg',
+
+    portfolio_stories = data.get('stories', [])
+
+    # Strictly unique photo allocation:
+    # Each detail card in #library-about gets its own unique portfolio photograph,
+    # and the staggered 2-column showcase gallery displays only the remaining unique photographs
+    # (filtering out near-identical circulation desk shots so every visible photo is distinct).
+    card_bg_by_slide = {
+        3: '/assets/library/portfolio-2018/85e61baa84155a93.jpg',
+        4: '/assets/library/portfolio-2018/1bf0a3b74af43fcc.jpg',
+        5: '/assets/library/portfolio-2018/d35d599ac9ebf1a2.jpg',
+        6: '/assets/library/portfolio-2018/a4dcc04ed1ecb576.jpg',
     }
-    portfolio_stories = [
-        ('Історія, що почалася 1945 року',
-         'Бібліотека працює від часу заснування коледжу. За десятиліття вона стала місцем для навчання, пошуку інформації та культурних подій.',
-         [2, 5]),
-        ('Книги, читальна зала й цифровий пошук',
-         'Абонемент, читальна зала та електронні ресурси допомагають знаходити фахову й художню літературу. У портфоліо 2017 року фонд налічував 69 228 видань.',
-         [5, 6, 9, 10, 11]),
-        ('Люди бібліотеки',
-         'За книжками й подіями стоїть команда бібліотекарів. В архіві збереглися кадри їхньої роботи, професійних зустрічей і спілкування з випускниками.',
-         [4, 12, 13, 14, 15]),
-        ('Зустрічі, лекції та відкриття',
-         'Бібліотека проводить розмови про мову, культуру, право й професію. Ці фотографії показують події, що відбувалися в коледжі на час створення портфоліо.',
-         [16, 17, 18, 19, 20, 21, 22, 23, 24]),
-        ('Книжкові виставки',
-         'Тематичні добірки знайомлять читачів із новими темами та авторами. Тут зібрані справжні виставки бібліотеки й видання, що були представлені в її просторі.',
-         [25, 26, 27, 28]),
-        ('Простір, у якому хочеться залишитися',
-         'Читальну залу доповнюють рослини, книжкові полиці й роботи студентів. Оформлення змінюється разом із життям бібліотеки.',
-         [29, 30, 31, 32]),
-        ('Відзнаки та професійний досвід',
-         'У портфоліо збережені нагороди й сертифікати працівників бібліотеки. Вони відображають участь у професійних подіях на час підготовки презентації.',
-         [33, 34, 35]),
-    ]
-    portfolio_stories = data.get('stories', portfolio_stories)
-    def portfolio_story_html(story):
+    used_photo_srcs = set(card_bg_by_slide.values())
+    # Exclude near-duplicate shots of the circulation counter so every photo in the gallery is visually unique
+    near_duplicate_srcs = {
+        '/assets/library/portfolio-2018/beb2fe771ff361e6.jpg',
+        '/assets/library/portfolio-2018/34239c75c5c43187.jpg',
+    }
+
+    showcase_photos = []
+    for story in portfolio_stories:
         if isinstance(story, dict):
-            carousel = photo_carousel(story.get('images', []), 'library-portfolio-photos', f'Фото до розділу: {story.get("title", "")}')
-            return f'<article class="library-portfolio-story"><div class="library-portfolio-copy"><h3>{esc(story.get("title"))}</h3><p>{esc(story.get("text"))}</p></div>{carousel}</article>'
-        title, summary, slide_numbers = story
-        images = []
-        seen = set()
-        for number in slide_numbers:
-            for src in portfolio_slides.get(number, {}).get('images', []):
-                if Path(src).name in portfolio_decorations or src in seen:
-                    continue
-                seen.add(src)
-                images.append((src, f'Архівне фото бібліотеки коледжу: {title}', False))
-        carousel_images = [{'src': src, 'alt': alt, 'caption': 'Ілюстративне фото' if illustrative else ''} for src, alt, illustrative in images]
-        carousel = photo_carousel(carousel_images, 'library-portfolio-photos', f'Фото до розділу: {title}')
-        return (f'<article class="library-portfolio-story">'
-                f'<div class="library-portfolio-copy"><h3>{esc(title)}</h3><p>{esc(summary)}</p></div>'
-                f'{carousel}</article>')
-    portfolio_html = ''.join(portfolio_story_html(story) for story in portfolio_stories)
+            for img in story.get('images', []):
+                src = img.get('src')
+                if src and src not in used_photo_srcs and src not in near_duplicate_srcs:
+                    used_photo_srcs.add(src)
+                    showcase_photos.append({
+                        'src': src,
+                        'alt': f'Опис {len(showcase_photos) + 1}',
+                        'caption_index': len(showcase_photos) + 1,
+                    })
+
+    # Add distinct documentary photos from portfolio-2018 so the 2-column showcase has a balanced 6-photo set
+    extra_unique_portfolio_photos = [
+        '/assets/library/portfolio-2018/c18766197c048b8b.jpg',
+        '/assets/library/portfolio-2018/c3c57a4b78378711.jpg',
+    ]
+    for extra_src in extra_unique_portfolio_photos:
+        if extra_src not in used_photo_srcs:
+            used_photo_srcs.add(extra_src)
+            showcase_photos.append({
+                'src': extra_src,
+                'alt': f'Опис {len(showcase_photos) + 1}',
+                'caption_index': len(showcase_photos) + 1,
+            })
+
+    # Build scroll-driven .items -> .item accordion cards and minimalist expandable list rows (.testimonials -> .testimonial)
+    about_items_html = []
+    testimonials_html = []
+
+    def expandable_row_html(title_str, body_html, extra_attrs=''):
+        attrs_str = f' {extra_attrs.strip()}' if extra_attrs else ''
+        return (
+            f'<article class="testimonial"{attrs_str} data-expandable-item>'
+            f'<button type="button" class="testimonial__trigger" data-expandable-trigger aria-expanded="false">'
+            f'<span class="testimonial__heading">{esc(title_str)}</span>'
+            f'<span class="testimonial__icon" aria-hidden="true"></span>'
+            f'</button>'
+            f'<div class="testimonial__panel" data-expandable-panel>'
+            f'<div class="testimonial__panel-inner">'
+            f'<div class="testimonial__text">{body_html}</div>'
+            f'</div>'
+            f'</div>'
+            f'</article>'
+        )
+
+    for story in portfolio_stories:
+        if not isinstance(story, dict):
+            continue
+        layout = story.get('layout')
+        slide_no = story.get('source_slide')
+        title_raw = story.get('title', '')
+        text_raw = story.get('text', '')
+        imgs = story.get('images', [])
+        first_alt = imgs[0].get('alt', '') if imgs else ''
+
+        # Narrative articles (slides 3, 4, 5, 6) become scroll-driven .item accordion cards
+        if slide_no in (3, 4, 5, 6):
+            unique_bg = card_bg_by_slide.get(slide_no, '')
+            if slide_no == 6 and not text_raw.strip():
+                chunks = [chunk.strip() for chunk in re.split(r'\n\s*\n+', title_raw) if chunk.strip()]
+                card_title = esc(chunks[0]) if chunks else esc(title_raw)
+                body_chunks = chunks if len(chunks) <= 1 else chunks[1:]
+                paragraphs = ''.join(f'<p>{esc(line)}</p>' for chunk in body_chunks for line in chunk.splitlines() if line.strip())
+                full_verbatim = f'<p class="item__lead">{esc(chunks[0])}</p>{paragraphs}' if len(chunks) > 1 else paragraphs
+                action = more_button_html('Переглянути фотографії', '#library-showcase-section')
+                about_items_html.append(cuberto_item_html(
+                    card_title,
+                    full_verbatim,
+                    unique_bg,
+                    first_alt or chunks[0],
+                    action,
+                    f'data-source-slide="{slide_no}"'
+                ))
+            else:
+                lines = [line for line in text_raw.splitlines() if line.strip()]
+                if layout == 'structure':
+                    paragraphs = '<ul class="item__list">' + ''.join(f'<li>{esc(line)}</li>' for line in lines) + '</ul>'
+                else:
+                    paragraphs = ''.join(f'<p>{esc(line)}</p>' for line in lines)
+                action_target = '#library-showcase-section' if imgs else '#library-testimonials-section'
+                action_label = 'Переглянути фотографії' if imgs else 'Структура та фонд'
+                action = more_button_html(action_label, action_target)
+                about_items_html.append(cuberto_item_html(
+                    esc(title_raw),
+                    paragraphs,
+                    unique_bg,
+                    first_alt or title_raw.strip(),
+                    action,
+                    f'data-source-slide="{slide_no}"'
+                ))
+
+        # Former bento data cards become a minimalist full-width expandable accordion list
+        if layout == 'fund':
+            records = [record.splitlines() for record in text_raw.split('\n\n') if record.strip()]
+            metrics = []
+            for record in records:
+                label, quantity = record[0], record[-1]
+                metrics.append(f'<span class="testimonial__metric"><strong>{esc(label)}</strong> <em>{esc(quantity)}</em></span>')
+            metrics_grid = '<div class="testimonial__metrics">' + ''.join(metrics) + '</div>'
+            testimonials_html.append(expandable_row_html(
+                title_raw,
+                metrics_grid,
+                f'data-source-slide="{slide_no}"'
+            ))
+        elif layout == 'structure':
+            lines = [line for line in text_raw.splitlines() if line.strip()]
+            pills = '<ul class="testimonial__tags">' + ''.join(f'<li>{esc(line)}</li>' for line in lines) + '</ul>'
+            testimonials_html.append(expandable_row_html(
+                title_raw,
+                pills,
+                f'data-source-slide="{slide_no}"'
+            ))
+        elif layout == 'functions':
+            lines = [line for line in text_raw.splitlines() if line.strip()]
+            pills = '<ul class="testimonial__tags">' + ''.join(f'<li>{esc(line)}</li>' for line in lines) + '</ul>'
+            testimonials_html.append(expandable_row_html(
+                title_raw,
+                pills,
+                f'data-source-slide="{slide_no}"'
+            ))
+        elif layout == 'branches':
+            diag_id = story.get('diagram_id', 'branches')
+            items = [line for line in text_raw.splitlines() if line.strip()]
+            branches = '<ul class="testimonial__tags">' + ''.join(f'<li>{esc(item)}</li>' for item in items) + '</ul>'
+            details_list = [item for item in story.get('details', '').splitlines() if item.strip()]
+            details_html = ('<div class="testimonial__divider"></div><ul class="testimonial__sublist">' + ''.join(f'<li>{esc(item)}</li>' for item in details_list) + '</ul>') if details_list else ''
+            testimonials_html.append(expandable_row_html(
+                title_raw,
+                branches + details_html,
+                f'data-library-diagram="{esc(diag_id)}"'
+            ))
+        elif layout == 'integrity':
+            lines = [line for line in text_raw.splitlines() if line.strip()]
+            pills = '<ul class="testimonial__tags">' + ''.join(f'<li><span>{esc(line)}</span></li>' for line in lines) + '</ul>'
+            testimonials_html.append(expandable_row_html(
+                title_raw,
+                pills,
+                'data-library-diagram="academic-integrity" aria-label="Академічна доброчесність"'
+            ))
+
+    items_section_html = (
+        f'<section class="library-items-section" id="library-items-section" aria-label="Історія та діяльність бібліотеки">'
+        f'<div class="items" data-library-items>{"".join(about_items_html)}</div>'
+        f'</section>'
+    )
+    showcase_section_html = (
+        f'<section class="library-showcase-section" id="library-showcase-section" aria-label="Фотографії бібліотеки">'
+        f'{photo_carousel(showcase_photos, "library-portfolio-photos", "Фотографії бібліотеки коледжу", preserve_original=True)}'
+        f'</section>'
+    )
+    testimonials_section_html = (
+        f'<section class="library-testimonials-section" id="library-testimonials-section" aria-label="Фонд, послуги та напрями роботи бібліотеки">'
+        f'<div class="testimonials" data-library-testimonials>{"".join(testimonials_html)}</div>'
+        f'</section>'
+    )
+    portfolio_html = items_section_html + showcase_section_html + testimonials_section_html
+
+    # Build News section using .items -> .item (without duplicating the poster in a second gallery below)
+    news_blocks = sections.get('news', {}).get('blocks', [])
+    news_list = sections.get('news', {}).get('list_items', [])
+    news_closing = sections.get('news', {}).get('closing_blocks', [])
+    news_imgs = sections.get('news', {}).get('images', [])
+    news_bg = news_imgs[0]['src'] if news_imgs else ''
+    news_title = news_blocks[1] if len(news_blocks) > 1 else (news_blocks[0] if news_blocks else 'Бібліотека інформує')
+    news_body_html = (
+        ''.join(f'<p>{esc(t)}</p>' for t in news_blocks)
+        + ('<ul class="item__list">' + ''.join(f'<li>{esc(t)}</li>' for t in news_list) + '</ul>' if news_list else '')
+        + ''.join(f'<p>{esc(t)}</p>' for t in news_closing)
+    )
+    news_item_card = cuberto_item_html(
+        esc(news_title),
+        news_body_html,
+        news_bg,
+        news_imgs[0].get('alt', '') if news_imgs else 'Бібліотека інформує',
+        more_button_html('Переглянути афішу виставки', '', f'data-book-cover="{esc(news_bg)}" data-book-title="{esc(news_title)}"') if news_bg else '',
+        ''
+    )
+
+    # Build Events section using .items -> .item + showcase gallery (each photo used strictly once)
+    event_items_cards = []
+    all_event_photos = []
+    for event in sections.get('events', {}).get('entries', []):
+        ev_paragraphs = ''.join(f'<p>{esc(text)}</p>' for text in event.get('text', '').split('\n\n') if text.strip())
+        ev_imgs = event.get('images', [])
+        ev_bg = ev_imgs[0]['src'] if ev_imgs else ''
+        for extra_ev_img in ev_imgs[1:]:
+            if extra_ev_img.get('src') and extra_ev_img['src'] not in used_photo_srcs:
+                used_photo_srcs.add(extra_ev_img['src'])
+                all_event_photos.append({
+                    'src': extra_ev_img['src'],
+                    'alt': f'Опис {len(all_event_photos) + 1}',
+                    'caption_index': len(all_event_photos) + 1,
+                })
+        ev_action = more_button_html('Допис у Facebook', event.get('source_url'), 'target="_blank" rel="noopener noreferrer"') if event.get('source_url') else ''
+        event_items_cards.append(cuberto_item_html(
+            esc(event.get('title', 'Захід бібліотеки')),
+            ev_paragraphs,
+            ev_bg,
+            ev_imgs[0].get('alt', '') if ev_imgs else event.get('title', ''),
+            ev_action,
+            ''
+        ))
+    if event_blocks:
+        ev_main_imgs = sections.get('events', {}).get('images', [])
+        ev_main_bg = ev_main_imgs[0]['src'] if ev_main_imgs else ''
+        for extra_ev_img in ev_main_imgs[1:]:
+            if extra_ev_img.get('src') and extra_ev_img['src'] not in used_photo_srcs:
+                used_photo_srcs.add(extra_ev_img['src'])
+                all_event_photos.append({
+                    'src': extra_ev_img['src'],
+                    'alt': f'Опис {len(all_event_photos) + 1}',
+                    'caption_index': len(all_event_photos) + 1,
+                })
+        ev_main_paragraphs = ''.join(f'<p>{esc(text)}</p>' for text in event_blocks if text.strip())
+        event_items_cards.append(cuberto_item_html(
+            'Міні-лекція «Важливість розвитку інноваційного інтелекту»',
+            ev_main_paragraphs,
+            ev_main_bg,
+            'Зустріч у читальній залі бібліотеки',
+            more_button_html('Переглянути фото заходу', '#library-events-gallery'),
+            ''
+        ))
+    events_items_html = '<div class="items" data-library-items>' + ''.join(event_items_cards) + '</div>'
+    events_gallery_html = f'<div id="library-events-gallery">{photo_carousel(all_event_photos, "library-gallery library-event-photos", "Фото заходів бібліотеки")}</div>' if all_event_photos else ''
+
     library_title = intro.get('title', 'Головна сторінка бібліотеки')
     library_html = page_heading(library_title,intro.get('lead', '')) + f'''<div class="container library-page">
-      <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{str(index == 0).lower()}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи')]) )}</nav>
+      <nav class="library-sections" role="tablist" aria-label="Розділи бібліотеки">{''.join(f'<button type="button" role="tab" id="tab-{anchor}" aria-controls="{anchor}" aria-selected="{str(index == 0).lower()}" tabindex="{0 if index == 0 else -1}" data-library-tab="{anchor}">{label}</button>' for index,(anchor,label) in enumerate([('library-about','Про бібліотеку'),('library-news','Бібліотека інформує'),('library-exhibition','Віртуальна виставка'),('library-new-books','Нові надходження'),('library-periodicals','Періодичні видання'),('library-rules','Нормативна база'),('library-events','Заходи'),('library-self-education','Самоосвіта')]) )}</nav>
       <section class="library-intro library-intro-compact"><div class="library-intro-copy"><p>{esc(intro.get('description'))}</p></div><button type="button" class="text-link library-catalog-link" data-library-open-tab="library-new-books"><span><strong>{len(arrivals)}</strong> нових видань у каталозі</span>{icon('arrow')}</button></section>
-      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">Бібліотека</h2><p>Люди, книжки й події, які творили її історію. Архівні світлини та відомості взято з презентації 2017 року; цифри й персональні дані описують саме той час.</p></div><div class="library-portfolio-list">{portfolio_html}</div></section>
-      <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="library-story"><div>{'<h3>'+esc(news[0])+'</h3>' if news else ''}<p>Новини, зустрічі й матеріали бібліотеки.</p></div>{image_grid('news')}</div></section>
+      <section class="library-section" id="library-about" role="tabpanel" aria-labelledby="tab-library-about"><div class="library-section-heading library-portfolio-heading"><h2 id="library-portfolio">{esc(intro.get("about_heading", "Загальні відомості про бібліотеку"))}</h2></div><div class="library-history">{''.join(f'<p>{esc(paragraph)}</p>' for paragraph in intro.get("about_description", "").split("\n\n") if paragraph.strip())}</div><div class="library-portfolio-list">{portfolio_html}</div></section>
+      <section class="library-section" id="library-news" role="tabpanel" aria-labelledby="tab-library-news" hidden><div class="library-section-heading"><p class="eyebrow">Події та оголошення</p><h2>Бібліотека інформує</h2></div><div class="items" data-library-items>{news_item_card}</div></section>
       <section class="library-section" id="library-exhibition" role="tabpanel" aria-labelledby="tab-library-exhibition" hidden><div class="library-section-heading"><p class="eyebrow">Книжкова добірка</p><h2>«Життя — в творчості, життя — в роботі»</h2><p>Віртуальна виставка книжок працівників коледжу.</p></div><div class="library-book-list">{exhibition_html}</div></section>
       <section class="library-section" id="library-new-books" role="tabpanel" aria-labelledby="tab-library-new-books" hidden><div class="library-section-heading"><p class="eyebrow">Каталог бібліотеки</p><h2>Нові надходження</h2><p>Бібліографічні описи та обкладинки видань.</p></div><div class="library-book-list">{arrivals_html}</div>{pdf_viewer(arrivals_pdf) if arrivals_pdf else ''}<p class="library-source-note">Повні електронні тексти цих видань у каталозі недоступні.</p></section>
       <section class="library-section" id="library-periodicals" role="tabpanel" aria-labelledby="tab-library-periodicals" hidden><div class="library-section-heading"><p class="eyebrow">Читання та фахова преса</p><h2>Періодичні видання</h2></div><div class="library-periodical-list">{period_html}</div></section>
       <section class="library-section" id="library-rules" role="tabpanel" aria-labelledby="tab-library-rules" hidden><div class="library-section-heading"><p class="eyebrow">Документи для читачів</p><h2>Нормативна база</h2><p>Доступні PDF відкриваються без переходу на окрему сторінку.</p></div><div class="library-documents">{pdf_cards}{word_cards}</div></section>
-      <section class="library-section" id="library-events" role="tabpanel" aria-labelledby="tab-library-events" hidden><div class="library-section-heading"><p class="eyebrow">Життя бібліотеки</p><h2>Заходи</h2></div><div class="library-event-layout"><div class="library-event-copy"><p>{esc(event_text)}</p></div>{image_grid('events')}</div></section>
+      <section class="library-section" id="library-events" role="tabpanel" aria-labelledby="tab-library-events" hidden><div class="library-section-heading"><p class="eyebrow">Життя бібліотеки</p><h2>Заходи</h2></div>{events_items_html}{events_gallery_html}</section>
+      <section class="library-section" id="library-self-education" role="tabpanel" aria-labelledby="tab-library-self-education" hidden><div class="library-section-heading"><h2>Самоосвіта</h2></div></section>
       <dialog class="library-lightbox" aria-label="Перегляд фотографій"><button type="button" data-lightbox-close class="library-lightbox-close" aria-label="Закрити">×</button><button type="button" data-lightbox-prev class="library-lightbox-prev" aria-label="Попереднє фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="library-lightbox-content"><img alt="" data-lightbox-image><div class="library-lightbox-tools"><button type="button" data-zoom-out aria-label="Зменшити">−</button><button type="button" data-zoom-reset aria-label="Скинути масштаб">100%</button><button type="button" data-zoom-in aria-label="Збільшити">+</button></div></div><button type="button" data-lightbox-next class="library-lightbox-next" aria-label="Наступне фото"><svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></dialog>
-      <script>(function(){{const root=document.querySelector('.library-page');if(!root)return;const tabs=[...root.querySelectorAll('[data-library-tab]')];const panels=tabs.map(tab=>root.querySelector('#'+tab.dataset.libraryTab)),tablist=root.querySelector('.library-sections');function moveTabHighlight(tab){{if(!tab||!tablist)return;tablist.style.setProperty('--tab-glow-x',tab.offsetLeft+'px');tablist.style.setProperty('--tab-glow-y',tab.offsetTop+'px');tablist.style.setProperty('--tab-glow-width',tab.offsetWidth+'px');tablist.style.setProperty('--tab-glow-height',tab.offsetHeight+'px');tablist.dataset.glowReady='true'}}function activate(index,focus){{tabs.forEach((tab,i)=>{{const active=i===index;tab.setAttribute('aria-selected',active);tab.tabIndex=active?0:-1;panels[i].hidden=!active}});moveTabHighlight(tabs[index]);if(focus)tabs[index].focus()}}tabs.forEach((tab,index)=>{{tab.addEventListener('click',()=>activate(index,false));tab.addEventListener('keydown',event=>{{let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();activate(next,true)}})}});moveTabHighlight(tabs.find(tab=>tab.getAttribute('aria-selected')==='true'));window.addEventListener('resize',()=>moveTabHighlight(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')));const lightbox=root.querySelector('.library-lightbox'),lightboxImage=root.querySelector('[data-lightbox-image]');let activeCarousel=null,zoom=1;function fitCarouselPhoto(carousel,index=carousel._slideOrder?.[Number(carousel.dataset.index)]??Number(carousel.dataset.index)){{const slide=carousel.querySelectorAll('.library-carousel-slide')[index],image=slide?.querySelector('img'),stage=carousel.querySelector('.library-carousel-stage');if(!image||!stage||!image.naturalWidth)return;const style=getComputedStyle(slide),maxWidth=Math.max(1,stage.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-8),maxHeight=Math.max(1,stage.clientHeight-12),scale=Math.min(maxWidth/image.naturalWidth,maxHeight/image.naturalHeight);const width=Math.round(image.naturalWidth*scale),height=Math.round(image.naturalHeight*scale);image.style.width=width+'px';image.style.height=height+'px';const open=slide.querySelector('[data-lightbox-open]');if(open){{open.style.width=width+'px';open.style.height=height+'px'}}}}function showSlide(carousel,index){{const slides=[...carousel.querySelectorAll('.library-carousel-slide')],length=slides.length;if(!length)return;const previousIndex=Number(carousel.dataset.index),next=((index%length)+length)%length,direction=Math.sign(index-previousIndex)||1,previous=slides[carousel._slideOrder?.[previousIndex]??previousIndex],target=slides[carousel._slideOrder?.[next]??next],animationId=(carousel._slideAnimation||0)+1;carousel._slideAnimation=animationId;slides.forEach(slide=>{{slide.getAnimations().forEach(animation=>animation.cancel());slide.hidden=slide!==previous&&slide!==target}});carousel.dataset.index=String(next);target.hidden=false;if(previous!==target){{const finish=()=>{{if(carousel._slideAnimation!==animationId)return;previous.hidden=true;previous.getAnimations().forEach(animation=>animation.cancel());target.getAnimations().forEach(animation=>animation.cancel())}};if(matchMedia('(prefers-reduced-motion: reduce)').matches||!previous.animate)finish();else{{const distance=carousel.querySelector('.library-carousel-stage').getBoundingClientRect().width,options={{duration:760,easing:'cubic-bezier(.22,.72,.25,1)',fill:'both'}},outgoing=previous.animate([{{transform:'translate3d(0,0,0)'}},{{transform:'translate3d('+(-direction*distance)+'px,0,0)'}}],options),incoming=target.animate([{{transform:'translate3d('+(direction*distance)+'px,0,0)'}},{{transform:'translate3d(0,0,0)'}}],options);Promise.all([outgoing.finished,incoming.finished]).then(finish).catch(()=>{{}})}}}}carousel.querySelector('[data-carousel-count]').textContent=(next+1)+' / '+length;fitCarouselPhoto(carousel,carousel._slideOrder?.[next]??next)}}root.querySelectorAll('[data-library-carousel]').forEach(carousel=>{{carousel.dataset.index='0';const stage=carousel.querySelector('.library-carousel-stage'),slideTotal=carousel.querySelectorAll('.library-carousel-slide').length;carousel._slideOrder=Array.from({{length:slideTotal}},(_,i)=>i);carousel.querySelectorAll('.library-carousel-slide').forEach((slide,index)=>slide.hidden=index!==carousel._slideOrder[0]);carousel.querySelector('[data-carousel-count]').textContent='1 / '+slideTotal;carousel.querySelectorAll('.library-carousel-slide img').forEach((image,index)=>image.addEventListener('load',()=>{{if(index===carousel._slideOrder[Number(carousel.dataset.index)])fitCarouselPhoto(carousel,index)}}));if('ResizeObserver'in window)new ResizeObserver(()=>fitCarouselPhoto(carousel)).observe(stage);fitCarouselPhoto(carousel,carousel._slideOrder[0]);carousel.querySelector('[data-carousel-prev]').addEventListener('click',()=>showSlide(carousel,Number(carousel.dataset.index)-1));carousel.querySelector('[data-carousel-next]').addEventListener('click',()=>showSlide(carousel,Number(carousel.dataset.index)+1));let touchStart=null,ignoreNextClick=false;stage.addEventListener('pointerdown',event=>{{if((event.pointerType==='mouse'&&event.button!==0)||event.target.closest('.library-carousel-arrow'))return;touchStart={{x:event.clientX,y:event.clientY}};stage.dataset.dragging='true'}});window.addEventListener('pointerup',event=>{{if(!touchStart)return;const dx=event.clientX-touchStart.x,dy=event.clientY-touchStart.y;touchStart=null;delete stage.dataset.dragging;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.2){{ignoreNextClick=true;showSlide(carousel,Number(carousel.dataset.index)+(dx<0?1:-1));setTimeout(()=>ignoreNextClick=false,450)}}}});stage.addEventListener('pointercancel',()=>{{touchStart=null;delete stage.dataset.dragging}});stage.addEventListener('click',event=>{{if(ignoreNextClick||!event.target.closest('[data-lightbox-open]'))return;activeCarousel=carousel;zoom=1;syncZoom();updateLightbox();lightbox.showModal()}})}});function updateLightbox(){{const slides=[...activeCarousel.querySelectorAll('.library-carousel-slide')],slide=slides[activeCarousel._slideOrder?.[Number(activeCarousel.dataset.index)]??Number(activeCarousel.dataset.index)],image=slide.querySelector('img');lightboxImage.src=image.dataset.fullSrc||image.currentSrc||image.src;lightboxImage.alt=image.alt;lightbox.querySelector('[data-lightbox-prev]').disabled=slides.length<2;lightbox.querySelector('[data-lightbox-next]').disabled=slides.length<2}}function syncZoom(){{lightboxImage.style.transform='scale('+zoom+')';lightbox.querySelector('[data-zoom-reset]').textContent=Math.round(zoom*100)+'%'}}function stepLightbox(direction){{showSlide(activeCarousel,Number(activeCarousel.dataset.index)+direction);zoom=1;syncZoom();updateLightbox()}}root.querySelector('[data-lightbox-close]').addEventListener('click',()=>lightbox.close());root.querySelector('[data-lightbox-prev]').addEventListener('click',()=>stepLightbox(-1));root.querySelector('[data-lightbox-next]').addEventListener('click',()=>stepLightbox(1));root.querySelector('[data-zoom-in]').addEventListener('click',()=>{{zoom=Math.min(3,zoom+.25);syncZoom()}});root.querySelector('[data-zoom-out]').addEventListener('click',()=>{{zoom=Math.max(1,zoom-.25);syncZoom()}});root.querySelector('[data-zoom-reset]').addEventListener('click',()=>{{zoom=1;syncZoom()}});lightboxImage.addEventListener('dblclick',()=>{{zoom=zoom>1?1:2;syncZoom()}});lightbox.addEventListener('click',event=>{{if(event.target===lightbox)lightbox.close()}});let dialogTouch=null;lightbox.addEventListener('pointerdown',event=>{{dialogTouch={{x:event.clientX,y:event.clientY}}}});lightbox.addEventListener('pointerup',event=>{{if(!dialogTouch||zoom>1)return;const dx=event.clientX-dialogTouch.x,dy=event.clientY-dialogTouch.y;dialogTouch=null;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.2)stepLightbox(dx<0?1:-1)}});document.addEventListener('keydown',event=>{{if(!lightbox.open)return;if(event.key==='ArrowLeft')stepLightbox(-1);if(event.key==='ArrowRight')stepLightbox(1)}})}})();</script>
+      <script>{(ROOT/'src/library.js').read_text(encoding='utf-8')}</script>
       </div>'''
     # All section headings, paragraphs, files and photographs come from the CMS.
     library_dom = BeautifulSoup(library_html, 'html.parser')
+    for caption in library_dom.select('.library-section-heading .eyebrow'):
+        caption.decompose()
     section_ids = {'home':'library-about', 'news':'library-news', 'exhibition':'library-exhibition',
-                   'arrivals':'library-new-books', 'periodicals':'library-periodicals', 'rules':'library-rules', 'events':'library-events'}
+                   'arrivals':'library-new-books', 'periodicals':'library-periodicals', 'rules':'library-rules', 'events':'library-events', 'self_education':'library-self-education'}
     for key, section_id in section_ids.items():
         section_data = sections.get(key, {})
         section_tag = library_dom.find(id=section_id)
         if not section_tag: continue
         heading = section_tag.select_one('.library-section-heading h2')
-        if heading and section_data.get('title'): heading.string = section_data['title']
+        if heading and section_data.get('title'): heading.string = intro.get('about_heading', section_data['title']) if key == 'home' else section_data['title']
         tab = library_dom.find(id='tab-' + section_id)
         if tab and section_data.get('title'): tab.string = section_data['title']
         if key == 'home':
             description = section_tag.select_one('.library-section-heading p')
             if description: description.string = intro.get('about_description', '')
-        elif key == 'news':
-            copy = section_tag.select_one('.library-story>div')
-            if copy:
-                copy.clear()
-                copy.append(BeautifulSoup(''.join(f'<p>{esc(text)}</p>' for text in section_data.get('blocks', [])), 'html.parser'))
-        elif key == 'events':
-            copy = section_tag.select_one('.library-event-copy')
-            if copy:
-                copy.clear()
-                copy.append(BeautifulSoup(''.join(f'<p>{esc(text)}</p>' for text in section_data.get('blocks', [])), 'html.parser'))
         if section_data.get('description'):
             description = library_dom.new_tag('p')
             description.string = section_data['description']
@@ -1408,8 +1648,21 @@ def library_page():
             additional_docs += [item for item in documents if item.get('section') == key and item is not arrivals_pdf]
         if additional_docs:
             section_tag.append(BeautifulSoup(''.join(pdf_viewer(item) for item in additional_docs), 'html.parser'))
+    for section_key in ('news', 'periodicals'):
+        if sections.get(section_key, {}).get('empty'):
+            library_dom.find(id=section_ids[section_key]).clear()
+    verbatim_portfolio = data.get('portfolio_import', {}).get('verbatim', False)
+    if verbatim_portfolio:
+        library_dom.select_one('.library-intro').decompose()
+        about = library_dom.find(id='library-about')
+        about.clear()
+        # Insert after shared copy normalization so source names and punctuation remain exact.
+        about.append('LIBRARY_VERBATIM_PORTFOLIO_CONTENT')
     library_html = str(library_dom)
-    write('/бібліотека/', shell(library_title, library_html, '/бібліотека/', intro.get('lead', '')))
+    rendered_library = shell(library_title, library_html, '/бібліотека/', intro.get('lead', ''))
+    if verbatim_portfolio:
+        rendered_library = rendered_library.replace('LIBRARY_VERBATIM_PORTFOLIO_CONTENT', '<div class="library-portfolio-list">' + portfolio_html + '</div>')
+    write('/бібліотека/', rendered_library)
     SEARCH.append({'title':'Головна сторінка бібліотеки','url':'/бібліотека/','type':'Сторінка','text':'Бібліотека · Книги · Нові надходження · Виставки · Періодика · Документи'})
 
 library_page()
@@ -1469,7 +1722,15 @@ for output in OUT.rglob('*'):
         current = output.read_text(encoding='utf-8')
     except UnicodeDecodeError:
         continue
-    cleaned = current.translate(long_dashes)
+    # Imported source slides retain original punctuation, including quoted dashes.
+    source_blocks = []
+    def protect_source_slide(match):
+        source_blocks.append(match.group(0))
+        return f'LIBRARY_SOURCE_BLOCK_{len(source_blocks) - 1}_END'
+    protected = re.sub(r'<article\b[^>]*\bdata-source-slide="[0-9]+"[^>]*>.*?</article>', protect_source_slide, current, flags=re.S)
+    cleaned = protected.translate(long_dashes)
+    for source_index, source_block in enumerate(source_blocks):
+        cleaned = cleaned.replace(f'LIBRARY_SOURCE_BLOCK_{source_index}_END', source_block)
     if cleaned != current:
         output.write_text(cleaned,encoding='utf-8')
 print(f'Built {len(WRITTEN)} pages, {len(POSTS)} articles, {len(DOCUMENTS)} documents; {len(COPIED)} referenced images.')

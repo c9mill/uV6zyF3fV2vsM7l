@@ -174,3 +174,55 @@
 
 /* Keep section navigation directly beneath the page title. */
 .library-page>.library-sections{margin:0 0 12px;padding-bottom:4px}
+
+/* Original portfolio content uses the library's alternating text/gallery rhythm. */
+.library-source-slide{padding:clamp(18px,3vw,42px) 0;align-items:start}
+.library-source-slide .library-portfolio-copy p{margin:0 0 12px;overflow-wrap:anywhere}
+.library-source-slide .library-portfolio-copy h3{white-space:pre-line;overflow-wrap:anywhere;font-size:clamp(1.65rem,3vw,2.8rem);line-height:1.16}
+.library-source-slide.library-source-text-only{display:block}
+.library-source-text-only .library-portfolio-copy{max-width:85ch;margin:0 auto}
+.library-source-slide.library-source-images-only{display:block}
+.library-source-images-only .library-carousel{max-width:900px;margin:0 auto}
+.library-source-slide:first-child .library-portfolio-copy h3{font-size:clamp(2.4rem,4.8vw,4.5rem)}
+.library-source-slide .library-carousel{position:sticky;top:120px}
+@media(max-width:720px){.library-source-slide .library-carousel{position:relative;top:auto}.library-source-slide{padding:18px 0}}
+
+.library-page .library-portfolio-list::before{left:0;right:0}
+
+/* Semantic, responsive replacements for the portfolio diagrams. */
+.library-native-structure,.library-native-functions{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:14px}
+.library-native-structure li{position:relative;padding:14px 0 14px 26px;font-size:clamp(1.1rem,1.8vw,1.45rem);line-height:1.5;color:var(--text)}
+.library-native-structure li::before{content:"";position:absolute;left:0;top:26px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.library-native-functions{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.library-native-functions li{padding:18px 0;color:var(--accent);font-size:clamp(.95rem,1.7vw,1.3rem);font-weight:650;overflow-wrap:anywhere;transition:transform .25s ease}
+@media(hover:hover){.library-native-functions li:hover{transform:translateX(4px)}}
+.library-native-fund{margin:28px 0 0;display:grid;gap:23px}
+.library-fund-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;align-items:baseline}
+.library-fund-row dt{font-size:clamp(1rem,1.7vw,1.3rem);color:var(--text)}
+.library-fund-row dd{margin:0;font-size:clamp(1.2rem,2vw,1.7rem);font-weight:650;color:var(--accent);font-variant-numeric:tabular-nums}
+.library-fund-meter{grid-column:1/-1;display:block;height:5px;background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:6px;overflow:hidden}
+.library-fund-meter::before{content:"";display:block;width:var(--fund-share);height:100%;background:var(--accent);border-radius:inherit}
+@media(max-width:480px){.library-native-functions{grid-template-columns:1fr}.library-native-functions li{padding:12px 0}}
+
+/* Functions follow the same readable list treatment as the library structure. */
+.library-native-functions{grid-template-columns:minmax(0,1fr);gap:14px;margin:24px 0 0}
+.library-native-functions li{position:relative;padding:14px 0 14px 26px;font-size:clamp(1.1rem,1.8vw,1.45rem);line-height:1.5;color:var(--text);font-weight:650}
+.library-native-functions li::before{content:"";position:absolute;left:0;top:26px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+@media(hover:hover){.library-native-functions li:hover{transform:none}}
+@media(max-width:480px){.library-native-functions li{padding:14px 0 14px 26px}}
+
+.library-event-entry{margin:0 0 48px}
+.library-event-entry .library-event-copy h3{margin:0 0 22px;color:var(--accent);font-size:clamp(1.6rem,2.7vw,2.4rem);line-height:1.2}
+.library-event-entry .library-event-copy p{margin:0 0 16px}
+.library-event-entry .library-carousel{position:sticky;top:120px;align-self:start}
+.library-event-entry .text-link{margin-top:12px}
+@media(max-width:980px){.library-event-entry .library-carousel{position:relative;top:auto}}
+
+.library-story>div>p{margin:0 0 18px;line-height:1.7}
+.library-story>div{min-width:0}
+/* A single exhibition photograph keeps its natural proportions. */
+.library-story .library-carousel:has(.library-carousel-slide:only-of-type) .library-carousel-stage{height:auto;aspect-ratio:auto;min-height:0;background:transparent;box-shadow:none}
+.library-story .library-carousel:has(.library-carousel-slide:only-of-type) .library-carousel-slide{position:relative;inset:auto;height:auto;padding:0;display:block}
+.library-story .library-carousel:has(.library-carousel-slide:only-of-type) .library-carousel-open{width:100%;height:auto;display:block;padding:0}
+.library-story .library-carousel:has(.library-carousel-slide:only-of-type) img{width:100%;height:auto;max-height:none}
+.library-story .library-carousel:has(.library-carousel-slide:only-of-type) :is(.library-carousel-arrow,.library-carousel-count){display:none}

@@ -186,3 +186,65 @@ html body .footer .footer-partner{display:grid;grid-template-columns:36px minmax
 }
 @media(max-width:380px){.footer-partners-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.news-card .news-image img,.site-header .desktop-nav a::after{transition:none;transform:none}}
+
+/* Library history follows the authored paragraph structure. */
+.library-history{max-width:80ch;margin:0 0 40px;line-height:1.75;color:var(--text-muted,var(--text));}
+.library-history p{margin:0 0 16px;}
+
+/* One list language across authored page content, using each page's palette. */
+html body main :is(ul,ol).content-list{display:block;list-style-position:outside;margin:24px 0;padding:0 0 0 26px;max-width:85ch;font-size:clamp(1.1rem,1.8vw,1.45rem);line-height:1.5;color:var(--text);background:none;border:0;box-shadow:none}
+html body main ul.content-list{list-style-type:disc}
+html body main ol.content-list{list-style-type:decimal}
+html body main .content-list>li{display:list-item;position:static;margin:0 0 24px;padding:0;color:var(--text);font-size:inherit;line-height:inherit;background:none;border:0;box-shadow:none;transform:none;font-weight:400;overflow-wrap:anywhere}
+html body main .content-list>li:last-child{margin-bottom:0}
+html body main .content-list>li::before{content:none}
+html body main .content-list>li::marker{color:var(--accent);font-size:.85em;font-weight:650}
+html body main .content-list>li>p{margin:0 0 10px;font-size:inherit;line-height:inherit;color:inherit}
+html body main .content-list .content-list{font-size:inherit;margin:16px 0}
+html body main .library-native-functions.content-list>li{font-weight:650}
+
+/* Functions occupy the available section width without changing list markers. */
+html body main .library-layout-functions .library-portfolio-copy{max-width:none;width:100%;margin:0}
+html body main .library-native-functions.content-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:42px;row-gap:26px;max-width:none;padding-left:26px}
+html body main .library-native-functions.content-list>li{margin:0;min-width:0}
+@media(max-width:1100px){html body main .library-native-functions.content-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}}
+@media(max-width:620px){html body main .library-native-functions.content-list{grid-template-columns:minmax(0,1fr);row-gap:20px}}
+
+/* Branch connectors express the relationship between a diagram and its items. */
+html body main .library-layout-branches{display:block;padding:36px 0}
+html body main .library-layout-branches .library-portfolio-copy{max-width:none;width:100%}
+html body main .library-layout-branches h3{max-width:900px;margin:0 auto 42px;text-align:center;white-space:pre-line;font-size:clamp(1.65rem,3vw,2.8rem);line-height:1.2;color:var(--accent)}
+html body main ul.library-native-branches.content-list{position:relative;display:grid;grid-template-columns:repeat(var(--branch-count),minmax(0,1fr));gap:30px;max-width:none;margin:0;padding:30px 0 0;list-style:none}
+html body main .library-native-branches::before{content:"";position:absolute;left:calc(50% / var(--branch-count));right:calc(50% / var(--branch-count));top:0;height:1px;background:color-mix(in srgb,var(--accent) 50%,transparent)}
+html body main .library-layout-branches .library-portfolio-copy{position:relative}
+html body main .library-layout-branches h3::after{content:"";display:block;position:absolute;left:50%;height:22px;width:1px;margin-top:20px;background:color-mix(in srgb,var(--accent) 50%,transparent)}
+html body main .library-native-branches.content-list>li{position:relative;display:block;margin:0;padding:8px 12px;text-align:center;font-size:clamp(1rem,1.55vw,1.3rem);line-height:1.5}
+html body main .library-native-branches>li::after{content:"";position:absolute;left:50%;top:-30px;height:30px;width:1px;background:color-mix(in srgb,var(--accent) 50%,transparent)}
+@media(max-width:900px){html body main ul.library-native-branches.content-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;padding:0 0 0 26px;list-style:disc}
+html body main .library-native-branches::before,html body main .library-native-branches>li::after,html body main .library-layout-branches h3::after{content:none}
+html body main .library-native-branches.content-list>li{display:list-item;text-align:left;padding:0}
+html body main .library-layout-branches h3{text-align:left;margin:0 0 26px}}
+@media(max-width:620px){html body main ul.library-native-branches.content-list{grid-template-columns:minmax(0,1fr)}}
+
+html body main ul.library-diagram-services.content-list{max-width:none;margin:38px 0 0;padding-left:26px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 48px}
+html body main .library-diagram-services.content-list>li{margin:0;font-size:clamp(1rem,1.5vw,1.25rem)}
+@media(max-width:900px){html body main ul.library-diagram-services.content-list{grid-template-columns:minmax(0,1fr)}}
+
+/* Academic integrity is a native diagram; each value retains its own luminous color. */
+.library-integrity{position:relative;max-width:1120px;margin:40px auto 60px;isolation:isolate}
+.library-integrity h3{position:absolute;z-index:1;left:50%;top:48%;transform:translate(-50%,-50%);margin:0;text-align:center;white-space:pre-line;color:var(--accent);font-size:clamp(1.5rem,3vw,2.7rem);line-height:1.2;text-shadow:0 0 24px color-mix(in srgb,var(--accent) 35%,transparent)}
+html body main ul.library-integrity-values.content-list{position:relative;height:620px;max-width:none;margin:0;padding:0;list-style:none}
+html body main .library-integrity-values.content-list>li{--value-color:#93e768;position:absolute;display:grid;place-items:center;width:230px;min-height:100px;margin:0;padding:20px 16px;text-align:center;color:var(--text);font-size:clamp(.9rem,1.35vw,1.15rem);font-weight:700;background:color-mix(in srgb,var(--value-color) 16%,var(--surface));border-radius:24px;box-shadow:0 0 28px color-mix(in srgb,var(--value-color) 24%,transparent);text-shadow:0 0 14px color-mix(in srgb,var(--value-color) 45%,transparent);transform:translate(-50%,-50%);transition:box-shadow .25s ease,background .25s ease}
+.library-integrity-values li span{color:var(--value-color)}
+html body main .library-integrity-values>li:nth-child(1){--value-color:#93e768;left:15%;top:36%}
+html body main .library-integrity-values>li:nth-child(2){--value-color:#ffb04d;left:29%;top:13%}
+html body main .library-integrity-values>li:nth-child(3){--value-color:#55dbc9;left:54%;top:10%}
+html body main .library-integrity-values>li:nth-child(4){--value-color:#f5dd60;left:79%;top:23%}
+html body main .library-integrity-values>li:nth-child(5){--value-color:#83b5ff;left:85%;top:49%}
+html body main .library-integrity-values>li:nth-child(6){--value-color:#e88aff;left:76%;top:75%}
+html body main .library-integrity-values>li:nth-child(7){--value-color:#ff936b;left:47%;top:88%}
+@media(hover:hover){html body main .library-integrity-values>li:hover{box-shadow:0 0 38px color-mix(in srgb,var(--value-color) 40%,transparent);background:color-mix(in srgb,var(--value-color) 24%,var(--surface))}}
+@media(max-width:1000px){html body main .library-integrity-values.content-list>li{width:190px;font-size:.9rem}.library-integrity h3{font-size:1.7rem}}
+@media(max-width:720px){.library-integrity h3{position:static;transform:none;margin:0 0 28px;white-space:pre-line}html body main ul.library-integrity-values.content-list{height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}html body main .library-integrity-values.content-list>li{position:static;transform:none;width:auto;min-height:100px;padding:18px 10px;font-size:.8rem;overflow-wrap:normal}.library-integrity{margin:32px 0 48px}}
+@media(max-width:380px){html body main ul.library-integrity-values.content-list{grid-template-columns:1fr}}
+html[data-theme="light"] .library-integrity-values li span{color:color-mix(in srgb,var(--value-color) 50%,#123226)}
