@@ -52,7 +52,7 @@
 @media(max-width:480px){.home-page .news-grid{grid-template-columns:1fr}.home-page .news-card h3{font-size:1.15rem}}
 
 /* Resource navigation: clear links instead of nested decorative cards. */
-html body :is(.quick-links,.student-resources,.page-sidebar,.resource-group,.resource-tile,.document-link),html[data-page-palette] :is(.page-sidebar,.resource-group,.resource-tile,.document-link){background:transparent!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0}
+html body :is(.quick-links,.student-resources,.page-sidebar,.resource-group,.resource-tile,.document-link),html[data-page-palette] :is(.page-sidebar,.resource-group,.resource-tile,.document-link){background:transparent!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:24px}
 :is(.quick-links,.student-resources,.page-sidebar,.resource-group,.resource-tile,.document-link):before{display:none!important}
 .quick-links{gap:32px;padding-block:20px;margin-top:8px}
 .quick-links>a,.quick-links>a:first-child,.quick-links>a:last-child{padding:12px 4px;gap:12px;border-radius:6px}
@@ -124,7 +124,7 @@ html body main .program-card .program-bottom{grid-column:1/-1;grid-row:4;min-hei
 .program-footnote{margin-top:18px;font-size:.78rem}
 
 /* Stories read as an editorial strip, with the original photo proportions. */
-html[data-section-theme] body .news-card,html[data-section-theme] body .news-card:hover{background:transparent!important;box-shadow:none!important;border-radius:0}
+html[data-section-theme] body .news-card,html[data-section-theme] body .news-card:hover{background:transparent!important;box-shadow:none!important;border-radius:24px}
 .home-page .news-grid{gap:clamp(16px,1.8vw,26px);align-items:start}
 .home-page .news-grid>.news-card{padding:0;min-width:0}
 .news-card .news-image,.home-page .news-card .news-image{height:auto;aspect-ratio:auto;border-radius:14px;margin-bottom:18px;overflow:hidden}
@@ -248,3 +248,22 @@ html body main .library-integrity-values>li:nth-child(7){--value-color:#ff936b;l
 @media(max-width:720px){.library-integrity h3{position:static;transform:none;margin:0 0 28px;white-space:pre-line}html body main ul.library-integrity-values.content-list{height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}html body main .library-integrity-values.content-list>li{position:static;transform:none;width:auto;min-height:100px;padding:18px 10px;font-size:.8rem;overflow-wrap:normal}.library-integrity{margin:32px 0 48px}}
 @media(max-width:380px){html body main ul.library-integrity-values.content-list{grid-template-columns:1fr}}
 html[data-theme="light"] .library-integrity-values li span{color:color-mix(in srgb,var(--value-color) 50%,#123226)}
+
+/* Shared document readers: title and source icon, with content on this page. */
+.document-reader{min-width:0;margin:10px 0 18px;grid-column:1/-1}
+.document-reader>summary.document-link{display:flex;align-items:center;gap:14px;cursor:pointer;list-style:none;width:100%;margin:0}
+.document-reader>summary::-webkit-details-marker{display:none}
+.document-reader>summary strong{flex:1;min-width:0;overflow-wrap:anywhere}
+.document-reader .resource-drive-icon,.resource-drive-icon{flex:0 0 22px;width:22px;height:22px;stroke:none}
+.document-reader>summary>.nav-chevron{flex:0 0 18px;transition:transform 180ms ease}
+.document-reader[open]>summary>.nav-chevron{transform:rotate(90deg)}
+.document-reader>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.document-reader-body{padding:16px 0 8px;min-width:0}
+.document-reader-body iframe{display:block;width:100%;height:75vh;min-height:420px;max-height:960px;border:0;background:#fff;border-radius:8px}
+.document-reader-source{display:inline-block;margin:12px 0;font-size:.875rem}
+.document-image{grid-column:1/-1;min-width:0;width:100%;margin:20px 0 28px}
+.document-image figcaption{font-weight:600;margin-bottom:14px;line-height:1.5}
+.document-image img{display:block;width:auto;max-width:100%;height:auto;margin:0 auto;border:0;box-shadow:none;border-radius:0}
+@media(max-width:620px){.document-reader-body iframe{height:70vh;min-height:360px}.document-reader>summary.document-link{padding:16px;gap:10px}.document-image{margin:16px 0 24px}}
+
+.lenis.lenis-smooth :is(.document-reader,.library-pdf) iframe{pointer-events:auto}

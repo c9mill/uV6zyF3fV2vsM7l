@@ -8,3 +8,17 @@
 .library-document>summary>.nav-chevron{width:16px;height:16px;flex:0 0 16px;margin-left:auto;stroke-width:1.2;opacity:.65;transition:transform 180ms ease}
 .library-document[open]>summary>.nav-chevron{transform:rotate(90deg)}
 .library-document>summary:after{display:none}
+
+/* IRBIS records preserve the journal's column order on every screen. */
+.library-page [data-library-diagram="irbis"] .testimonial__text{max-width:none}
+.library-irbis-table-scroll{max-width:100%;overflow-x:auto;margin-top:24px;overscroll-behavior-x:contain}
+.library-irbis-table{width:100%;table-layout:fixed;min-width:500px;border-collapse:collapse;color:var(--ink);font-size:.9rem;font-variant-numeric:tabular-nums;line-height:1.4}
+.library-irbis-table caption{text-align:left;font-weight:600;color:var(--ink);padding:0 0 12px}
+.library-irbis-table :is(th,td){padding:12px 10px;text-align:center;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.library-irbis-table thead th{font-weight:600;background:color-mix(in srgb,var(--accent) 10%,var(--surface));vertical-align:middle}
+.library-irbis-table :is(th,td):first-child{white-space:nowrap}
+.library-irbis-table tbody th{font-weight:500}
+.library-irbis-table tbody td{white-space:nowrap}
+.library-irbis-table-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+html body main .library-irbis-table :is(th,td){min-width:0!important;width:20%!important;padding:12px 10px!important;text-align:center!important;vertical-align:middle}

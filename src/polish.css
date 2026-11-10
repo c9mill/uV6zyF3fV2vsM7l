@@ -1,0 +1,245 @@
+/* Final refinement layer: existing forest/cosmic identity, clearer composition. */
+:root{--polish-out:cubic-bezier(.22,1,.36,1);--polish-fast:180ms;--polish-surface:#ffffffed;--polish-well:#e9f0e9}
+html[data-theme="dark"]{--polish-surface:#1b3025f5;--polish-well:#1d3227}
+html[data-theme][data-page-palette] body * ,html[data-theme][data-page-palette] body *::before,html[data-theme][data-page-palette] body *::after{text-shadow:none!important}
+html[data-theme][data-page-palette] body .holographic-wallpaper{opacity:.38!important}
+html[data-theme][data-page-palette] body{background:radial-gradient(ellipse at 70% 4%,#d6eadf 0,transparent 42%),var(--canvas)!important}
+html[data-theme="dark"][data-page-palette] body{background:radial-gradient(ellipse at 72% 5%,#204b3d 0,transparent 45%),var(--canvas)!important}
+html[data-theme][data-page-palette] body .container{width:min(1240px,calc(100% - 96px))}
+html[data-theme][data-page-palette] body .section{padding-block:80px}
+html[data-theme][data-page-palette] body .site-header{width:min(1360px,calc(100% - 48px));top:16px;margin:16px auto 0;background:transparent!important}
+html[data-theme][data-page-palette] body .site-header .header-inner{width:100%!important;min-height:76px!important;padding:10px 20px!important;gap:18px!important;border-radius:999px!important;background:var(--polish-surface)!important;box-shadow:0 8px 32px #081b1514!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+html[data-theme][data-page-palette] body .site-header .brand{flex:0 1 238px;gap:8px;min-width:0}
+html[data-theme][data-page-palette] body .site-header .brand img{width:44px;height:44px;flex-basis:44px}
+html[data-theme][data-page-palette] body .site-header .brand strong{font-size:12px;line-height:1.4;letter-spacing:-.015em}
+html[data-theme][data-page-palette] body .site-header .desktop-nav{gap:16px;font-size:12px}
+html[data-theme][data-page-palette] body .site-header .header-search{min-width:80px;max-width:180px}
+html[data-theme][data-page-palette] body .site-header .header-search input{font-size:12px}
+html[data-theme][data-page-palette] body .header-actions{gap:3px!important}
+html[data-theme][data-page-palette] body .icon-button{min-width:44px;min-height:44px}
+html[data-theme][data-page-palette] body .site-header .header-actions>.icon-button{width:44px;height:44px;flex-basis:44px}
+html[data-theme][data-page-palette] body .site-header .header-actions .button.compact{padding:12px 18px!important;font-size:12px}
+html[data-theme][data-page-palette] body .menu-toggle:hover,html[data-theme][data-page-palette] body .menu-toggle[aria-expanded="true"],html[data-theme][data-page-palette] body .icon-button:hover{background:var(--polish-well)!important;color:var(--ink)!important}
+html[data-theme][data-page-palette] body .site-header .mobile-nav{left:auto;right:0;top:calc(100% + 8px);width:min(1040px,100%);padding:28px!important;max-height:calc(100dvh - 124px);border-radius:32px!important;background:var(--polish-surface)!important;box-shadow:0 24px 80px #061a1530!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;transform-origin:0 0;transition:none!important;opacity:1!important;transform:none;overflow:auto;overscroll-behavior:contain}
+html[data-theme][data-page-palette] body .mobile-nav a{opacity:1!important;transform:none!important;transition:background-color 160ms,color 160ms!important}
+html[data-theme][data-page-palette] body .menu-backdrop{background:#081c18a8!important;backdrop-filter:blur(8px);transition:opacity 220ms!important}
+html[data-theme][data-page-palette] body .navigation-browser{gap:28px}
+html[data-theme][data-page-palette] body .navigation-toolbar{padding:0 8px 20px}
+html[data-theme][data-page-palette] body .navigation-toolbar strong{font-size:13px;font-weight:600;color:var(--muted)}
+html[data-theme][data-page-palette] body .navigation-detail{background:var(--polish-well)!important;border-radius:22px;padding:24px!important;border:0!important}
+html[data-theme][data-page-palette] body .navigation-detail h2{font-size:26px;line-height:1.2;letter-spacing:-.035em}
+html[data-theme][data-page-palette] body .navigation-detail-hint{font-size:15px;max-width:300px;line-height:1.7;color:var(--muted)}
+html[data-theme][data-page-palette] body .navigation-tree a,html[data-theme][data-page-palette] body .navigation-tree summary,html[data-theme][data-page-palette] body .navigation-detail a{border-radius:12px;padding:12px!important;line-height:1.5;font-size:14px}
+html[data-theme][data-page-palette] body .navigation-tree a:hover,html[data-theme][data-page-palette] body .navigation-tree summary:hover,html[data-theme][data-page-palette] body .navigation-detail a:hover{background:transparent!important;color:var(--accent)!important}
+html[data-theme][data-page-palette] body .navigation-detail a:hover{background:transparent!important}
+html[data-theme][data-page-palette] body .navigation-alphabet button{min-width:32px;min-height:32px}
+html[data-theme][data-page-palette] body .navigation-tree details[data-selected] > summary{background:transparent!important;color:var(--accent)!important}
+html[data-theme][data-page-palette] body .header-search-results{background:var(--polish-surface)!important;backdrop-filter:blur(24px);border:0!important;border-radius:24px;box-shadow:0 16px 56px #081b1526!important}
+html[data-theme][data-page-palette] body .header-search-results a{padding:14px 18px}
+html[data-theme][data-page-palette] body .header-search-results a:hover{background:transparent!important;color:var(--accent)!important}
+html[data-theme][data-page-palette] body #main .hero.hero-centered{min-height:610px;padding:64px 24px 52px!important;margin-top:12px}
+html[data-theme][data-page-palette] body .hero.hero-centered h1{font-size:clamp(3.5rem,6.7vw,6rem)!important;line-height:1.07!important;letter-spacing:-.065em!important;margin-bottom:28px!important;font-weight:650}
+html[data-theme][data-page-palette] body .hero.hero-centered .hero-word.together{font-size:.8em;font-weight:500;letter-spacing:-.045em}
+html[data-theme][data-page-palette] body .hero-centered .hero-college-name{max-width:580px;font-size:14px;line-height:1.75;margin-bottom:28px;color:var(--muted)!important;-webkit-text-fill-color:var(--muted)!important}
+html[data-theme][data-page-palette] body .button{border-radius:999px!important;gap:16px;transition:background-color 180ms,color 180ms,scale 180ms!important}
+html[data-theme][data-page-palette] body .button:active{scale:.97}
+html[data-theme][data-page-palette] body .hero-centered .button-row{gap:24px;align-items:center}
+html[data-theme][data-page-palette] body .hero-centered .button{font-size:14px!important;min-height:52px;padding:14px 24px!important}
+html[data-theme][data-page-palette] body .hero-centered .button.secondary{padding-inline:6px!important;background:transparent!important;color:var(--ink)!important}
+html[data-theme][data-page-palette] body .button .icon{width:18px;height:18px}
+html[data-theme][data-page-palette] body .quick-links{padding:16px 0 28px;gap:40px;margin-bottom:0}
+html[data-theme][data-page-palette] body .quick-links>a{padding:16px 0;gap:14px}
+html[data-theme][data-page-palette] body .quick-links strong{font-size:14px;font-weight:550}
+html[data-theme][data-page-palette] body .quick-links small{font-size:12px;margin-top:4px;color:var(--muted)}
+html[data-theme][data-page-palette] body .quick-links>a>.icon:first-child{width:22px;height:22px}
+html[data-theme][data-page-palette] body .quick-links>a>.icon:last-child{width:16px;height:16px;color:var(--muted)!important}
+html[data-theme][data-page-palette] body .section-heading{margin-bottom:32px;align-items:end}
+html[data-theme][data-page-palette] body .section-heading h2,html[data-theme][data-page-palette] body .student-feature h2{font-size:clamp(28px,3.2vw,42px);line-height:1.15;letter-spacing:-.045em}
+html[data-theme][data-page-palette] body .text-link{font-size:13px;gap:10px;font-weight:500}
+html[data-theme][data-page-palette] body .program-grid{gap:8px;background:var(--polish-well)!important;border-radius:28px;padding:8px}
+html[data-theme][data-page-palette] body .program-card{padding:28px!important;border-radius:22px!important;transform:none!important;transition:background-color 180ms!important;background:transparent!important;min-height:300px}
+html[data-theme][data-page-palette] body .program-card:hover,html[data-theme][data-page-palette] body .program-card:focus-visible{background:var(--polish-surface)!important}
+html[data-theme][data-page-palette] body .program-label{padding:0;background:none!important;font-size:13px;font-weight:600;letter-spacing:0}
+html[data-theme][data-page-palette] body .program-top>.icon{width:18px;height:18px;color:var(--accent)!important}
+html[data-theme][data-page-palette] body .program-art{height:62px!important;justify-content:flex-start}
+html[data-theme][data-page-palette] body .program-code{font-size:13px!important;font-weight:500;letter-spacing:.06em;color:var(--muted)!important;opacity:1!important}
+html[data-theme][data-page-palette] body .program-art>.icon{display:none}
+html[data-theme][data-page-palette] body .program-card h3{font-size:26px!important;line-height:1.25;letter-spacing:-.035em;margin:0 0 16px!important}
+html[data-theme][data-page-palette] body .program-card p{font-size:14px;line-height:1.7;margin-bottom:24px;max-width:30ch}
+html[data-theme][data-page-palette] body .program-bottom{font-size:12px;padding-top:12px;gap:20px}
+html[data-theme][data-page-palette] body .program-footnote{font-size:12px;margin-top:20px}
+html[data-theme][data-page-palette] body .news-section{background:transparent!important}
+html[data-theme][data-page-palette] body .news-grid{gap:24px}
+html[data-theme][data-page-palette] body.home-page .news-card{padding:0!important;background:transparent!important;border-radius:24px!important}
+html[data-theme][data-page-palette] body.home-page .news-card :is(.news-meta,h3,.news-excerpt,.text-link){margin-inline:0!important}
+html[data-theme][data-page-palette] body.home-page .news-card h3{font-size:19px;line-height:1.35;font-weight:550;letter-spacing:-.025em;margin-bottom:12px}
+html[data-theme][data-page-palette] body.home-page .news-card .news-meta{font-size:11px;line-height:1.5;margin-bottom:10px}
+html[data-theme][data-page-palette] body.home-page .news-card .news-image{border-radius:16px!important;margin-bottom:18px}
+html[data-theme][data-page-palette] body.home-page .news-card .news-excerpt{font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:12px}
+html[data-theme][data-page-palette] body.home-page .news-card>.text-link{margin-top:auto;font-size:12px}
+html[data-theme][data-page-palette] body .student-feature{gap:80px}
+html[data-theme][data-page-palette] body .student-feature p{font-size:15px;line-height:1.75}
+html[data-theme][data-page-palette] body .student-resources{padding:8px 0}
+html[data-theme][data-page-palette] body .student-resources>a{padding:20px 0;gap:16px;font-size:14px}
+html[data-theme][data-page-palette] body .footer{padding-top:64px;background:transparent!important}
+html[data-theme][data-page-palette] body .footer-grid{gap:40px;padding-bottom:32px}
+html[data-theme][data-page-palette] body .footer p,html[data-theme][data-page-palette] body .footer-grid>div>a:not(.brand){font-size:13px;color:var(--muted)!important}
+html[data-theme][data-page-palette] body .footer h3{font-size:13px;font-weight:600;margin-bottom:16px}
+html[data-theme][data-page-palette] body .footer-bottom{padding-block:24px 32px}
+html[data-theme][data-page-palette] body .page-heading{padding-block:52px 36px}
+html[data-theme][data-page-palette] body .page-heading h1{font-size:clamp(36px,4.2vw,64px);letter-spacing:-.05em;line-height:1.12}
+html[data-theme][data-page-palette] body :is(.prose,.page-lead){line-height:1.8}
+html[data-theme][data-page-palette] body :is(a,button,input,summary,select):focus-visible{outline:2px solid var(--accent)!important;outline-offset:4px!important}
+html[data-theme][data-page-palette] body :is(.motion-cursor,.kx-spotlight){display:none!important}
+html[data-theme][data-page-palette] body .hero-copy{opacity:1!important;transform:none!important}
+html[data-theme][data-page-palette] body .kx-mag,html[data-theme][data-page-palette] body .kx-mag-on{transform:none!important;translate:none!important}
+html[data-theme][data-page-palette] body .kx-mag>.icon{translate:none!important}
+@media(max-width:1250px){html[data-theme][data-page-palette] body .site-header .desktop-nav{display:none!important}html[data-theme][data-page-palette] body .site-header .header-search{max-width:320px}html[data-theme][data-page-palette] body .site-header .brand{flex-basis:270px}}
+@media(max-width:1000px){html[data-theme][data-page-palette] body .container{width:calc(100% - 56px)}html[data-theme][data-page-palette] body .home-page .news-grid{grid-template-columns:repeat(3,minmax(0,1fr))}html[data-theme][data-page-palette] body .program-card{padding:20px!important}html[data-theme][data-page-palette] body .program-card h3{font-size:22px!important}html[data-theme][data-page-palette] body .student-feature{gap:36px}}
+@media(max-width:720px){
+ html[data-theme][data-page-palette] body .container{width:calc(100% - 40px)}html[data-theme][data-page-palette] body .section{padding-block:48px}
+ html[data-theme][data-page-palette] body .site-header{width:calc(100% - 24px);top:10px;margin-top:10px}
+ html[data-theme][data-page-palette] body .site-header .header-inner{width:100%!important;min-height:68px!important;padding:8px 12px!important;gap:6px!important}
+ html[data-theme][data-page-palette] body .site-header .brand{flex:1 1 auto;gap:7px}html[data-theme][data-page-palette] body .site-header .brand img{width:34px;height:34px;flex-basis:34px}
+ html[data-theme][data-page-palette] body .site-header .brand strong{font-size:10px!important;line-height:1.35!important;max-width:150px}
+ html[data-theme][data-page-palette] body .site-header .header-actions>.icon-button{width:40px;min-width:40px;flex-basis:40px;font-size:11px}
+ html[data-theme][data-page-palette] body .site-header .header-inner>.header-search{display:none!important}
+ html[data-theme][data-page-palette] body .site-header .mobile-nav{width:100%;padding:16px!important;border-radius:26px!important;max-height:calc(100dvh - 106px - env(safe-area-inset-bottom));overflow-y:auto}
+ html[data-theme][data-page-palette] body .navigation-toolbar{padding-bottom:14px}html[data-theme][data-page-palette] body .navigation-detail{padding:16px!important}
+ html[data-theme][data-page-palette] body .navigation-browser{gap:12px}html[data-theme][data-page-palette] body .navigation-tree a,html[data-theme][data-page-palette] body .navigation-tree summary{padding:13px 8px!important;font-size:14px}
+ html[data-theme][data-page-palette] body .mobile-nav .header-search{background:var(--polish-well)!important;border-radius:14px;min-height:48px;margin-bottom:16px}
+ html[data-theme][data-page-palette] body #main .hero.hero-centered{min-height:490px;padding:52px 0 36px!important;margin-top:0}
+ html[data-theme][data-page-palette] body .hero.hero-centered h1{font-size:clamp(38px,10.7vw,68px)!important;line-height:1.12!important;margin-bottom:24px!important;letter-spacing:-.06em!important}
+ html[data-theme][data-page-palette] body .hero-centered .hero-college-name{font-size:12px;max-width:330px;line-height:1.75;padding-inline:8px;margin-bottom:24px}
+ html[data-theme][data-page-palette] body .hero-centered .button-row{gap:8px 20px;flex-direction:column}html[data-theme][data-page-palette] body .hero-centered .button{font-size:13px!important;min-height:48px}
+ html[data-theme][data-page-palette] body .quick-links{grid-template-columns:1fr;gap:0;padding:0 0 12px}
+ html[data-theme][data-page-palette] body .quick-links>a{padding:16px 4px!important}html[data-theme][data-page-palette] body .quick-links strong{font-size:13px}
+ html[data-theme][data-page-palette] body .quick-links>a>.icon:first-child{width:20px;height:20px}
+ html[data-theme][data-page-palette] body .section-heading{align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:24px}html[data-theme][data-page-palette] body .section-heading h2{font-size:30px}
+ html[data-theme][data-page-palette] body .program-grid{grid-template-columns:1fr;gap:4px;padding:6px;border-radius:24px}
+ html[data-theme][data-page-palette] body .program-card{padding:24px!important;min-height:250px}html[data-theme][data-page-palette] body .program-art{height:42px!important}html[data-theme][data-page-palette] body .program-card h3{font-size:25px!important;max-width:24ch}
+ html[data-theme][data-page-palette] body.home-page .news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 20px}html[data-theme][data-page-palette] body.home-page .news-card:first-child{grid-column:1/-1}
+ html[data-theme][data-page-palette] body.home-page .news-card:first-child h3{font-size:24px}html[data-theme][data-page-palette] body.home-page .news-card h3{font-size:18px}
+ html[data-theme][data-page-palette] body .student-feature{grid-template-columns:1fr;gap:20px}html[data-theme][data-page-palette] body .student-resources{padding:0}html[data-theme][data-page-palette] body .student-feature h2{margin-bottom:16px}
+ html[data-theme][data-page-palette] body .footer-grid{grid-template-columns:1fr 1fr;gap:28px 20px}html[data-theme][data-page-palette] body .footer-brand{grid-column:1/-1}html[data-theme][data-page-palette] body .footer-grid>div:last-child{display:block;grid-column:1/-1}html[data-theme][data-page-palette] body .footer{padding-top:40px}
+}
+@media(max-width:360px){html[data-theme][data-page-palette] body .site-header .brand strong{max-width:105px;font-size:9px!important}html[data-theme][data-page-palette] body .site-header .header-actions>.icon-button{width:36px;min-width:36px;flex-basis:36px}html[data-theme][data-page-palette] body .site-header .header-inner{padding-inline:8px!important}html[data-theme][data-page-palette] body .hero.hero-centered h1{font-size:36px!important}}
+@media(prefers-reduced-motion:reduce){html[data-theme][data-page-palette] body *,html[data-theme][data-page-palette] body *::before,html[data-theme][data-page-palette] body *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}html[data-theme][data-page-palette] body .hero-copy{transform:none!important;opacity:1!important}}
+
+html[data-theme][data-page-palette] body .holographic-wallpaper{display:block!important;position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;contain:strict}
+html[data-theme][data-page-palette] body{isolation:isolate}
+
+/* Keep readable foregrounds in both themes and program details at every size. */
+html[data-theme][data-page-palette] body #main .hero.hero-centered :is(h1,.hero-word){color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
+html[data-theme][data-page-palette] body .program-card p{display:block!important}
+html[data-theme][data-page-palette] body .program-art{position:static!important;width:auto!important;margin:0!important;padding:0!important}
+html[data-theme][data-page-palette] body .program-card>.eyebrow{display:none!important}
+html[data-theme][data-page-palette] body .header-inner .brand{background:transparent!important}
+
+html[data-theme][data-page-palette] body .button .icon{color:currentColor!important}
+html[data-theme][data-page-palette] body .header-search input:focus-visible{outline:none!important}
+html[data-theme][data-page-palette] body .header-search:focus-within{outline:2px solid var(--accent)!important;outline-offset:3px;box-shadow:none!important}
+html[data-theme][data-page-palette] body .header-search-results{background:#fff!important}
+html[data-theme="dark"][data-page-palette] body .header-search-results{background:#1b3025!important}
+html[data-theme][data-page-palette] body :is(h1,h2,h3,[id]){scroll-margin-top:120px}
+
+html[data-theme][data-page-palette] body .footer :is(h2,h3,strong,.icon){color:var(--ink)!important}
+html.kx-text .hero h1 .kx-line>.hero-word{transition-duration:800ms}
+html.kx-text .hero-centered :is(.hero-college-name,.button-row){transition-duration:650ms;transition-delay:260ms}
+
+/* A single centered student-links block spanning the content width. */
+html[data-theme][data-page-palette] body.home-page .student-feature{display:block;width:100%;margin-inline:auto}
+html[data-theme][data-page-palette] body.home-page .student-feature .student-resources{width:100%;margin:0;padding:12px 32px;background:var(--polish-well)!important;border-radius:28px;box-shadow:none!important}
+html[data-theme][data-page-palette] body.home-page .student-feature .student-resources>a{width:100%;padding:22px 0;gap:18px}
+@media(max-width:720px){html[data-theme][data-page-palette] body.home-page .student-feature .student-resources{padding:8px 20px;border-radius:24px}html[data-theme][data-page-palette] body.home-page .student-feature .student-resources>a{padding:20px 0;font-size:13px}}
+
+/* Rounded content surfaces remain coherent when their hover fill appears. */
+html[data-theme][data-page-palette] body :is(.news-card,.resource-tile,.resource-group,.page-sidebar,.sidebar-help,.document-link,.document-row,.search-result,.empty-state,.info-banner,.inline-cta,.editorial-section,.contact-details>div,.steps>div){border-radius:24px!important}
+html[data-theme][data-page-palette] body .news-card{overflow:hidden}
+html[data-theme][data-page-palette] body :is(.news-card,.resource-tile,.resource-group,.page-sidebar,.document-link,.search-result)::before,
+html[data-theme][data-page-palette] body :is(.news-card,.resource-tile,.resource-group,.page-sidebar,.document-link,.search-result)::after{border-radius:inherit}
+
+/* Menu feedback is text/icon color only; the containing island keeps its surface. */
+html[data-theme][data-page-palette] body :is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a,.desktop-nav>a,.nav-group>a,.nav-dropdown a,.navigation-tree a,.navigation-tree summary,.navigation-detail a,.navigation-detail summary,.header-search-results a,.resource-tile,.document-link,.footer-partner,.navigation-alphabet button,.navigation-toolbar button,.library-sections>button,.council-tab,.filter-button){background:transparent!important;box-shadow:none!important;color:var(--ink)!important;transition:color 180ms ease!important}
+html[data-theme][data-page-palette] body :is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a,.desktop-nav>a,.nav-group>a,.nav-dropdown a,.navigation-tree a,.navigation-tree summary,.navigation-detail a,.navigation-detail summary,.header-search-results a,.resource-tile,.document-link,.footer-partner,.navigation-alphabet button,.navigation-toolbar button,.library-sections>button,.council-tab,.filter-button):is(:hover,:active,[aria-current],[aria-selected="true"],[aria-pressed="true"]),html[data-theme][data-page-palette] body .navigation-tree details[data-selected]>summary{background:transparent!important;box-shadow:none!important;color:var(--accent)!important}
+html[data-theme][data-page-palette] body :is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a,.desktop-nav>a,.nav-group>a,.nav-dropdown a,.navigation-tree a,.navigation-tree summary,.navigation-detail a,.navigation-detail summary,.header-search-results a,.resource-tile,.document-link,.footer-partner,.navigation-alphabet button,.navigation-toolbar button,.library-sections>button,.council-tab,.filter-button)::before,html[data-theme][data-page-palette] body :is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a,.desktop-nav>a,.nav-group>a,.nav-dropdown a,.navigation-tree a,.navigation-tree summary,.navigation-detail a,.navigation-detail summary,.header-search-results a,.resource-tile,.document-link,.footer-partner,.navigation-alphabet button,.navigation-toolbar button,.library-sections>button,.council-tab,.filter-button)::after{background:none!important;box-shadow:none!important}
+html[data-theme][data-page-palette] body :is(.student-resources>a,.page-sidebar>a,.quick-links>a,.section-explorer>a,.desktop-nav>a,.nav-group>a,.nav-dropdown a,.navigation-tree a,.navigation-tree summary,.navigation-detail a,.navigation-detail summary,.header-search-results a,.resource-tile,.document-link,.footer-partner,.navigation-alphabet button,.navigation-toolbar button,.library-sections>button,.council-tab,.filter-button) .icon{color:currentColor!important}
+
+/* Search has one capsule: the form only arranges the field and submit control. */
+html[data-theme][data-page-palette] body form.filter-bar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;backdrop-filter:none!important}
+html[data-theme][data-page-palette] body form.filter-bar .search-field{background:var(--polish-well)!important;border-radius:999px!important;box-shadow:none!important;min-width:0}
+html[data-theme][data-page-palette] body form.filter-bar .search-field input{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:none!important}
+html[data-theme][data-page-palette] body form.filter-bar .search-field:focus-within{outline:2px solid var(--accent)!important;outline-offset:3px;box-shadow:none!important}
+
+/* Each study programme has its own surface and a larger text-only action. */
+html[data-theme] body #main .program-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:0;background:transparent!important;border-radius:0;overflow:visible}
+html[data-theme] body #main .program-grid>a.program-card,html[data-theme] body #main .program-grid>a.program-card:is(:hover,:active,:focus){display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:310px;padding:32px;border-radius:24px;background:var(--surface)!important;background-image:none!important;border:0;box-shadow:none!important}
+html[data-theme] body #main .program-card h3{margin:24px 0 32px;max-width:22ch}
+html[data-theme] body #main .program-card .program-bottom{margin-top:auto;min-height:44px;display:flex;align-items:center;font-size:1.125rem;font-weight:550;line-height:1.4}
+@media(max-width:720px){html[data-theme] body #main .program-grid{grid-template-columns:1fr;gap:18px}html[data-theme] body #main .program-grid>a.program-card,html[data-theme] body #main .program-grid>a.program-card:is(:hover,:active,:focus){min-height:250px;padding:26px}}
+/* A continuous number rail: all pages stay present, including on narrow screens. */
+html body main .pagination{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;width:max-content;max-width:100%;margin-inline:auto;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;touch-action:pan-x pan-y;cursor:grab;padding-block:12px;scroll-behavior:auto}
+html body main .pagination::-webkit-scrollbar{display:none}
+html body main .pagination[hidden]{display:none}
+html body main .pagination>a,html body main .pagination>a:hover,html body main .pagination>a[aria-current]{flex:0 0 auto;display:grid;place-items:center;min-width:40px;min-height:44px;padding:10px 8px;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none;animation:none;opacity:1;text-decoration:none;font-variant-numeric:tabular-nums;color:var(--ink);text-shadow:none;transition:color 160ms,text-shadow 160ms}
+html body main .pagination>a:hover{color:var(--accent)}
+html body main .pagination>a[aria-current="page"]{color:var(--accent);text-shadow:0 0 12px var(--accent);font-weight:600}
+html body main .pagination.is-dragging,html body main .pagination.is-dragging>a{cursor:grabbing;user-select:none}
+html[data-theme] body #main .pagination>a,html[data-theme] body #main .pagination>a:is(:hover,:focus,:active){background:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--ink)!important;text-shadow:none!important}
+html[data-theme] body #main .pagination>a[aria-current="page"]{color:var(--accent)!important;text-shadow:0 0 12px var(--accent)!important}
+html body main .resource-list+.subheading{margin-top:clamp(36px,4vw,56px)}
+
+/* Port 4177: requested spacing, homepage composition and arrow removal. */
+/* Consistent separation between introductory blocks and the next content section. */
+html body main .page-content>:is(.admission-intro,.about-intro,.resource-tiles,.info-banner,.facts,.program-grid)+:is(.content-columns,section,.facts,.program-grid){margin-top:clamp(40px,5vw,72px)}
+html body main .admission-intro{gap:clamp(28px,4vw,56px);align-items:center}
+html body main .admission-intro h2{margin:0 0 22px;line-height:1.15}
+html body main .admission-intro p{margin:0 0 24px;line-height:1.65}
+html body main .admission-intro .button-row{margin-top:26px;gap:16px 24px}
+html body main .admission-intro>img{display:block;height:auto;border-radius:24px}
+html body main .content-columns>section>.subheading:first-child{margin-top:0;margin-bottom:26px}
+html body main .content-columns>.page-sidebar{padding-top:0}
+@media(max-width:720px){html body main .page-content>:is(.admission-intro,.about-intro,.resource-tiles,.info-banner,.facts,.program-grid)+:is(.content-columns,section,.facts,.program-grid){margin-top:36px}html body main .admission-intro .button-row{margin-top:20px}html body main .content-columns{row-gap:40px}}
+
+/* Two-column first screen: the institutional headline and essential destinations. */
+html body #main .hero.hero-centered{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);align-items:center;gap:clamp(40px,6vw,88px);padding:56px 0;min-height:560px}
+html body #main .hero.hero-centered .hero-copy{width:100%;max-width:none;text-align:left;min-width:0}
+html body #main .hero.hero-centered h1{font-size:clamp(2.6rem,5.8vw,6rem);text-align:left;line-height:1.12;margin:0 0 26px;max-width:100%}
+html body #main .hero.hero-centered .hero-word{margin-inline:0;white-space:nowrap}
+html body #main .hero.hero-centered .hero-college-name{margin:0 0 28px;max-width:660px;text-align:left;line-height:1.65}
+html body #main .hero.hero-centered .button-row{justify-content:flex-start;margin:0;gap:14px 24px}
+html body #main .hero.hero-centered .hero-quick-links{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:none;gap:24px;padding:0;margin:0;align-self:center}
+html body #main .hero-quick-links>a{display:flex;align-items:center;justify-content:flex-start;width:100%;padding:20px 0;gap:18px;min-height:76px}
+html body #main .hero-quick-links>a>span{flex:1;min-width:0}
+html body #main .hero-quick-links strong{font-size:clamp(1rem,1.3vw,1.2rem);font-weight:600}
+html body #main .hero-quick-links small{font-size:.875rem;line-height:1.5;margin-top:6px}
+@media(max-width:860px){html body #main .hero.hero-centered{grid-template-columns:minmax(0,1fr);gap:28px;padding:36px 0;min-height:0}html body #main .hero.hero-centered h1{font-size:clamp(2.3rem,8.2vw,4.6rem)}html body #main .hero.hero-centered .hero-quick-links{gap:4px}html body #main .hero-quick-links>a{padding:16px 0;min-height:64px}}
+
+/* No decorative navigation arrows. Icon-only gallery controls retain text labels. */
+/* Keep the configured campus photo visible behind the existing hero layout. */
+html[data-theme][data-page-palette] body #main .hero.hero-centered{padding-inline:clamp(24px,4vw,56px)!important}
+html[data-theme][data-page-palette] body #main .hero.hero-centered .hero-background{z-index:0;opacity:1;transform:none;object-fit:cover}
+html[data-theme][data-page-palette] body #main .hero.hero-centered::after{content:""!important;display:block!important;z-index:1;background:linear-gradient(90deg,#10251de8,#10251d80)!important}
+html[data-theme][data-page-palette] body #main .hero.hero-centered :is(.hero-copy,.hero-quick-links){position:relative;z-index:2}
+html[data-theme][data-page-palette] body #main .hero.hero-centered :is(h1,.hero-word,.hero-college-name,.hero-quick-links a,.hero-quick-links .icon){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body svg.nav-chevron,html body svg.icon:has(>path[d="m8 10 4 4 4-4"]),html body svg.icon:has(>path[d="m9 5 7 7-7 7"]){display:none!important}
+html body :is(.MoreButton__icon,.footer-partner-arrow,.nav-arrow,.link-arrow){display:none!important}
+html body :is(.library-carousel-arrow,.library-lightbox-prev,.library-lightbox-next,.news-photo-arrow,.site-photo-lightbox-arrow,.back-top){font-size:.75rem!important;line-height:1.3!important;width:auto!important;min-width:44px;min-height:44px;padding:8px!important}
+html body :is([data-carousel-prev],[data-lightbox-prev],[data-site-photo-prev],[data-news-step="-1"])::after{content:"Назад";color:inherit}
+html body :is([data-carousel-next],[data-lightbox-next],[data-site-photo-next],[data-news-step="1"])::after{content:"Далі";color:inherit}
+html body .back-top::after{content:"Вгору";color:inherit}
+
+/* Stable document rows: one icon, wrapping label and aligned trailing arrow. */
+html[data-theme][data-page-palette] body .library-documents{gap:12px;align-items:start}
+html[data-theme][data-page-palette] body .library-document>summary{display:grid!important;grid-template-columns:22px minmax(0,1fr) 18px;align-items:center;gap:12px;min-height:58px;padding:16px 18px;list-style:none}
+html[data-theme][data-page-palette] body .library-document>summary>span{display:flex;align-items:center;justify-content:center}
+html[data-theme][data-page-palette] body .library-document>summary strong{min-width:0;line-height:1.5;overflow-wrap:anywhere}
+html[data-theme][data-page-palette] body .library-document>summary>.icon:last-child{width:18px;height:18px;justify-self:end}
+html[data-theme][data-page-palette] body .library-section>.library-document+.library-document{margin-top:12px}
+html[data-theme][data-page-palette] body :is(.document-link,.resource-tile,.student-resources>a,.page-sidebar>a){min-width:0;gap:12px}
+html[data-theme][data-page-palette] body :is(.document-link,.resource-tile) :is(strong,h2,p,span){min-width:0;overflow-wrap:anywhere}
+@media(max-width:720px){html[data-theme][data-page-palette] body .library-documents{grid-template-columns:1fr}html[data-theme][data-page-palette] body .library-document>summary{padding:16px;gap:10px}}
+/* Active library tabs use contrasting text instead of the green link color. */
+html[data-theme][data-page-palette] body .library-page .library-sections>button[aria-selected="true"]{background:#89D99A!important;color:#142219!important;-webkit-text-fill-color:#142219!important;text-shadow:none!important}
+/* Expandable library categories share the page background in either theme. */
+html[data-theme][data-page-palette] body .library-page .testimonial{background:transparent!important;box-shadow:none!important}

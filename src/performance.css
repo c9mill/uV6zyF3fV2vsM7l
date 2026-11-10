@@ -13,8 +13,8 @@ html .site-header{background:var(--canvas)!important;transition:none!important;a
 html dialog::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 html .header-inner{transition:none!important}
 html .menu-backdrop{background:color-mix(in srgb,var(--canvas) 78%,transparent)}
-html .site-header .mobile-nav{transform:translate3d(0,-10px,0)!important;transition:opacity 240ms ease,transform 300ms cubic-bezier(.22,1,.36,1)!important}
-html .site-header .mobile-nav.is-open{transform:none!important}
+html .site-header .mobile-nav{transform:translate3d(0,-10px,0);transition:opacity 240ms ease,transform 300ms cubic-bezier(.22,1,.36,1)!important}
+html .site-header .mobile-nav.is-open{transform:none}
 html .site-header .mobile-nav :is(a,summary){opacity:1!important;transform:none!important;transition:color 120ms ease,background-color 120ms ease!important;transition-delay:0s!important}
 /* Cards stay in their layout while scrolling; never fold and re-open on every pass. */
 html :is(.home-stage,.deck-heading,.program-card,.news-card,.council-activity-card,.interior-card,.motion-pending,.motion-enter,.card-reveal-target,.card-reveal-visible){opacity:1;transform:none;translate:none!important;scale:none!important;clip-path:none!important;filter:none!important;animation:none!important;transition:background-color 120ms ease,color 120ms ease!important}

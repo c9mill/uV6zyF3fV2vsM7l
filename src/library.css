@@ -226,3 +226,6 @@
 .library-story .library-carousel:has(.library-carousel-slide:only-of-type) .library-carousel-open{width:100%;height:auto;display:block;padding:0}
 .library-story .library-carousel:has(.library-carousel-slide:only-of-type) img{width:100%;height:auto;max-height:none}
 .library-story .library-carousel:has(.library-carousel-slide:only-of-type) :is(.library-carousel-arrow,.library-carousel-count){display:none}
+
+.library-category-photo{display:block;width:100%;height:auto;border-radius:24px}.library-story{align-items:start}.library-classic-carousel .library-carousel-stage{height:clamp(280px,36vw,520px)}
+.library-pdf.library-pdf-only{min-width:0;padding:0}

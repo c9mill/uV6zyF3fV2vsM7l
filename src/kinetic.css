@@ -184,3 +184,8 @@ html[data-theme="dark"] .library-page{
   html.kx-intro :is(.hero-college-name,.button-row,.page-heading h1),html :is(.hero-copy){opacity:1!important}
   .kx-cursor-ring,.kx-glow{display:none!important}
 }
+
+/* Keep the entire group photograph visible in the library staff card. */
+.library-page .item[data-source-slide="4"] .item__bg{width:48%;max-width:none;-webkit-mask-image:none;mask-image:none;display:flex;align-items:center;transform:none}
+.library-page .item[data-source-slide="4"] .item__bg img{width:100%;height:auto;max-height:100%;object-fit:contain;object-position:center;filter:none!important;border-radius:20px}
+@media(max-width:720px){.library-page .item[data-source-slide="4"] .item__bg{width:100%;height:auto;display:none}.library-page .item[data-source-slide="4"].is-active .item__bg{display:block}}

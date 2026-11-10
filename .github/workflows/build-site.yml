@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - build.py
+      - document_resources.py
       - requirements.txt
       - src/**
       - .github/workflows/build-site.yml

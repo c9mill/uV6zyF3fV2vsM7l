@@ -529,9 +529,9 @@
   registerSplit(document, true);
   registerMedia(document);
   heroIntro();
-  initPointer();
-  initCursor();
-  initDepth();
+  // Controls retain their physical positions.
+  // No decorative follower cursor.
+  // Hero remains stable while reading.
   loadLenis();
   for (const id of ['news-results', 'search-results']) {
     const container = document.getElementById(id);

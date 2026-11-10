@@ -1,0 +1,120 @@
+/* Forest / Fresh Green: shared academic identity, independent of route palette. */
+html,html[data-theme],html body,html body *{
+ --canvas:#F6F8F5!important;--surface:#FFFFFF!important;--card:#FFFFFF!important;--card-hover:#EDF4EE!important;
+ --soft:#EDF2EC!important;--elevated:#FFFFFF!important;--ink:#17251C!important;--text:#17251C!important;
+ --muted:#506355!important;--text-muted:#506355!important;--accent:#24382B!important;--accent-solid:#4FCB67!important;
+ --secondary:#24382B!important;--blue-soft:#E5F2E6!important;--line:#CBD7CC!important;--glass:#FFFFFFf5!important;
+ --theme-blue:#24382B!important;--theme-green:#4FCB67!important;--theme-yellow:#24382B!important;
+ --headline-color:#24382B!important;--program-base:#FFFFFF!important;--program-hue:132!important;
+ --value-color:#24382B!important;--lib-card-idle:#FFFFFF!important;--lib-card-active:#EDF4EE!important;
+ --lib-card-data:#FFFFFF!important;--lib-card-data-alt:#EDF4EE!important;
+ --shadow:0 6px 20px #24382B08!important;--card-shadow:0 3px 12px #24382B06!important;--card-shadow-hover:0 6px 18px #24382B0c!important;
+}
+html{color-scheme:light!important;background:#F6F8F5!important}
+html body{background:#F6F8F5!important;color:#17251C!important}
+html body *,html body *::before,html body *::after{text-shadow:none!important}
+html body :is(.holographic-wallpaper,.cosmic-backdrop,.motion-cursor,.future-star,.future-art){display:none!important}
+html body :is(h1,h2,h3,h4,h5,h6){color:#24382B!important}
+html body :is(.display-number,.stat-number){background:none!important;color:#24382B!important;-webkit-text-fill-color:#24382B!important;filter:none!important}
+html body :is(.page-heading,.section-heading,.news-section,.library-page,.program-grid,.library-portfolio-list){background:transparent!important}
+html body :is(.header-inner,.mega-menu,.mobile-nav,.nav-dropdown,.search-overlay,.search-panel,dialog){background:#FFFFFF!important;color:#17251C!important;box-shadow:0 6px 20px #24382B0a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body .site-header{background:#F6F8F5!important;box-shadow:none!important}
+html body .header-inner{border-radius:999px}
+html body :is(.program-card,.news-card,.resource-tile,.resource-group,.page-sidebar,.sidebar-help,.student-resources,.library-book,.library-document,.library-integrity-values>li,.testimonial,.info-banner,.filter-bar,.search-result){background:#FFFFFF!important;color:#17251C!important;box-shadow:none!important}
+html body .quick-links{background:transparent!important;box-shadow:none!important}
+html body :is(.item__fill,.library-page .item.is-active .item__fill){background:#FFFFFF!important;box-shadow:none!important}
+html body .library-page .item.is-active .item__fill{background:#EDF4EE!important}
+html body .library-page :is(.item,.item.is-active,.testimonial,.testimonial__text,.item__text){color:#17251C!important}
+html body :is(.item__fill::after,.library-portfolio-list::before,.library-sections::before){display:none!important}
+html body :is(.library-integrity-values li span,.library-fund-row dd,.eyebrow,.icon,.text-link,.item__meta-tag){color:#24382B!important;filter:none!important}
+html body :is(.button,.button[data-link-theme],.header-actions .button,.hero-centered .button):not(.secondary){background:#4FCB67!important;color:#17251C!important;box-shadow:none!important}
+html body :is(.button,.button[data-link-theme]):not(.secondary):hover{background:#68D67D!important}
+html body .button.secondary{background:#24382B!important;color:#FFFFFF!important;box-shadow:none!important}
+html body .button.secondary .icon{color:#FFFFFF!important}
+html body :is(.library-sections>button,.council-tabs button,.filter-button){background:transparent!important;color:#506355!important;box-shadow:none!important}
+html body :is(.library-sections>button[aria-selected="true"],.council-tabs [aria-selected="true"],.filter-button.active){background:#24382B!important;color:#FFFFFF!important}
+html body :is(.library-sections>button:hover,.library-integrity-values>li:hover){box-shadow:none!important}
+html body :is(input,select,textarea,.header-search,.search-field){background:#EDF2EC!important;color:#17251C!important;border-color:#CBD7CC!important}
+html body :is(input,textarea)::placeholder{color:#506355!important}
+html body a[data-link-theme]:hover{color:#24382B!important}
+html body :focus-visible{outline-color:#24382B!important}
+html body .library-carousel-stage{background:transparent!important;box-shadow:none!important}
+html body .menu-backdrop,html body dialog::backdrop{background:#17251C99!important}
+/* The photographed hero keeps a restrained forest overlay and white lettering. */
+html body .hero-centered{background:#24382B!important}
+html body .hero-centered::after{background:linear-gradient(115deg,#24382Be8,#24382B95 70%,#4FCB6740)!important}
+html body .hero-centered :is(h1,.hero-word,.hero h1 span,.hero-college-name){color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;background:none!important}
+html body :is(.future-banner,.admission-banner){background:linear-gradient(115deg,#24382B,#335F3C 78%,#4FCB67)!important;color:#FFFFFF!important}
+html body :is(.future-banner,.admission-banner) :is(h2,p,span){color:#FFFFFF!important}
+html body .footer{background:#24382B!important;color:#F6F8F5!important}
+html body .footer :is(h2,h3,p,a,span,strong,.icon){color:#F6F8F5!important}
+html body :is(.social-link,.social-link--instagram,.social-link--facebook,.social-link--telegram){background:#EDF2EC!important;color:#24382B!important;box-shadow:none!important}
+html body .footer .social-link :is(span,.icon,svg){color:#24382B!important}
+
+/* Dark mode shares the forest identity while retaining an independent tonal scale. */
+html[data-theme="dark"],html[data-theme="dark"] body,html[data-theme="dark"] body *{
+ --canvas:#142219!important;--surface:#24382B!important;--card:#24382B!important;--card-hover:#2D4635!important;
+ --soft:#1C3023!important;--elevated:#2D4635!important;--ink:#F6F8F5!important;--text:#F6F8F5!important;
+ --muted:#BBCDBE!important;--text-muted:#BBCDBE!important;--accent:#89D99A!important;--accent-solid:#4FCB67!important;
+ --secondary:#24382B!important;--blue-soft:#2D4635!important;--line:#425F49!important;--glass:#24382Bf5!important;
+ --headline-color:#F6F8F5!important;--program-base:#24382B!important;--value-color:#89D99A!important;
+ --lib-card-idle:#24382B!important;--lib-card-active:#2D4635!important;--lib-card-data:#24382B!important;--lib-card-data-alt:#2D4635!important;
+}
+html[data-theme="dark"]{color-scheme:dark!important;background:#142219!important}
+html[data-theme="dark"] body{background:#142219!important;color:#F6F8F5!important}
+html[data-theme="dark"] body :is(h1,h2,h3,h4,h5,h6){color:#F6F8F5!important}
+html[data-theme="dark"] body :is(.display-number,.stat-number){color:#89D99A!important;-webkit-text-fill-color:#89D99A!important}
+html[data-theme="dark"] body :is(.header-inner,.mega-menu,.mobile-nav,.nav-dropdown,.search-overlay,.search-panel,dialog,.program-card,.news-card,.resource-tile,.resource-group,.page-sidebar,.sidebar-help,.student-resources,.library-book,.library-document,.library-integrity-values>li,.testimonial,.info-banner,.filter-bar,.search-result){background:#24382B!important;color:#F6F8F5!important}
+html[data-theme="dark"] body .site-header{background:#142219!important}
+html[data-theme="dark"] body :is(.item__fill,.library-page .item.is-active .item__fill){background:#24382B!important}
+html[data-theme="dark"] body .library-page .item.is-active .item__fill{background:#2D4635!important}
+html[data-theme="dark"] body .library-page :is(.item,.item.is-active,.testimonial,.testimonial__text,.item__text){color:#F6F8F5!important}
+html[data-theme="dark"] body :is(.library-integrity-values li span,.library-fund-row dd,.eyebrow,.icon,.text-link,.item__meta-tag){color:#89D99A!important}
+html[data-theme="dark"] body :is(.library-sections>button,.council-tabs button,.filter-button){color:#BBCDBE!important}
+html[data-theme="dark"] body :is(.library-sections>button[aria-selected="true"],.council-tabs [aria-selected="true"],.filter-button.active){background:#4FCB67!important;color:#17251C!important}
+html[data-theme="dark"] body :is(input,select,textarea,.header-search,.search-field){background:#1C3023!important;color:#F6F8F5!important;border-color:#425F49!important}
+html[data-theme="dark"] body :is(input,textarea)::placeholder{color:#BBCDBE!important}
+html[data-theme="dark"] body a[data-link-theme]:hover{color:#89D99A!important}
+html[data-theme="dark"] body :focus-visible{outline-color:#89D99A!important}
+html[data-theme="dark"] body :is(.button,.button[data-link-theme]):not(.secondary){color:#17251C!important}
+html[data-theme="dark"] body .button:not(.secondary) .icon{color:#17251C!important}
+html[data-theme="dark"] body .button.secondary{background:#365B40!important;color:#FFFFFF!important}
+html[data-theme="dark"] body .button.secondary .icon{color:#FFFFFF!important}
+html[data-theme="dark"] body :is(.social-link,.social-link--instagram,.social-link--facebook,.social-link--telegram){background:#2D4635!important;color:#F6F8F5!important}
+html[data-theme="dark"] body .footer .social-link :is(span,.icon,svg){color:#F6F8F5!important}
+
+/* Close legacy route-specific color paths, including pseudo-elements and hover states. */
+html,html[data-page-palette],html[data-theme],html[data-theme][data-page-palette] body,html[data-theme][data-page-palette] body *{
+ --page-hue:138!important;--page-companion:138!important;--link-hue:138!important;--card-hue:138!important;
+ --council-accent:#4FCB67!important;--row-accent:#4FCB67!important;--activity-color:#4FCB67!important;
+}
+html[data-theme][data-page-palette] body :is(.council-intro,.council-activity-card,.council-cta,.interior-card,.admission-intro,.contact-details>div,.editorial-section){background:var(--surface)!important;box-shadow:none!important}
+html[data-theme][data-page-palette] body :is(.council-intro::before,.council-intro::after,.council-intro-media::after,.council-activity-card::before,.council-cta::before,.council-cta::after){content:none!important;background:none!important;box-shadow:none!important}
+html[data-theme][data-page-palette] body .council-intro-media{background:#24382B!important;box-shadow:none!important}
+html[data-theme][data-page-palette] body :is(.council-activity-card>span,.council-cta>span,.social-icon,.social-link--instagram .social-icon){background:transparent!important;color:var(--accent)!important;box-shadow:none!important;background-image:none!important;-webkit-text-fill-color:currentColor!important}
+html[data-theme][data-page-palette] body :is(.news-card:hover,.program-card:hover,.resource-group[open],.interior-card:hover){background:var(--card-hover)!important;box-shadow:none!important}
+html[data-theme][data-page-palette] body :is(.news-photo-count,.news-photo-slide figcaption,.library-carousel-count){background:#24382Beb!important;color:#F6F8F5!important;text-shadow:none!important}
+html[data-theme][data-page-palette] body :is(.news-photo-arrow:hover,.library-carousel-arrow:hover){color:#4FCB67!important}
+html[data-theme][data-page-palette] body :is(.news-photo-stage::before,.news-photo-stage::after){background:none!important}
+html[data-theme][data-page-palette] body :is(.section-explorer a:hover,.section-explorer a[aria-current]){background:#24382B!important;color:#F6F8F5!important}
+html[data-theme][data-page-palette] body .footer .social-icon{color:#24382B!important}
+html[data-theme="dark"] body .footer .social-icon{color:#F6F8F5!important}
+
+html body #main .council-intro::before,html body #main .council-intro::after,html body #main .council-intro-media::after{content:none!important;display:none!important;background-image:none!important;box-shadow:none!important}
+
+html body .cosmic-glints{background:none!important}
+html body .schedule-picker-backdrop{background:#17251C70!important}
+
+/* Plain source-based role names, with no decorative numbering or icon column. */
+html body .council-table th:first-child{width:52%}
+html body .council-table th:nth-child(2){width:auto}
+html body .council-table td:nth-child(2){display:table-cell}
+html body .council-tab{grid-template-columns:minmax(0,1fr) 19px;background:var(--surface)!important;gap:12px}
+html body .council-tab-copy{grid-column:1}
+html body .resource-tile{grid-template-columns:minmax(0,1fr) 16px}
+html body .resource-tile :is(h2,p){grid-column:1}
+html body .resource-tile>.icon:last-child{grid-column:2}
+
+html[data-theme] body #main .hero.hero-centered{background:none!important}
+html[data-theme] body #main .hero.hero-centered::before,html[data-theme] body #main .hero.hero-centered::after{content:none!important;display:none!important;background:none!important}
+

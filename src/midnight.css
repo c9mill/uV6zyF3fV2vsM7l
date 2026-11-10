@@ -1,0 +1,61 @@
+/* Unified Midnight / Teal identity. Loaded after every component stylesheet. */
+html,html[data-theme],html body,html body *{
+ --canvas:#100C37!important;--surface:#151C36!important;--card:#142838!important;--card-hover:#193A44!important;
+ --soft:#142838!important;--elevated:#1B3443!important;--ink:#F5F7FA!important;--text:#F5F7FA!important;
+ --muted:#C4D3DA!important;--text-muted:#C4D3DA!important;--accent:#A8EBC7!important;--accent-solid:#A8EBC7!important;
+ --secondary:#07515A!important;--blue-soft:#163A45!important;--line:#35505D!important;--glass:#151C36f5!important;
+ --theme-blue:#A8EBC7!important;--theme-green:#A8EBC7!important;--theme-yellow:#A8EBC7!important;
+ --headline-color:#F5F7FA!important;--program-base:#142838!important;--program-hue:185!important;
+ --value-color:#A8EBC7!important;--lib-card-idle:#142838!important;--lib-card-active:#07515A!important;
+ --lib-card-data:#142838!important;--lib-card-data-alt:#193441!important;
+ --shadow:0 10px 28px #00000020!important;--card-shadow:0 6px 20px #00000018!important;--card-shadow-hover:0 10px 28px #00000025!important;
+}
+html{color-scheme:dark!important;background:#100C37!important}
+html body{background:#100C37!important;color:#F5F7FA!important}
+html body :is(.cosmic-backdrop,.cosmic-nebula,.cosmic-dust,.cosmic-glints,.motion-cursor){display:none!important}
+html body :is(h1,h2,h3,h4,h5,h6){color:#F5F7FA!important;text-shadow:none!important}
+html body :is(.hero-word,.hero h1 span,.display-number,.stat-number){color:#F5F7FA!important;background:none!important;-webkit-text-fill-color:#F5F7FA!important;text-shadow:none!important;filter:none!important}
+html body :is(.page-heading,.section-heading,.news-section,.footer,.library-page,.program-grid,.library-portfolio-list){background:transparent!important}
+html body :is(.hero-centered,.future-banner,.admission-banner){background:linear-gradient(125deg,#100C37 0%,#07515A 100%)!important}
+html body .hero-centered::after{background:linear-gradient(125deg,#100C37c9,#07515A99)!important}
+html body :is(.header-inner,.mega-menu,.mobile-nav,.nav-dropdown,.search-overlay,.search-panel,dialog){background:#151C36!important;color:#F5F7FA!important;box-shadow:0 12px 32px #0003!important}
+html body :is(.button,.button[data-link-theme],.header-actions .button,.hero-centered .button):not(.secondary){background:#A8EBC7!important;color:#100C37!important;text-shadow:none!important;box-shadow:none!important}
+html body :is(.button,.button[data-link-theme]):not(.secondary):hover{background:#C4F3DA!important}
+html body .button.secondary{background:#07515A!important;color:#F5F7FA!important;box-shadow:none!important;text-shadow:none!important}
+html body :is(.program-card,.news-card,.resource-tile,.resource-group,.page-sidebar,.sidebar-help,.quick-links,.student-resources,.library-book,.library-document,.library-integrity-values>li,.library-carousel-stage,.testimonial,.info-banner){background:#142838!important;color:#F5F7FA!important;box-shadow:none!important;text-shadow:none!important}
+html body :is(.item__fill,.library-page .item.is-active .item__fill){background:#142838!important;box-shadow:none!important}
+html body .library-page .item.is-active .item__fill{background:#07515A!important}
+html body :is(.item__fill::after,.library-portfolio-list::before,.library-sections::before,.future-art,.future-star){display:none!important}
+html body :is(.library-integrity-values li span,.library-fund-row dd,.eyebrow,.icon,.text-link,.item__meta-tag){color:#A8EBC7!important;text-shadow:none!important;filter:none!important}
+html body :is(.library-sections>button,.council-tabs button,.filter-button){background:#142838!important;color:#C4D3DA!important;box-shadow:none!important;text-shadow:none!important}
+html body :is(.library-sections>button[aria-selected="true"],.council-tabs [aria-selected="true"],.filter-button.active){background:#07515A!important;color:#F5F7FA!important}
+html body :is(.social-link,.social-link--instagram,.social-link--facebook,.social-link--telegram){background:#07515A!important;color:#F5F7FA!important;box-shadow:none!important}
+html body input,html body select,html body textarea{background:#142838!important;color:#F5F7FA!important;border-color:#35505D!important}
+html body input::placeholder,html body textarea::placeholder{color:#C4D3DA!important}
+html body a[data-link-theme]:hover{color:#A8EBC7!important}
+html body :focus-visible{outline-color:#A8EBC7!important}
+html body :is(.library-book-info,.library-book-record>summary,.library-integrity-values li){text-shadow:none!important}
+html body :is(.library-integrity-values>li:hover,.library-sections>button:hover,.library-carousel-stage){box-shadow:none!important}
+
+/* Transparent surfaces: composition is defined by spacing and restrained shadow. */
+html body :is(.site-header,.header-inner,.site-header.is-scrolled,.menu-open .site-header,.site-header .mobile-nav,.menu-open .site-header .mobile-nav,.mega-menu,.nav-dropdown,.search-overlay,.search-panel,dialog,.program-card,.news-card,.resource-tile,.resource-group,.page-sidebar,.sidebar-help,.quick-links,.student-resources,.library-book,.library-document,.library-integrity-values>li,.library-carousel-stage,.testimonial,.info-banner,.filter-bar,.search-result){background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:0 5px 20px #00000018!important}
+html body .site-header{box-shadow:none!important}
+html body :is(.header-inner,.mega-menu,.mobile-nav,.nav-dropdown,.search-panel,dialog){box-shadow:0 6px 24px #00000024!important}
+html body :is(.header-inner,.mega-menu,.mobile-nav,.nav-dropdown,.search-panel,dialog) :is(a,button,label,h2,h3){text-shadow:0 1px 3px #100C3780}
+html body :is(.item__fill,.library-page .item.is-active .item__fill){background:transparent!important;box-shadow:0 5px 20px #00000018!important}
+html body .menu-backdrop,html body dialog::backdrop{background:#100C37d9!important}
+
+/* Quiet text separation on transparent surfaces. */
+html body :is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,small,strong,summary,a,button,input,textarea,select,.hero-word,.hero h1 span,.display-number,.stat-number,.library-integrity-values li span){text-shadow:0 1px 2px #100C37b3,0 2px 7px #100C3766!important}
+/* Mint actions use dark lettering with a restrained light edge. */
+html body .button:not(.secondary){text-shadow:0 1px 1px #F5F7FA40!important}
+
+/* Invert only the backdrop inside the rounded navigation island. */
+html body .site-header .header-inner{border-radius:999px;background:transparent!important;backdrop-filter:invert(1)!important;-webkit-backdrop-filter:invert(1)!important;isolation:isolate}
+
+html body .site-header .header-inner{backdrop-filter:invert(1) brightness(.5)!important;-webkit-backdrop-filter:invert(1) brightness(.5)!important}
+
+/* A fixed physical wallpaper, behind content in an isolated document stack. */
+html{background:#091a18!important}
+html body{background:transparent!important;isolation:isolate}
+html body .holographic-wallpaper{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;display:block;contain:strict}

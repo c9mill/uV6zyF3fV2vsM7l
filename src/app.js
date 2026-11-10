@@ -1,7 +1,14 @@
 const navigationChevron = '<svg class="icon nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
 const actions=document.querySelector('.header-actions');
 // Make the static site installable as FKBAD without changing page navigation.
-if('serviceWorker' in navigator && window.isSecureContext){
+const localPreview=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+if(localPreview && 'serviceWorker' in navigator){
+  // Local previews always use the files currently served from dist.
+  navigator.serviceWorker.getRegistrations().then(registrations=>Promise.all(registrations.map(registration=>registration.unregister()))).then(()=>{
+    if('caches' in window)return caches.keys().then(keys=>Promise.all(keys.filter(key=>/^fkbad-(static|pages)-/.test(key)).map(key=>caches.delete(key))));
+  }).catch(()=>{});
+}
+if(!localPreview && 'serviceWorker' in navigator && window.isSecureContext){
   // Versioned page assets already update safely. Do not reload a working page
   // when the worker activates, or compete with first-screen loading.
   window.addEventListener('load',()=>{
@@ -197,7 +204,11 @@ if(navigationTree){
   for(const parent of lineage.slice(0,-1)){const back=document.createElement('button');back.type='button';back.textContent=label(parent);back.addEventListener('click',()=>openGroup(parent));trail.append(back);}
   const title=document.createElement('h2');title.textContent=label(group);title.tabIndex=-1;
   pane.append(trail,title);activeGroup=group;movedChildren=group.querySelector(':scope > .navigation-children');if(movedChildren)pane.append(movedChildren);
-  pane.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});
+  pane.scrollTo({top:0,behavior:'auto'});
+  if(!reducedMotion.matches&&pane.animate){
+   pane.getAnimations().forEach(animation=>animation.cancel());
+   pane.animate([{transform:'translateX(-10px)',opacity:.45},{transform:'none',opacity:1}],{duration:280,easing:'cubic-bezier(.22,1,.36,1)'});
+  }
  };
  mobileNav.addEventListener('click',event=>{const summary=event.target.closest('summary');if(!summary||!desktopMenu.matches)return;event.preventDefault();openGroup(summary.parentElement);});
  mobileNav.openDirectoryGroup=openGroup;mobileNav.resetDirectory=resetDirectory;
@@ -209,25 +220,71 @@ menuBackdrop.className='menu-backdrop';menuBackdrop.type='button';menuBackdrop.h
 menuBackdrop.tabIndex=-1;menuBackdrop.setAttribute('aria-label','Закрити меню');
 document.querySelector('.site-header')?.before(menuBackdrop);
 menuBackdrop.addEventListener('click',()=>{closeMenu();menuButton?.focus({preventScroll:true});});
-let menuTimer, menuFrame, savedScroll=0;
+let savedScroll=0, menuAnimation=null, menuSequence=0;
+const menuContentAnimations=new Set();
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-function closeMenu(){
- if(!menuButton||menuButton.getAttribute('aria-expanded')!=='true')return;
- clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);mobileNav.classList.remove('is-open');mobileNav.inert=true;
- menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Відкрити меню');
- document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');menuBackdrop.classList.remove('is-open');menuBackdrop.style.pointerEvents='none';
+// A damped spring is sampled once per transition. Geometry, not a timeout,
+// controls completion; a reversed transition begins from its current matrix.
+function springProgress(t){
+ const damping=.86,frequency=13,wd=frequency*Math.sqrt(1-damping*damping);
+ return 1-Math.exp(-damping*frequency*t)*(Math.cos(wd*t)+damping/Math.sqrt(1-damping*damping)*Math.sin(wd*t));
+}
+function cancelMenuContent(){for(const animation of menuContentAnimations)animation.cancel();menuContentAnimations.clear();}
+function animateMenu(open,done){
+ const current=menuAnimation?getComputedStyle(mobileNav).transform:null;
+ menuAnimation?.cancel();menuAnimation=null;cancelMenuContent();
+ if(reducedMotion.matches||!mobileNav.animate){done?.();return;}
+ const trigger=menuButton.getBoundingClientRect(),panel=mobileNav.getBoundingClientRect();
+ const dx=trigger.left-panel.left,dy=trigger.top-panel.top;
+ const sx=Math.max(.025,trigger.width/panel.width),sy=Math.max(.025,trigger.height/panel.height);
+ const small=`translate(${dx}px,${dy}px) scale(${sx},${sy})`;
+ let frames;
+ if(open&&!current){
+  frames=Array.from({length:49},(_,i)=>{
+   const offset=i/48,p=i===48?1:springProgress(offset);
+   return {offset,transform:`translate(${dx*(1-p)}px,${dy*(1-p)}px) scale(${sx+(1-sx)*p},${sy+(1-sy)*p})`};
+  });
+ }else frames=[{transform:current||'none'},{transform:open?'none':small}];
+ const animation=mobileNav.animate(frames,{duration:open?520:260,easing:open&&!current?'linear':'cubic-bezier(.22,1,.36,1)',fill:'both'});
+ menuAnimation=animation;
+ if(open){
+  for(const child of mobileNav.children){
+   const reveal=child.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:220,delay:130,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
+   menuContentAnimations.add(reveal);reveal.finished.then(()=>menuContentAnimations.delete(reveal),()=>{});
+  }
+ }
+ animation.finished.then(()=>{if(menuAnimation!==animation)return;menuAnimation=null;animation.cancel();done?.();},()=>{});
+}
+function finishMenuClose(ticket){
+ if(ticket!==menuSequence||menuButton.getAttribute('aria-expanded')==='true')return;
+ mobileNav.hidden=true;menuBackdrop.hidden=true;
+ document.body.classList.remove('menu-open');document.documentElement.classList.remove('menu-locked');
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=false);
  const previous=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,savedScroll);document.documentElement.style.scrollBehavior=previous;
- menuTimer=setTimeout(()=>{mobileNav.hidden=true;menuBackdrop.hidden=true;},reducedMotion.matches?0:300);
 }
-menuButton?.addEventListener('click',()=>{
+function closeMenu(){
+ if(!menuButton||menuButton.getAttribute('aria-expanded')!=='true')return;
+ const ticket=++menuSequence;
+ if(mobileNav.contains(document.activeElement))menuButton.focus({preventScroll:true});
+ mobileNav.classList.remove('is-open');mobileNav.inert=true;
+ menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Відкрити меню');
+ menuBackdrop.classList.remove('is-open');menuBackdrop.style.pointerEvents='none';
+ animateMenu(false,()=>finishMenuClose(ticket));
+}
+menuButton?.addEventListener('click',event=>{
  if(menuButton.getAttribute('aria-expanded')==='true'){closeMenu();return;}
- clearTimeout(menuTimer);cancelAnimationFrame(menuFrame);savedScroll=window.scrollY;mobileNav.resetDirectory?.();mobileNav.hidden=false;mobileNav.inert=false;
+ ++menuSequence;
+ if(!document.documentElement.classList.contains('menu-locked'))savedScroll=window.scrollY;
+ mobileNav.resetDirectory?.();mobileNav.hidden=false;mobileNav.inert=false;
  menuButton.setAttribute('aria-expanded','true');menuButton.setAttribute('aria-label','Закрити меню');document.body.classList.add('menu-open');
  document.documentElement.classList.add('menu-locked');menuBackdrop.hidden=false;menuBackdrop.style.pointerEvents='';
  document.querySelectorAll('main,.footer,.utility,.back-top').forEach(el=>el.inert=true);
- menuFrame=requestAnimationFrame(()=>{menuFrame=requestAnimationFrame(()=>{mobileNav.classList.add('is-open');menuBackdrop.classList.add('is-open');});});
+ mobileNav.classList.add('is-open');menuBackdrop.classList.add('is-open');
+ animateMenu(true);
+ // Keyboard users land inside the island; pointer users retain their trigger.
+ if(!event?.detail)(mobileNav.querySelector('input,a,summary,button'))?.focus({preventScroll:true});
 });
+reducedMotion.addEventListener('change',()=>{if(reducedMotion.matches){cancelMenuContent();menuAnimation?.finish();}});
 mobileNav?.querySelectorAll('a').forEach((a,i)=>{a.style.setProperty('--menu-index',i);a.addEventListener('click',closeMenu);});
 document.addEventListener('keydown',event=>{
  if(event.key!=='Tab'||menuButton?.getAttribute('aria-expanded')!=='true')return;
@@ -238,7 +295,8 @@ document.addEventListener('keydown',event=>{
 });
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menuButton?.getAttribute('aria-expanded')==='true'){closeMenu();menuButton.focus({preventScroll:true});}});
 // Keep the panel and focused search open when the mobile keyboard resizes the viewport.
-window.addEventListener('pagehide',closeMenu);
+window.addEventListener('pagehide',()=>{closeMenu();menuAnimation?.finish();});
+window.addEventListener('resize',()=>menuAnimation?.finish(),{passive:true});
 
 const norm=text=>(text||'').toLocaleLowerCase('uk').replace(/[’ʼ`]/g,"'").replace(/\s+/g,' ').trim();
 const escapeHTML=text=>String(text||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -409,7 +467,7 @@ if(newsForm){
   status.textContent='Шукаємо новини…';
   try{const index=await getIndex();if(id!==request)return;const found=index.filter(r=>r.type==='Новина'&&matches(r,q));results.replaceChildren();pagination.hidden=true;document.querySelector('#news-more')?.remove();status.textContent=found.length?`Знайдено новин: ${found.length}`:'Новин не знайдено. Спробуй інші слова.';
    let shown=0;const more=document.createElement('div');more.id='news-more';results.after(more);
-   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)||'<div class="news-image"><div class="news-placeholder">ВСП ФКБАД Поліського університету</div></div>'}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину ${navigationChevron}</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
+   function renderMore(){results.insertAdjacentHTML('beforeend',found.slice(shown,shown+12).map(r=>`<article class="news-card">${newsPreviewMarkup(r.image||(r.images&&r.images[0]),r.title,r.url)}<div class="news-meta"><time datetime="${escapeHTML(r.iso)}">${escapeHTML(r.date)}</time><span>Життя коледжу</span></div><h3><a href="${escapeHTML(r.url)}">${escapeHTML(r.title)}</a></h3><p class="news-excerpt"><span>${escapeHTML(r.text)}</span></p><a class="text-link" href="${escapeHTML(r.url)}">Читати новину ${navigationChevron}</a></article>`).join(''));shown+=12;if(shown<found.length)moreButton(more,renderMore);}renderMore();
   }catch{if(id===request)status.textContent='Не вдалося завантажити новини. Перевір з’єднання та повтори пошук.';}
  }
  newsForm.addEventListener('submit',e=>{e.preventDefault();filterNews();});input.addEventListener('input',debounce(filterNews));
@@ -426,7 +484,7 @@ document.addEventListener('toggle',event=>{
   for(let parent=frame.parentElement;parent;parent=parent.parentElement){
    if(parent.tagName==='DETAILS'&&!parent.open){visible=false;break;}
   }
-  if(visible){frame.src=frame.dataset.deferredSrc;delete frame.dataset.deferredSrc;}
+  if(visible){frame.loading='eager';frame.src=frame.dataset.deferredSrc;delete frame.dataset.deferredSrc;}
  }
 },true);
 
@@ -479,6 +537,49 @@ document.querySelectorAll('[data-council]').forEach(council=>{
   });
  });
  back?.addEventListener('click',close);
+});
+
+// Preserve the number rail across ordinary page navigation; touch uses native scrolling.
+document.querySelectorAll('.pagination').forEach(rail=>{
+ const key=`pagination-scroll:${rail.id||location.pathname}`;
+ let saved=null;
+ try{saved=sessionStorage.getItem(key);}catch{}
+ if(saved!==null&&Number.isFinite(Number(saved)))rail.scrollLeft=Number(saved);
+ else{
+  const active=rail.querySelector('[aria-current="page"]');
+  if(active)rail.scrollLeft=active.offsetLeft-rail.offsetLeft-(rail.clientWidth-active.offsetWidth)/2;
+ }
+ const save=()=>{try{sessionStorage.setItem(key,String(rail.scrollLeft));}catch{}};
+ rail.addEventListener('scroll',save,{passive:true});
+ window.addEventListener('pagehide',save);
+ rail.addEventListener('wheel',event=>{
+  if(event.ctrlKey||Math.abs(event.deltaX)>Math.abs(event.deltaY)||rail.scrollWidth<=rail.clientWidth)return;
+  const before=rail.scrollLeft;
+  rail.scrollLeft+=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?rail.clientWidth:1);
+  if(rail.scrollLeft!==before)event.preventDefault();
+ },{passive:false});
+ let drag=null,suppressClick=false;
+ rail.addEventListener('pointerdown',event=>{
+  if(event.pointerType!=='mouse'||event.button!==0)return;
+  suppressClick=false;drag={id:event.pointerId,x:event.clientX,left:rail.scrollLeft};
+ });
+ rail.addEventListener('pointermove',event=>{
+  if(!drag||event.pointerId!==drag.id)return;
+  const distance=event.clientX-drag.x;
+  if(Math.abs(distance)>5){suppressClick=true;rail.classList.add('is-dragging');rail.setPointerCapture(event.pointerId);}
+  if(suppressClick){event.preventDefault();rail.scrollLeft=drag.left-distance;}
+ });
+ const stop=()=>{drag=null;rail.classList.remove('is-dragging');};
+ rail.addEventListener('pointerup',stop);rail.addEventListener('pointercancel',stop);rail.addEventListener('lostpointercapture',stop);
+ rail.addEventListener('dragstart',event=>event.preventDefault());
+ rail.addEventListener('click',event=>{if(suppressClick){event.preventDefault();suppressClick=false;}else save();},true);
+ rail.addEventListener('keydown',event=>{
+  const links=[...rail.querySelectorAll('a')],index=links.indexOf(document.activeElement);
+  if(index<0||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const next=event.key==='Home'?0:event.key==='End'?links.length-1:Math.max(0,Math.min(links.length-1,index+(event.key==='ArrowRight'?1:-1)));
+  links[next].focus({preventScroll:true});links[next].scrollIntoView({block:'nearest',inline:'nearest'});
+ });
 });
 
 // Support old numeric links while serving ordinary static HTML everywhere else.
