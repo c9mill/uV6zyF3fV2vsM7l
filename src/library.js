@@ -48,7 +48,7 @@
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.libraryOpenTab;
       const idx = tabs.findIndex(t => t.dataset.libraryTab === targetId);
-      if (idx >= 0) activate(idx, true);
+      if (idx >= 0) activate(idx, btn.tagName !== 'A');
     });
   });
 
@@ -147,6 +147,8 @@
       const willOpen = !item.classList.contains('is-open');
       item.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', String(willOpen));
+      const panel = item.querySelector('[data-expandable-panel]');
+      if (panel) panel.inert = !willOpen;
     });
   });
 
@@ -240,22 +242,71 @@
   }
 })();
 
-// Manual galleries in the restored category layouts.
-document.querySelectorAll('.library-classic-carousel').forEach(carousel=>{
- const slides=[...carousel.querySelectorAll('.library-carousel-slide')];
- let index=0,busy=false,start=null;
- function show(next){
-  if(busy||slides.length<2)return;
-  const previous=slides[index];index=(next+slides.length)%slides.length;
-  const target=slides[index];if(previous===target)return;
-  busy=true;target.hidden=false;carousel.dataset.index=String(index);
-  carousel.querySelector('[data-carousel-count]').textContent=(index+1)+' / '+slides.length;
-  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const animation=target.animate([{opacity:0,transform:'translateX(18px)'},{opacity:1,transform:'translateX(0)'}],{duration:reduce?1:650,easing:'cubic-bezier(.2,.7,.2,1)'});
-  animation.finished.catch(()=>{}).then(()=>{previous.hidden=true;busy=false});
- }
- carousel.querySelector('[data-carousel-prev]').addEventListener('click',()=>show(index-1));
- carousel.querySelector('[data-carousel-next]').addEventListener('click',()=>show(index+1));
- carousel.addEventListener('pointerdown',event=>{start={x:event.clientX,y:event.clientY}});
- carousel.addEventListener('pointerup',event=>{if(!start)return;const dx=event.clientX-start.x,dy=event.clientY-start.y;start=null;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.2)show(index+(dx<0?1:-1))});
+// Touch and trackpads scroll natively. Mouse users can drag the photo or use arrow keys.
+document.querySelectorAll('.library-event-track[tabindex]').forEach(track => {
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const slideCount = track.children.length;
+  let drag = null;
+  let skipClick = false;
+
+  function currentSlide() {
+    return Math.round(track.scrollLeft / track.clientWidth);
+  }
+
+  function showSlide(index) {
+    const clamped = Math.max(0, Math.min(slideCount - 1, index));
+    track.scrollTo({ left: clamped * track.clientWidth, behavior: motion.matches ? 'instant' : 'smooth' });
+  }
+
+  track.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    track.focus({ preventScroll: true });
+    showSlide(currentSlide() + (event.key === 'ArrowRight' ? 1 : -1));
+  });
+
+  track.addEventListener('pointerdown', event => {
+    skipClick = false;
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    drag = { id: event.pointerId, startX: event.clientX, scrollLeft: track.scrollLeft, slide: currentSlide() };
+  });
+
+  track.addEventListener('pointermove', event => {
+    if (drag?.id !== event.pointerId) return;
+    const delta = event.clientX - drag.startX;
+    if (!skipClick && Math.abs(delta) < 8) return;
+    if (!skipClick) {
+      skipClick = true;
+      track.classList.add('is-dragging');
+      track.setPointerCapture(event.pointerId);
+    }
+    track.scrollLeft = drag.scrollLeft - delta;
+  });
+
+  function finishDrag(event) {
+    if (drag?.id !== event.pointerId) return;
+    if (skipClick) {
+      const delta = event.clientX - drag.startX;
+      const nearest = currentSlide();
+      const next = event.type === 'pointerup' && Math.abs(delta) >= 42 && nearest === drag.slide
+        ? drag.slide + (delta < 0 ? 1 : -1)
+        : nearest;
+      track.classList.remove('is-dragging');
+      showSlide(next);
+    }
+    drag = null;
+  }
+
+  track.addEventListener('pointerup', finishDrag);
+  track.addEventListener('pointercancel', finishDrag);
+  track.addEventListener('lostpointercapture', finishDrag);
+  track.addEventListener('pointerleave', event => {
+    if (!skipClick && drag?.id === event.pointerId) drag = null;
+  });
+  track.addEventListener('click', event => {
+    if (!skipClick || event.detail === 0) return;
+    event.stopPropagation();
+    skipClick = false;
+  }, { capture: true });
 });

@@ -22,3 +22,285 @@
 .library-irbis-table-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 html body main .library-irbis-table :is(th,td){min-width:0!important;width:20%!important;padding:12px 10px!important;text-align:center!important;vertical-align:middle}
+
+/* Library categories use the page surface, with rules only between table rows. */
+#library-testimonials-section {
+  --library-data-rule: color-mix(in srgb, var(--ink) 16%, transparent);
+  --library-diagram-line: color-mix(in srgb, var(--accent) 55%, transparent);
+  scroll-margin-top: 108px;
+}
+
+#library-testimonials-section > h2 {
+  margin: 0 0 clamp(16px, 2.2vw, 30px);
+  font-size: clamp(1.9rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -.04em;
+}
+
+#library-testimonials-section .testimonials {
+  border-top: 0;
+}
+
+#library-testimonials-section .testimonial {
+  border-bottom: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#library-testimonials-section .testimonial__trigger {
+  padding-block: clamp(14px, 1.8vw, 24px);
+  min-height: 50px;
+}
+
+#library-testimonials-section .testimonial__heading {
+  font-size: clamp(1.08rem, 1.8vw, 1.42rem);
+  text-wrap: balance;
+}
+
+#library-testimonials-section .testimonial__text {
+  max-width: 100%;
+}
+
+#library-testimonials-section .library-data-table {
+  width: min(100%, 54rem);
+  margin-block: 6px 0;
+}
+
+#library-testimonials-section .library-diagram + .library-data-table {
+  margin-top: 22px;
+}
+
+#library-testimonials-section .library-data-table > table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+  font-size: clamp(.9rem, 1.3vw, 1rem);
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+
+#library-testimonials-section .library-data-table :is(th, td) {
+  padding: 12px clamp(10px, 1.5vw, 18px);
+  border-bottom: 1px solid var(--library-data-rule);
+  text-align: start;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+#library-testimonials-section .library-data-table thead th,
+#library-testimonials-section .library-irbis-table thead th {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  font-weight: 650;
+}
+
+#library-testimonials-section .library-data-table tbody th {
+  font-weight: 520;
+}
+
+#library-testimonials-section .library-data-table :is(th, td):nth-child(2):last-child {
+  width: 1%;
+  text-align: end;
+  white-space: nowrap;
+}
+
+#library-testimonials-section .library-irbis-table-scroll:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Shared branch lines show that every node belongs to the category above. */
+#library-testimonials-section .library-diagram {
+  width: min(100%, 62rem);
+  margin-block: 6px 14px;
+}
+
+#library-testimonials-section .library-diagram-nodes {
+  --branch-gap: 20px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px var(--branch-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--branch-gap);
+}
+
+#library-testimonials-section .library-diagram-nodes::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 24px 0;
+  border-inline-start: 1px solid var(--library-diagram-line);
+}
+
+#library-testimonials-section .library-diagram-nodes > li {
+  position: relative;
+  min-width: 0;
+  list-style: none;
+  margin: 0;
+  padding: 20px 8px 0 0;
+  font-weight: 540;
+  line-height: 1.45;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+#library-testimonials-section .library-diagram-nodes > li::before,
+#library-testimonials-section .library-diagram-nodes > li::after,
+#library-testimonials-section .library-diagram-nodes > li > span::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+#library-testimonials-section .library-diagram-nodes > li::before {
+  inset: 0 0 auto calc(0px - var(--branch-gap));
+  border-top: 1px solid var(--library-diagram-line);
+}
+
+#library-testimonials-section .library-diagram-nodes > li::after {
+  inset: 0 auto auto 0;
+  height: 11px;
+  border-inline-start: 1px solid var(--library-diagram-line);
+}
+
+#library-testimonials-section .library-diagram-nodes > li > span::before {
+  inset: 10px auto auto -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+@media (min-width: 901px) {
+  #library-testimonials-section .library-diagram-nodes > :nth-child(3n)::before {
+    inset-inline-end: 100%;
+  }
+}
+
+@media (min-width: 561px) and (max-width: 900px) {
+  #library-testimonials-section .library-diagram-nodes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #library-testimonials-section .library-diagram-nodes > :nth-child(2n)::before {
+    inset-inline-end: 100%;
+  }
+}
+
+#library-testimonials-section .library-diagram-nodes > :last-child::before {
+  inset-inline-end: 100%;
+}
+
+@media (max-width: 560px) {
+  #library-testimonials-section .library-diagram-nodes {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0;
+  }
+
+  #library-testimonials-section .library-diagram-nodes::before {
+    content: none;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li {
+    padding: .45em 0 .45em 26px;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li::before {
+    inset: 1.15em auto auto 0;
+    width: 15px;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li::after {
+    inset-block: 0;
+    height: auto;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li:first-child::after {
+    inset-block-start: 1.15em;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li:last-child::after {
+    inset-block-end: auto;
+    height: 1.15em;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li:only-child::after {
+    content: none;
+  }
+
+  #library-testimonials-section .library-diagram-nodes > li > span::before {
+    inset: calc(1.15em - 2px) auto auto 12px;
+  }
+}
+
+html body main ul.library-journal-grid.content-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 32px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html body main ul.library-journal-grid.content-list > li {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.library-journal-cover {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.library-journal-cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 7 / 10;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
+.library-journal-grid h3 {
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-size: clamp(.98rem, 1.4vw, 1.17rem);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.library-journal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding-block: 5px;
+  color: var(--ink);
+  font-size: .9rem;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.library-journal-link .icon {
+  width: 15px;
+  height: 15px;
+  transform: rotate(-45deg);
+}
+
+@media (min-width: 650px) {
+  html body main ul.library-journal-grid.content-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  html body main ul.library-journal-grid.content-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

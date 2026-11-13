@@ -46,8 +46,6 @@ html body .hero-centered::after{background:linear-gradient(115deg,#24382Be8,#243
 html body .hero-centered :is(h1,.hero-word,.hero h1 span,.hero-college-name){color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;background:none!important}
 html body :is(.future-banner,.admission-banner){background:linear-gradient(115deg,#24382B,#335F3C 78%,#4FCB67)!important;color:#FFFFFF!important}
 html body :is(.future-banner,.admission-banner) :is(h2,p,span){color:#FFFFFF!important}
-html body .footer{background:#24382B!important;color:#F6F8F5!important}
-html body .footer :is(h2,h3,p,a,span,strong,.icon){color:#F6F8F5!important}
 html body :is(.social-link,.social-link--instagram,.social-link--facebook,.social-link--telegram){background:#EDF2EC!important;color:#24382B!important;box-shadow:none!important}
 html body .footer .social-link :is(span,.icon,svg){color:#24382B!important}
 

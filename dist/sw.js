@@ -1,6 +1,6 @@
 /* FKBAD PWA service worker. HTML stays network-first so published content remains fresh. */
-const VERSION = 'af515cf18b4f';
-const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=073784e07376", "/performance.css?v=0aa114adf183", "/refinement.css?v=f9f2443794c4", "/styles.css?v=5b436d9fdb3c", "/experience.css?v=744f8a6ecf9f", "/app.js?v=cd78c292ec67", "/experience.js?v=090fd8df95fd", "/motion.css?v=3ec109a25c7d", "/motion.js?v=3fc52466b6f3", "/kinetic.css?v=e32e06f081bf", "/forest.css?v=6bb80bedfbca", "/polish.css?v=c6797d06b239", "/kinetic.js?v=7a8c5c60ec40", "/holographic.js?v=5b3a412ee179"];
+const VERSION = '844aec9ace55';
+const PRECACHE = ["/", "/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/section-colors.css?v=cb10bdd69abb", "/performance.css?v=e584c7af1dc1", "/refinement.css?v=29a344599963", "/styles.css?v=c3c4f6bf19d2", "/experience.css?v=dcccf16e1b54", "/app.js?v=5b0a34e99e40", "/experience.js?v=c3795a012256", "/motion.css?v=3ec109a25c7d", "/motion.js?v=3fc52466b6f3", "/kinetic.css?v=882afb7ab4b0", "/forest.css?v=0a80deab182d", "/polish.css?v=cd71185ef1b1", "/kinetic.js?v=5239414b9d6d", "/holographic.js?v=7bf89e428a51"];
 const STATIC_CACHE = `fkbad-static-${VERSION}`;
 const PAGE_CACHE = `fkbad-pages-${VERSION}`;
 const OFFLINE_URL = '/offline.html';

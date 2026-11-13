@@ -81,11 +81,12 @@ html[data-theme][data-page-palette] body .student-feature{gap:80px}
 html[data-theme][data-page-palette] body .student-feature p{font-size:15px;line-height:1.75}
 html[data-theme][data-page-palette] body .student-resources{padding:8px 0}
 html[data-theme][data-page-palette] body .student-resources>a{padding:20px 0;gap:16px;font-size:14px}
-html[data-theme][data-page-palette] body .footer{padding-top:64px;background:transparent!important}
+html[data-theme][data-page-palette] body .footer{padding-top:64px;background:transparent!important;color:var(--ink)!important}
 html[data-theme][data-page-palette] body .footer-grid{gap:40px;padding-bottom:32px}
 html[data-theme][data-page-palette] body .footer p,html[data-theme][data-page-palette] body .footer-grid>div>a:not(.brand){font-size:13px;color:var(--muted)!important}
 html[data-theme][data-page-palette] body .footer h3{font-size:13px;font-weight:600;margin-bottom:16px}
-html[data-theme][data-page-palette] body .footer-bottom{padding-block:24px 32px}
+html[data-theme][data-page-palette] body .footer-bottom{padding-block:24px 32px;color:var(--muted)}
+html[data-theme][data-page-palette] body .footer :is(.footer-partner,.footer-bottom)>span{color:inherit}
 html[data-theme][data-page-palette] body .page-heading{padding-block:52px 36px}
 html[data-theme][data-page-palette] body .page-heading h1{font-size:clamp(36px,4.2vw,64px);letter-spacing:-.05em;line-height:1.12}
 html[data-theme][data-page-palette] body :is(.prose,.page-lead){line-height:1.8}

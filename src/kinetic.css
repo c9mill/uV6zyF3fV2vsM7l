@@ -105,7 +105,7 @@ html[data-theme="dark"] .library-page{
 .library-page .item__list{margin:8px 0 12px;padding-left:20px;display:grid;gap:6px;color:inherit}
 .library-page .item__list li{color:inherit}
 .library-page .item__action{margin-top:clamp(16px,2vw,24px);display:flex;align-items:center;gap:14px}
-.library-page .MoreButton{appearance:none;border:0!important;outline:0;background:transparent;padding:0;display:inline-flex;align-items:center;gap:14px;color:#88e8a7!important;font:inherit;font-size:.94rem;font-weight:600;text-decoration:none!important;cursor:pointer}
+.library-page .MoreButton{appearance:none;border:0!important;outline:0;background:transparent;padding:0;display:inline-flex;align-items:center;gap:14px;color:var(--accent)!important;font:inherit;font-size:.94rem;font-weight:600;text-decoration:none!important;cursor:pointer}
 .library-page .MoreButton__label{position:relative;display:inline-block;overflow:hidden;line-height:1.25;padding-bottom:2px}
 .library-page .MoreButton__label>span{display:inline-block;position:relative;transition:transform .48s var(--kx-ease)!important}
 .library-page .MoreButton__label>span::after{content:attr(data-text);position:absolute;left:0;top:115%;color:inherit}

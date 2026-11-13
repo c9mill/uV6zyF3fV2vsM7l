@@ -2,11 +2,11 @@
   <div class="schedule-heading">
     <div class="schedule-heading-copy">
       <h1>Розклад занять</h1>
-      <p id="schedule-semester">Завантажуємо розклад Всеосвіти…</p>
+      <p id="schedule-semester" role="status">Завантажуємо розклад…</p>
     </div>
-    <div class="schedule-modes" role="group" aria-label="Чий розклад"><button type="button" data-mode="student" aria-pressed="true">Студент</button><button type="button" data-mode="teacher" aria-pressed="false">Викладач</button></div>
+    <div class="schedule-modes" role="group" aria-label="Чий розклад" hidden><button type="button" data-mode="student" aria-pressed="true">Студент</button><button type="button" data-mode="teacher" aria-pressed="false">Викладач</button></div>
   </div>
-  <div class="schedule-layout">
+  <div class="schedule-layout" hidden>
     <aside class="schedule-sidebar" id="schedule-selector" aria-label="Вибір групи або викладача">
       <div class="schedule-picker-head"><div><p class="schedule-kicker" id="schedule-kind">Група</p><h2 id="schedule-picker-title">Обери групу</h2></div><button type="button" class="schedule-picker-close" id="schedule-picker-close" aria-label="Закрити вибір">×</button></div>
       <div id="schedule-picker" class="schedule-picker" role="group" aria-labelledby="schedule-picker-title"></div>
@@ -19,6 +19,6 @@
     </section>
   </div>
   <div class="schedule-picker-backdrop" id="schedule-picker-backdrop" hidden></div>
-  <noscript><p>Увімкніть JavaScript для вибору групи або викладача. <a href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911">Відкрити розклад на Всеосвіті ↗</a></p></noscript>
+  <p id="schedule-recovery" hidden><button type="button" class="schedule-refresh" id="schedule-retry">Спробувати ще раз</button> <a class="text-link" href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911">Відкрити розклад на Всеосвіті ↗</a></p>
+  <noscript><style>#schedule-semester{display:none}</style><p>Увімкніть JavaScript для вибору групи або викладача. <a href="https://school.vseosvita.ua/private/school-schedule?hash=55b2f59c&amp;id=11778&amp;id_schedule=107911">Відкрити розклад на Всеосвіті ↗</a></p></noscript>
 </section>
-<link rel="stylesheet" href="/schedule.css"><script src="/schedule.js" defer></script>

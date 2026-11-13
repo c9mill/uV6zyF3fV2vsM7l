@@ -530,6 +530,24 @@ collections:
           label: Опис розділу
           widget: text
           required: false
+        - name: journals
+          label: Журнали з обкладинками
+          widget: list
+          required: false
+          collapsed: true
+          summary: '{{title}}'
+          fields:
+          - name: title
+            label: Назва журналу
+            widget: string
+          - name: cover
+            label: Обкладинка
+            widget: image
+            required: false
+          - name: url
+            label: Посилання для читання онлайн
+            widget: string
+            required: false
         - name: blocks
           label: Видання
           widget: list

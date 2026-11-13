@@ -11,7 +11,7 @@
   },
   {
     "label": "ПРО КОЛЕДЖ",
-    "url": "#",
+    "url": null,
     "children": [
       {
         "label": "Сторінка директора",
@@ -20,7 +20,7 @@
       },
       {
         "label": "СТРУКТУРА КОЛЕДЖУ",
-        "url": "#",
+        "url": null,
         "children": [
           {
             "label": "АДМІНІСТРАЦІЯ",
@@ -46,7 +46,7 @@
       },
       {
         "label": "КОНТИНГЕНТ СТУДЕНТІВ",
-        "url": "https://drive.google.com/file/d/1R-YmG2DKoNBc0gMg-nzAxM9G58i25cay/view?usp=sharing",
+        "url": "https://drive.google.com/file/d/10WQGZnYmisJuDmUUqRjMjzRrhTpX06Jp/view?usp=sharing",
         "children": []
       },
       {
@@ -99,7 +99,7 @@
   },
   {
     "label": "ВСТУПНИКУ",
-    "url": "#",
+    "url": null,
     "children": [
       {
         "label": "ОГОЛОШЕННЯ",
@@ -108,7 +108,7 @@
       },
       {
         "label": "ГОТУЄМО ЗА СПЕЦІАЛЬНОСТЯМИ",
-        "url": "http://www.fkbad.com.ua/%77p-content/uploads/2026/05/Готуємо-за-спеціальностями.jpg",
+        "url": "http://www.fkbad.com.ua/wp-content/uploads/2026/05/Готуємо-за-спеціальностями.jpg",
         "children": []
       },
       {
@@ -123,7 +123,7 @@
       },
       {
         "label": "НАШІ КОНТАКТИ",
-        "url": "http://www.fkbad.com.ua/%77p-content/uploads/2026/02/Контакти-коледжу-e1771511792963.jpg",
+        "url": "http://www.fkbad.com.ua/wp-content/uploads/2026/02/Контакти-коледжу-e1771511792963.jpg",
         "children": []
       },
       {
@@ -148,7 +148,7 @@
       },
       {
         "label": "ПРЕЗЕНТАЦІЇ СПЕЦІАЛЬНОСТЕЙ",
-        "url": "#",
+        "url": null,
         "children": [
           {
             "label": "БУДІВЕЛЬНИК",
@@ -210,7 +210,7 @@
       },
       {
         "label": "Середня заробітна плата в Україні на 2026 рік",
-        "url": "http://www.fkbad.com.ua/%77p-content/uploads/2026/05/СЕРЕДНЯ-ЗП-НА-2026-РІК.jpg",
+        "url": "http://www.fkbad.com.ua/wp-content/uploads/2026/05/СЕРЕДНЯ-ЗП-НА-2026-РІК.jpg",
         "children": []
       },
       {
@@ -222,26 +222,31 @@
   },
   {
     "label": "СТУДЕНТУ",
-    "url": "#",
+    "url": null,
     "children": [
+      {
+        "label": "ГРАФІК НАВЧАЛЬНОГО ПРОЦЕСУ 2026-2027 н.р.",
+        "url": "https://drive.google.com/file/d/1rPP7biLlqzXDiKCVhNV_NYZrdCM-YrzT/view?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "РОЗКЛАД ЗАНЯТЬ НА І СЕМЕСТР",
+        "url": "https://drive.google.com/file/d/18byoVygM1ldqj_Day6yCIez7IT1XyCmA/view?usp=sharing",
+        "children": []
+      },
       {
         "label": "РОЗКЛАД ДЗВІНКІВ НА І СЕМЕСТР_2026-2027 н.р.",
         "url": "https://drive.google.com/file/d/1aRkV54049DIZ9WdUtPcM7bH22c5Jv6BX/view?usp=sharing",
         "children": []
       },
       {
-        "label": "РОЗКЛАД ЗАНЯТЬ на І семестр_2026-2027 н.р.",
-        "url": "https://school.vseosvita.ua/private/school-schedule?id=11778&hash=55b2f59c&id_schedule=107911",
+        "label": "ЕЛЕКТРОННИЙ РОЗКЛАД ЗАНЯТЬ на І семестр_2026-2027 н.р.",
+        "url": "/розклад/",
         "children": []
       },
       {
         "label": "ГРАФІК прибирання аудиторій",
         "url": "https://drive.google.com/file/d/1mkuPjBIiWOQ4NzXigd2JlwCCKEverqNs/view?usp=sharing",
-        "children": []
-      },
-      {
-        "label": "ГРАФІК ОСВІТНЬОГО ПРОЦЕСУ 2026-2027 н.р.",
-        "url": null,
         "children": []
       },
       {
@@ -256,41 +261,46 @@
       },
       {
         "label": "НАША ГОРДІСТЬ",
-        "url": "#",
+        "url": null,
         "children": []
       },
       {
-        "label": "ВІДДІЛЕННЯ Проєктування та дизайн",
-        "url": "#",
+        "label": "ВІДДІЛЕННЯ ПРОЄКТУВАННЯ ТА ДИЗАЙНУ",
+        "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%bf%d1%80%d0%be%d1%94%d0%ba%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d1%82%d0%b0-%d0%b4%d0%b8%d0%b7%d0%b0%d0%b9%d0%bd%d1%83/",
         "children": [
           {
-            "label": "Графіки консультацій викладачів ОПП ОБСБД на І-й семестр",
+            "label": "СПИСКИ РЕЙТИНГУ СТУДЕНТІВ ВІДДІЛЕННЯ Проєктування та дизайн",
+            "url": "https://www.fkbad.com.ua/elementor-9473/",
+            "children": []
+          },
+          {
+            "label": "Графіки консультацій викладачів ОПП ОБСБД на І-й семестр 2026-2027н.р.",
             "url": "https://drive.google.com/file/d/1Zrtf4tg9iBi2PflslWh8rgeGvIZKYFB8/view?usp=sharing",
             "children": []
           },
           {
-            "label": "Графіки консультацій викладачів ОПП ПБІ на І-й семестр",
+            "label": "Графіки консультацій викладачів ОПП ПБІ на І-й семестр 2026-2027н.р.",
             "url": "https://drive.google.com/file/d/11F7lurA7N-a17c9t_Y3q3sviQFg683GG/view?usp=sharing",
             "children": []
           },
           {
-            "label": "Графік_роботи комісіїї з захисту КП_студ ІV курс_2 сем_2025-2026",
-            "url": "https://drive.google.com/file/d/1SbCIE3cdxDK0SwqeQlsKwFT3H_2J2d3C/view?usp=sharing",
+            "label": "Графік_роботи комісіїї з захисту КП_студ  3-4 курси_1 сем_2025-2026",
+            "url": "https://drive.google.com/file/d/1Ecsg3nyyElnGRBn16lPX-VOb_qejIXcI/view?usp=sharing",
             "children": []
           },
           {
-            "label": "РОЗКЛАД екзаменів ІІ сем_2025-2026_IV курс",
-            "url": "https://drive.google.com/file/d/1D1u6GzRGuPERYFa4kaAzFwIKAYk4YlzT/view?usp=sharing",
+            "label": "РОЗКЛАД екзаменів І сем_2026-2027_IV курс",
+            "url": "https://drive.google.com/file/d/1D4M9-KFEuKi7YMMusRnSzy2xh5freNMc/view?usp=sharing",
             "children": []
           },
           {
-            "label": "РОЗКЛАД ЕКЗАМЕНІВ 2-3 КУРСІВ 2 СЕМ_2025-2026н.р.",
-            "url": "https://drive.google.com/file/d/1DD8CKVJRx22uT-oDdH1ETHYDe64zOwHS/view?usp=sharing",
+            "label": "РОЗКЛАД ЕКЗАМЕНІВ 2-3 КУРСІВ 1 СЕМ_2026-2027н.р.",
+            "url": null,
             "children": []
           },
           {
-            "label": "РОЗКЛАД_роботи комісіїї з захисту КП_студ ІІІ курс_2 сем_відділення ПД",
-            "url": "https://drive.google.com/file/d/1a88aOYBPPM2WVFBM6PyKbrHkNOehb46D/view?usp=sharing",
+            "label": "РОЗКЛАД_роботи комісіїї з захисту КП_студ ІІІ курс_1 сем_відділення ПД",
+            "url": null,
             "children": []
           },
           {
@@ -302,11 +312,6 @@
             "label": "КУРСОВЕ ПРОЄКТУВАННЯ_РОЗКЛАД РОБОТИ КОМІСІЇ",
             "url": "https://drive.google.com/file/d/1xv5-tAD4R38YFJox4HVkS18QGAxs0T3D/view?usp=sharing",
             "children": []
-          },
-          {
-            "label": "СПИСКИ РЕЙТИНГУ СТУДЕНТІВ ВІДДІЛЕННЯ ПтаД",
-            "url": "https://www.fkbad.com.ua/elementor-9473/",
-            "children": []
           }
         ]
       },
@@ -316,22 +321,27 @@
         "children": []
       },
       {
-        "label": "ВІДДІЛЕННЯ Будівництво та цивільна інженерія",
-        "url": "#",
+        "label": "ВІДДІЛЕННЯ БУДІВНИЦТВО ТА ЦИВІЛЬНА ІНЖЕНЕРІЯ",
+        "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%b1%d1%86%d1%96/",
         "children": [
+          {
+            "label": "СПИСКИ РЕЙТИНГІВ ТА РЕЄСТРІВ СТУДЕНТІВ ВІДДІЛЕННЯ БЦІ",
+            "url": "https://www.fkbad.com.ua/elementor-9457/",
+            "children": []
+          },
           {
             "label": "Розклад консультацій викладачів БЦІ ОПП БЕБС_І сем_2026-2027н.р.",
             "url": "https://drive.google.com/file/d/1z2vFfvpPlDtnsFSxdqMeoyLUGRdoRINm/view?usp=sharing",
             "children": []
           },
           {
-            "label": "Розклад роботи комісій із захисту КП_4 курс_2 семестр 2025-2026н.р.",
-            "url": "https://drive.google.com/file/d/15R_l2dcBUtEMHAOLuqgO4K52tKuSIU8Z/view?usp=sharing",
+            "label": "Розклад роботи комісій із захисту КП_4 курс_1 семестр 2026-2027н.р.",
+            "url": null,
             "children": []
           },
           {
-            "label": "Розклад екзаменів для груп IV-го курсу_ІІ сем_2025-2026н.р.",
-            "url": "https://drive.google.com/file/d/1D3v3baQD_bUsPX_s3gtgggIHf68ubCgl/view?usp=sharing",
+            "label": "Розклад екзаменів для груп IV-го курсу_І сем_2026-2027н.р.",
+            "url": null,
             "children": []
           },
           {
@@ -341,7 +351,7 @@
           },
           {
             "label": "РОЗКЛАД РОБОТИ КОМІСІЇ ЗАХИСТУ КП_ІІ-ІІІ КУРСИ_1 сем",
-            "url": "http://2",
+            "url": null,
             "children": []
           },
           {
@@ -349,38 +359,48 @@
             "url": "https://www.fkbad.com.ua/%d0%b7%d0%b0%d0%be%d1%87%d0%bd%d0%b0-%d1%84%d0%be%d1%80%d0%bc%d0%b0/",
             "children": [
               {
-                "label": "Розклад занять для гр. 87зб_осіння сесія 2026-2027н.р.",
+                "label": "Розклад занять для гр. 87зб осіння сесія 2026-2027н.р.",
                 "url": "https://drive.google.com/file/d/1F1uYUk1QPYQv2WBQPIYYca5f6HFlx7G3/view?usp=sharing",
                 "children": []
               },
               {
-                "label": "Розклад занять для гр. 89зб_осіння сесія 2026-2027н.р.",
+                "label": "Розклад занять для гр. 89зб осіння сесія 2026-2027н.р.",
                 "url": "https://drive.google.com/file/d/1YCPGLD0V7JjoqdzdNMJYWkBy8Ko_n7GW/view?usp=sharing",
                 "children": []
               },
               {
-                "label": "НАВЧАЛЬНИЙ ГРАФІК групи 86зб",
-                "url": "https://drive.google.com/file/d/17yoxLa2p8mkyP5xa6oS9zCyNchHnjJK9/view?usp=sharing",
+                "label": "Розклад занять для гр. 88зб осіння сесія 2026-2027н.р.",
+                "url": null,
                 "children": []
               },
               {
-                "label": "Розклад занять для гр. 86зб_сесія_1 сем 2025-2026н.р.",
-                "url": "https://drive.google.com/file/d/1wPhosuwfz64lgxml3QYEevD7lntRsKo2/view?usp=sharing",
+                "label": "Графік консультацій викладачів в групі 87зб",
+                "url": "https://drive.google.com/file/d/1Xq5NsZiuy80QPCcMXFu8ylcLNpU4JxQr/view?usp=sharing",
                 "children": []
               },
               {
-                "label": "НАВЧАЛЬНИЙ ГРАФІК 87зб, 88зб",
-                "url": "https://drive.google.com/file/d/1w9ASN1tekPL40tv71HsbSmTlSFHkdWjB/view?usp=sharing",
+                "label": "Графік консультацій викладачів в групі 88зб",
+                "url": "https://drive.google.com/file/d/1A0pr8XCf18mee7SdYnfRDeX8PHk3VzgX/view?usp=sharing",
                 "children": []
               },
               {
-                "label": "Розклад занять для гр. 87зб_1 сем сесія 2025-2026н.р.",
-                "url": "https://drive.google.com/file/d/1O_kSxAn8Nt3MPZjes0j9ODv9aoflSG7X/view?usp=sharing",
+                "label": "Графік нонсультацій викладачів в групі 89зб",
+                "url": "https://drive.google.com/file/d/1Rq6JKa2OyVdgLKhEFws8gj_CK6XVLhRP/view?usp=sharing",
                 "children": []
               },
               {
-                "label": "Розклад занять для гр. 88зб_1 сем сесія 2025-2026н.р.",
-                "url": "https://drive.google.com/file/d/1ka6koVkp-onQCdsHsG04jwyDOUG0T9KX/view?usp=sharing",
+                "label": "НАВЧАЛЬНИЙ ГРАФІК групи 87зб",
+                "url": "https://drive.google.com/file/d/1BtPQEID5hG5z1XECS-vGbj6HuqH4yUeR/view?usp=sharing",
+                "children": []
+              },
+              {
+                "label": "НАВЧАЛЬНИЙ ГРАФІК групи 88зб",
+                "url": "https://drive.google.com/file/d/15QyXpymtUEciQOpO2syuOZmlZvEsG1DT/view?usp=sharing",
+                "children": []
+              },
+              {
+                "label": "НАВЧАЛЬНИЙ ГРАФІК групи 89зб",
+                "url": "https://drive.google.com/file/d/1veRvVgUMvgNVO81_kqxD4C7VyPrCnG3h/view?usp=sharing",
                 "children": []
               }
             ]
@@ -395,11 +415,6 @@
                 "children": []
               }
             ]
-          },
-          {
-            "label": "СПИСКИ РЕЙТИНГІВ ТА РЕЄСТРІВ СТУДЕНТІВ ВІДДІЛЕННЯ Будівництво та цивільна інженерія",
-            "url": "https://www.fkbad.com.ua/elementor-9457/",
-            "children": []
           }
         ]
       },
@@ -417,7 +432,7 @@
   },
   {
     "label": "ОСВІТНІЙ ПРОЦЕС",
-    "url": "#",
+    "url": null,
     "children": [
       {
         "label": "ДИСТАНЦІЙНЕ НАВЧАННЯ",
@@ -425,64 +440,18 @@
         "children": []
       },
       {
-        "label": "ВІДДІЛЕННЯ Будівництво та цивільна інженерія",
-        "url": "/відділення-бці/",
+        "label": "ВІДДІЛЕННЯ БУДІВНИЦТВО ТА ЦИВІЛЬНА ІНЖЕНЕРІЯ",
+        "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%b1%d1%86%d1%96/",
         "children": []
       },
       {
-        "label": "ВІДІЛЕННЯ ПРОЄКТУВАННЯ ТА ДИЗАЙН",
-        "url": "#",
-        "children": [
-          {
-            "label": "Графіки консультацій викладачів ОПП ОБСБД на І-й семестр",
-            "url": "https://drive.google.com/file/d/1Zrtf4tg9iBi2PflslWh8rgeGvIZKYFB8/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "Графіки консультацій викладачів ОПП ПБІ на І-й семестр",
-            "url": "https://drive.google.com/file/d/11F7lurA7N-a17c9t_Y3q3sviQFg683GG/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "Графік_роботи комісіїї з захисту КП_студ ІV курс_2 сем_2025-2026",
-            "url": "https://drive.google.com/file/d/1SbCIE3cdxDK0SwqeQlsKwFT3H_2J2d3C/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "РОЗКЛАД екзаменів ІІ сем_2025-2026_IV курс",
-            "url": "https://drive.google.com/file/d/1D1u6GzRGuPERYFa4kaAzFwIKAYk4YlzT/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "РОЗКЛАД ЕКЗАМЕНІВ 2-3 КУРСІВ 2 СЕМ_2025-2026н.р.",
-            "url": "https://drive.google.com/file/d/1DD8CKVJRx22uT-oDdH1ETHYDe64zOwHS/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "РОЗКЛАД_роботи комісіїї з захисту КП_студ ІІІ курс_2 сем_відділення ПД",
-            "url": "https://drive.google.com/file/d/1a88aOYBPPM2WVFBM6PyKbrHkNOehb46D/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "ДИПЛОМНЕ ПРОЄКТУВАННЯ на відділенні ПтаД",
-            "url": "https://www.fkbad.com.ua/%d0%b4%d0%b8%d0%bf%d0%bb%d0%be%d0%bc%d0%bd%d0%b5-%d0%bf%d1%80%d0%be%d1%94%d0%ba%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%bd%d0%b0-%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%96/",
-            "children": []
-          },
-          {
-            "label": "КУРСОВЕ ПРОЄКТУВАННЯ_РОЗКЛАД РОБОТИ КОМІСІЇ",
-            "url": "https://drive.google.com/file/d/1xv5-tAD4R38YFJox4HVkS18QGAxs0T3D/view?usp=sharing",
-            "children": []
-          },
-          {
-            "label": "СПИСКИ РЕЙТИНГУ СТУДЕНТІВ ВІДДІЛЕННЯ ПтаД",
-            "url": "https://www.fkbad.com.ua/elementor-9473/",
-            "children": []
-          }
-        ]
+        "label": "ВІДІЛЕННЯ ПРОЄКТУВАННЯ ТА ДИЗАЙНУ",
+        "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%bf%d1%80%d0%be%d1%94%d0%ba%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d1%82%d0%b0-%d0%b4%d0%b8%d0%b7%d0%b0%d0%b9%d0%bd%d1%83/",
+        "children": []
       },
       {
         "label": "МЕТОДИЧНИЙ КАБІНЕТ",
-        "url": "#",
+        "url": null,
         "children": [
           {
             "label": "ПЛАН РОБОТИ ПЕДАГОГІЧНОЇ РАДИ 2026-2027 н.р.",
@@ -511,7 +480,7 @@
           },
           {
             "label": "Положення про атестацію педагогічних працівників 2022, 2024",
-            "url": "https://zakon.rada.gov.ua/laws/show/z1649-22#Texthttps://",
+            "url": "https://zakon.rada.gov.ua/laws/show/z1649-22#Text",
             "children": []
           },
           {
@@ -522,6 +491,11 @@
           {
             "label": "Графік атестації педагогічних працівників 2025-2026н.р.",
             "url": "https://drive.google.com/file/d/1m15u9-G6HkKoSq6g-gMWG7fs8EaNyFEE/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "МЕТОДИЧНІ РЕКОМЕНДАЦІЇ ЩОДО ДИСТАНЦІЙНОГО НАВЧАННЯ",
+            "url": "https://www.fkbad.com.ua/%d0%bc%d0%b5%d1%82%d0%be%d0%b4%d0%b8%d1%87%d0%bd%d1%96-%d1%80%d0%b5%d0%ba%d0%be%d0%bc%d0%b5%d0%bd%d0%b4%d0%b0%d1%86%d1%96%d1%97-%d1%89%d0%be%d0%b4%d0%be-%d0%b4%d0%b8%d1%81%d1%82%d0%b0%d0%bd%d1%86/",
             "children": []
           },
           {
@@ -554,16 +528,16 @@
       },
       {
         "label": "АНКЕТУВАННЯ",
-        "url": "#",
+        "url": null,
         "children": [
           {
             "label": "ОПП БЕБС",
-            "url": "https://drive.google.com/file/d/1r6BaN5QpR9cnf94ZDKTM1sDw5xY6sMgj/view?usp=sharing",
+            "url": "https://www.fkbad.com.ua/%d0%b0%d0%bd%d0%ba%d0%b5%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%be%d0%bf%d0%bf-%d0%b1%d0%b5%d0%b1%d1%81/",
             "children": []
           },
           {
             "label": "ОПП ОБСБД",
-            "url": "https://drive.google.com/file/d/1ECEqxJrl01rrjPdz9X69FlWqZYe3-QuJ/view?usp=sharing",
+            "url": "https://www.fkbad.com.ua/%d0%b0%d0%bd%d0%ba%d0%b5%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%be%d0%bf%d0%bf-%d0%be%d0%b1%d1%81%d0%b1%d0%b4/",
             "children": []
           }
         ]
@@ -574,7 +548,7 @@
         "children": [
           {
             "label": "ОФІЦІЙНІ ДОКУМЕНТИ",
-            "url": "#",
+            "url": null,
             "children": [
               {
                 "label": "НАКАЗИ, ЛИСТИ МОН",
@@ -590,7 +564,7 @@
           },
           {
             "label": "ДОКУМЕНТИ КОЛЕДЖУ",
-            "url": "#",
+            "url": null,
             "children": [
               {
                 "label": "НАКАЗИ ДИРЕКТОРА",
@@ -635,7 +609,7 @@
   },
   {
     "label": "БІБЛІОТЕКА",
-    "url": "#",
+    "url": null,
     "children": [
       {
         "label": "ГОЛОВНА СТОРІНКА",
@@ -649,7 +623,7 @@
       },
       {
         "label": "ЗАМОВЛЕННЯ ПІДРУЧНИКІВ",
-        "url": "#",
+        "url": null,
         "children": [
           {
             "label": "Протокол результату вибору ЕП для ЗОД 2023р.",
@@ -707,7 +681,7 @@
   },
   {
     "label": "ВИХОВНА РОБОТА",
-    "url": "#",
+    "url": null,
     "children": [
       {
         "label": "ВИХОВНА РОБОТА",
@@ -750,18 +724,23 @@
         "children": []
       },
       {
-        "label": "МИ ПРАЦЮ ЛЮБИМО, ЩО В ТВОРЧІСТЬ ПЕРЕЙШЛА",
+        "label": "МИ ПРАЦЮ ЛЮБИМО, ЩО В ТВОРЧИСТЬ ПЕРЕЙШЛА",
         "url": "https://www.fkbad.com.ua/%d0%bc%d0%b8-%d0%bf%d1%80%d0%b0%d1%86%d1%8e-%d0%bb%d1%8e%d0%b1%d0%b8%d0%bc%d0%be-%d1%89%d0%be-%d0%b2-%d1%82%d0%b2%d0%be%d1%80%d1%87%d0%b8%d1%81%d1%82%d1%8c-%d0%bf%d0%b5%d1%80%d0%b5%d0%b9%d1%88%d0%bb/",
         "children": []
       },
       {
-        "label": "Графік чергування та відвідування гуртожитків на І семестр_ 2026-2027н.р.",
-        "url": null,
+        "label": "План проведення нарад у ЗДВР_2026-2027н.р.",
+        "url": "https://drive.google.com/file/d/1toeE12sOljXCDMEKNE3Iw6gWgLHksW_U/view?usp=sharing",
         "children": []
       },
       {
         "label": "План національного виховання студентів коледжу на І-й семестр 2026-2027 н.р.",
-        "url": null,
+        "url": "https://drive.google.com/file/d/1y_RIGAhvvmpKRSKDTu2FtI7b_cmodHZF/view?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "Графік чергування та відвідування гуртожитків на І семестр_ 2026-2027н.р.",
+        "url": "https://drive.google.com/file/d/1X304qmr7CPPdJarmSE1CyC44j_UcnJPP/view?usp=sharing",
         "children": []
       },
       {
@@ -781,6 +760,11 @@
     "url": "https://www.fkbad.com.ua/%d0%bf%d1%81%d0%b8%d1%85%d0%be%d0%bb%d0%be%d0%b3%d1%96%d1%87%d0%bd%d1%96-%d0%bf%d0%be%d1%80%d0%b0%d0%b4%d0%b8/",
     "children": [
       {
+        "label": "ПАМ’ЯТКА ДЛЯ БАТЬКІВ ПЕРШОКУРСНИКА",
+        "url": "https://drive.google.com/file/d/1RvxyBRvM0i4Vst62A2yMFU-Q_WYcIB-e/view?usp=sharing",
+        "children": []
+      },
+      {
         "label": "РЕКОМЕНДАЦІЇ ВІД ПСИХОЛОГА",
         "url": "https://drive.google.com/file/d/18LnJZXs657Uy3kRmwkTVEdAzj-Zgrx66/view?usp=sharing",
         "children": []
@@ -793,7 +777,7 @@
     ]
   },
   {
-    "label": "Оголошення",
+    "label": "ОГОЛОШЕННЯ",
     "url": "https://www.fkbad.com.ua/%d0%be%d0%b3%d0%be%d0%bb%d0%be%d1%88%d0%b5%d0%bd%d0%bd%d1%8f/",
     "children": [
       {
@@ -824,7 +808,7 @@
       },
       {
         "label": "НАВЧАЛЬНІ ПЛАНИ",
-        "url": "#",
+        "url": "https://www.fkbad.com.ua/%d0%bd%d0%b0%d0%b2%d1%87%d0%b0%d0%bb%d1%8c%d0%bd%d1%96-%d0%bf%d0%bb%d0%b0%d0%bd%d0%b8/",
         "children": []
       },
       {
@@ -846,6 +830,327 @@
         "label": "САМООЦІНЮВАННЯ ОПП",
         "url": "https://www.fkbad.com.ua/%d0%b0%d0%ba%d1%80%d0%b5%d0%b4%d0%b8%d1%82%d0%b0%d1%86%d1%96%d1%8f/%d1%81%d0%b0%d0%bc%d0%be%d0%be%d1%86%d1%96%d0%bd%d1%8e%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%be%d0%bf%d0%bf/",
         "children": []
+      },
+      {
+        "label": "Самооцінювання освітніх програм БЕБС і ОБСБД",
+        "url": "/самооцінювання-опп/",
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "ВІДДІЛЕННЯ БУДІВНИЦТВО ТА ЦИВІЛЬНА ІНЖЕНЕРІЯ",
+    "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%b1%d1%86%d1%96/",
+    "children": [
+      {
+        "label": "ОРГАНІЗАЦІЯ НАВЧАЛЬНОГО ПРОЦЕСУ БЦІ ОПП БЕБС",
+        "url": null,
+        "children": [
+          {
+            "label": "ГРАФІК НАВЧАЛЬНОГО ПРОЦЕСУ",
+            "url": "https://drive.google.com/file/d/1rPP7biLlqzXDiKCVhNV_NYZrdCM-YrzT/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЗАНЯТЬ",
+            "url": "https://drive.google.com/file/d/18byoVygM1ldqj_Day6yCIez7IT1XyCmA/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЙТИНГИ ТА РЕЄСТРИ НА СТИПЕНДІЇ",
+            "url": "https://drive.google.com/drive/folders/1_4E0IlXiHm_zMqol9uXlzbnXNy3pcYy4?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЕКЗАМЕНАЦІЙНИХ СЕСІЙ",
+            "url": "https://drive.google.com/drive/folders/118ufjUQz9jcaWkLRM_L6n8p9d3DCGL-x?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЗАХИСТУ КП і ДП",
+            "url": "https://drive.google.com/file/d/1j2bVbkPlC-4ArieNvfYt6tfH1iAOtHlq/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ НАВЧАННЯ",
+            "url": "https://drive.google.com/file/d/1Klbr_pQasg9C_fu-6x1fsBsUckJp_joR/view?usp=sharing",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "ОСВІТНЬО-ПРОФЕСІЙНІ ПРОГРАМИ БЕБС",
+        "url": "https://www.fkbad.com.ua/%d0%be%d1%81%d0%b2%d1%96%d1%82%d0%bd%d1%8c%d0%be-%d0%bf%d1%80%d0%be%d1%84%d0%b5%d1%81%d1%96%d0%b9%d0%bd%d1%96-%d0%bf%d1%80%d0%be%d0%b3%d1%80%d0%b0%d0%bc%d0%b8/",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПЛАНИ",
+        "url": "https://drive.google.com/drive/folders/1um_drFGzE7ZRgqn0DGyT5vRepsYa4HA-?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПРОГРАМИ",
+        "url": "https://drive.google.com/drive/folders/1STn7ObnQgwqFjzeY9Wbc53vX8EZqjNK5?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПРОГРАМИ ПРАКТИЧНОЇ ПІДГОТОВКИ",
+        "url": "https://drive.google.com/drive/folders/1jPXjC_69Bl1-HqsxeBnXkf22F6HrKAN0?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "ВИБІРКОВІ ДИСЦИПЛІНИ БЦІ ОПП БЕБС",
+        "url": null,
+        "children": [
+          {
+            "label": "ПОЛОЖЕННЯ ПРО ВИБІРКОВІ ДИСЦИПЛІНИ",
+            "url": "https://drive.google.com/file/d/1rYoNGsW-mi4OjcRA1iOIBi5cOglHscof/view",
+            "children": []
+          },
+          {
+            "label": "КАТАЛОГ ВИБІРКОВИХ ДИСЦИПЛІН",
+            "url": "https://drive.google.com/file/d/165VfUg9I3nbmfc-m1trp15qUuGcVjA1a/view",
+            "children": []
+          },
+          {
+            "label": "АНОТАЦІЇ ВИБІРКОВИХ ДИСЦИПЛІН",
+            "url": "https://drive.google.com/drive/folders/1P4EsOx4YM4BtClPlG8xPIVVM2nYSDRre?usp=sharing",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "НАВЧАЛЬНО-МЕТОДИЧНЕ ЗАБЕЗПЕЧЕННЯ ОПП БЕБС",
+        "url": null,
+        "children": []
+      },
+      {
+        "label": "ДИСТАНЦІЙНЕ НАВЧАННЯ",
+        "url": "https://drive.google.com/drive/folders/1m5wzmUPqRkVKWpL3-t2zjzwAoBo3gaXg?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "КАДРОВЕ ЗАБЕЗПЕЧЕННЯ ОПП БЕБС",
+        "url": null,
+        "children": []
+      },
+      {
+        "label": "ПАСПОРТИ НАВЧАЛЬНИХ КАБІНЕТІВ ОПП БЕБС",
+        "url": "https://drive.google.com/drive/folders/1ssMYiA-jLnQVNGIGopTdNOgR9Ojpbjc5?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "АНКЕТУВАННЯ ОПП БЕБС",
+        "url": "https://www.fkbad.com.ua/%d0%b0%d0%bd%d0%ba%d0%b5%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%be%d0%bf%d0%bf-%d0%b1%d0%b5%d0%b1%d1%81/",
+        "children": [
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ СТУДЕНТІВ",
+            "url": "https://drive.google.com/file/d/1NZRRLqJgClpN4upIg5ApOPVGEBHLxUvp/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ ВИПУСКНИКІВ",
+            "url": "https://drive.google.com/file/d/1CLrcutoimWZNmGygAOYUt48jgYOhhIOS/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ СТЕЙКХОЛДЕРІВ",
+            "url": "https://drive.google.com/drive/folders/1qstXZJzVefWSsqQULXf9TsErGUXnxdLp?usp=sharing",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "ЗАБЕЗПЕЧЕННЯ ЛІТЕРАТУРОЮ ОПП БЕБС",
+        "url": "https://drive.google.com/file/d/1Qg1kZFf6OcoWigva9Uy_nZr5bF0P5DE4/view?usp=sharing",
+        "children": [
+          {
+            "label": "СПИСОК НАВЧАЛЬНОЇ ЛІТЕРАТУРИ",
+            "url": "https://drive.google.com/file/d/1Qg1kZFf6OcoWigva9Uy_nZr5bF0P5DE4/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "ДОДАТКОВА ЛІТЕРАТУРА ОПП БЕБС",
+            "url": "https://drive.google.com/drive/folders/1G_NzAVX7gRCYUrukvkB21w6I16ltTuc5",
+            "children": []
+          },
+          {
+            "label": "НОРМАТИВНА ЛІТЕРАТУРА ОПП БЕБС",
+            "url": null,
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "ПРОТОКОЛИ ТА НАКАЗИ",
+        "url": null,
+        "children": [
+          {
+            "label": "ПРОТОКОЛИ ЗІ СТЕЙКХОДЕРАМИ",
+            "url": null,
+            "children": []
+          },
+          {
+            "label": "ЗВІТИ ГОЛІВ ДЕК",
+            "url": "https://drive.google.com/drive/folders/1mWleSbWJUCsBcqVu2EKJtVhAuPZQJALu?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "НАКАЗИ ПО КОЛЕДЖУ",
+            "url": null,
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "ВІДДІЛЕННЯ ПРОЄКТУВАННЯ ТА ДИЗАЙНУ",
+    "url": "https://www.fkbad.com.ua/%d0%b2%d1%96%d0%b4%d0%b4%d1%96%d0%bb%d0%b5%d0%bd%d0%bd%d1%8f-%d0%bf%d1%80%d0%be%d1%94%d0%ba%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d1%82%d0%b0-%d0%b4%d0%b8%d0%b7%d0%b0%d0%b9%d0%bd%d1%83/",
+    "children": [
+      {
+        "label": "ОРГАНІЗАЦІЯ НАВЧАЛЬНОГО ПРОЦЕСУ НА ВІДДІЛЕННІ ПРОЄКТУВАННЯ ТА ДИЗАЙН",
+        "url": null,
+        "children": [
+          {
+            "label": "РОЗКЛАД ЗАНЯТЬ на І семестр 2026-2027 н.р.",
+            "url": "https://drive.google.com/file/d/18byoVygM1ldqj_Day6yCIez7IT1XyCmA/view?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "ПРОТОКОЛИ ОПП ОБСБД",
+            "url": "https://drive.google.com/drive/folders/1jeJ0pfLkdtQl-ml0ntFyTZRwP3gIswC9?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "КОНСУЛЬТАЦІЇ ВИКЛАДАЧІВ",
+            "url": "https://drive.google.com/drive/folders/1u_1BvAuvJlx9GjXtz9olHbzRC4gUpf5o?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЕКЗАМЕНТІВ",
+            "url": "https://drive.google.com/drive/folders/1BqQGCbJKoiGAKKyjArMBOZ46z3JDifA0?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РОЗКЛАД ЗАХИСТУ КП і КР",
+            "url": "https://drive.google.com/drive/folders/1XmD0qNQaNGWzaeaaeqYODSqFxHfDp1Ks?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "СТИПЕНДІАЛЬНЕ ЗАБЕЗПЕЧЕННЯ",
+            "url": "https://drive.google.com/drive/folders/1gXBp7UGUChweo5Xm19vGbJ23Ibh_Afw4?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "ДИПЛОМНЕ ПРОЄКТУВАННЯ",
+            "url": "https://drive.google.com/drive/folders/18iz_3465NHEoJ9hYVx6sFolCYlYo7NtV?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ НАВЧАННЯ",
+            "url": "https://drive.google.com/drive/folders/1wDP-pYgtNRpKFniRRhO6eG5W12Qx3AzC?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ ЗАХИСТУ ДП",
+            "url": "https://drive.google.com/drive/folders/1lAxLzrYvmikbWKqq0JqHWW7qg6_ev16e?usp=sharing",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "ОСВІТНЬО-ПРОФЕСІЙНІ ПРОГРАМИ ОПП ОБСБД",
+        "url": "https://www.fkbad.com.ua/%d0%be%d1%81%d0%b2%d1%96%d1%82%d0%bd%d1%8c%d0%be-%d0%bf%d1%80%d0%be%d1%84%d0%b5%d1%81%d1%96%d0%b9%d0%bd%d1%96-%d0%bf%d1%80%d0%be%d0%b3%d1%80%d0%b0%d0%bc%d0%b8/",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПЛАНИ ОПП ОБСБД",
+        "url": "https://drive.google.com/file/d/1D3FFTY30wW4rxejiCsM0XKOVSlBrvPhn/view?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПРОГРАМИ ОПП ОБСБД",
+        "url": "https://drive.google.com/drive/folders/1jyd_YAwv480wxqEOgGzexOH91gdBneFY?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "НАВЧАЛЬНІ ПРОГРАМИ З ПРАКТИЧНОЇ ПІДГОТОВКИ ОПП ОБСБД",
+        "url": "https://drive.google.com/drive/folders/14IQwImmIl4Vb0gJTiDd9BHghtWOFCiNy?usp=sharing",
+        "children": []
+      },
+      {
+        "label": "ВИБІРКОВІ КОМПОНЕНТИ ОПП ОБСБД",
+        "url": "https://drive.google.com/drive/folders/1xlC9HjW9RhzY3RBk1LN6Md4rASbSaHgc?usp=sharing",
+        "children": [
+          {
+            "label": "ПОЛОЖЕННЯ ПРО ВИБІРКОВІ ДИСЦИПЛІНИ",
+            "url": "https://drive.google.com/file/d/1rYoNGsW-mi4OjcRA1iOIBi5cOglHscof/view",
+            "children": []
+          },
+          {
+            "label": "КАТАЛОГ ВИБІРКОВИХ ДИСЦИПЛІН",
+            "url": null,
+            "children": []
+          },
+          {
+            "label": "АНОТАЦІЇ ВИБІРКОВИХ ДИСЦИПЛІН ОПП ОБСБД",
+            "url": "https://drive.google.com/drive/folders/1ZbM8hhVhlTNyUFGhal5wxudWxBJgzRow?usp=sharing",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "НАВЧАЛЬНО-МЕТОДИЧНЕ ЗАБЕЗПЕЧЕННЯ ОПП ОБСБД",
+        "url": null,
+        "children": []
+      },
+      {
+        "label": "КАДРОВЕ ЗАБЕЗПЕЧЕННЯ ОПП ОБСБД",
+        "url": null,
+        "children": []
+      },
+      {
+        "label": "ПАСПОРТИ КАБІНЕТІВ ОПП ОБСБД",
+        "url": null,
+        "children": []
+      },
+      {
+        "label": "АНКЕТУВАННЯ ОПП ОБСБД",
+        "url": "https://www.fkbad.com.ua/%d0%b0%d0%bd%d0%ba%d0%b5%d1%82%d1%83%d0%b2%d0%b0%d0%bd%d0%bd%d1%8f-%d0%be%d0%bf%d0%bf-%d0%be%d0%b1%d1%81%d0%b1%d0%b4/",
+        "children": [
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ СТУДЕНТІВ",
+            "url": "https://drive.google.com/drive/folders/1uNQ39CTa8rcJwWBreG9h_FW1oT8fX_l-?usp=sharing",
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ ВИПУСКНИКІВ",
+            "url": null,
+            "children": []
+          },
+          {
+            "label": "РЕЗУЛЬТАТИ ОПИТУВАННЯ СТЕЙКХОЛДЕРІВ",
+            "url": null,
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "ЗАБЕЗПЕЧЕННЯ ЛІТЕРАТУРОЮ ОПП ОБСБД",
+        "url": "https://drive.google.com/file/d/1SVi8-gQ0V0jMlTihtWdM3dbF50kyNjl7/view?usp=sharing",
+        "children": [
+          {
+            "label": "ДОДАТКОВА ЛІТЕРАТУРА ОПП ОБСБД",
+            "url": "https://drive.google.com/drive/folders/1gHrEviV3UtvedDe-r1Zp3WQTRoRgEwkN",
+            "children": []
+          },
+          {
+            "label": "НОРМАТИВНА ЛІТЕРАТУРА ОПП ОБСБД",
+            "url": null,
+            "children": []
+          }
+        ]
       }
     ]
   }

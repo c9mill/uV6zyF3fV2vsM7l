@@ -33,7 +33,7 @@
 
  // Keep wide content tables scrollable without changing their rows or semantics.
  document.querySelectorAll('main table').forEach(table=>{
-  if(table.matches('.council-table')||table.closest('.schedule-table-scroll'))return;
+  if (table.matches('.council-table') || table.closest('.schedule-table-scroll, .library-data-table, .library-irbis-table-scroll')) return;
   let wrapper=table.closest('.table-scroll');
   if(!wrapper){wrapper=document.createElement('div');wrapper.className='table-scroll';table.before(wrapper);wrapper.append(table);}
   wrapper.classList.add('warm-table-scroll');

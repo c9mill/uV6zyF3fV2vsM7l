@@ -6,6 +6,9 @@
   const LETTERS = [...'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'];
   const STORAGE = 'fkbad.schedule.selection.v3';
   const DATA_STORAGE = 'fkbad.schedule.data.v3';
+  const unavailable = 'Не вдалося отримати розклад. Спробуйте ще раз.';
+  const layout = root.querySelector('.schedule-layout');
+  const modes = root.querySelector('.schedule-modes');
   const STUDENT_CATEGORIES = [
     {id:'architects', label:'А'},
     {id:'builders', label:'Б'},
@@ -14,6 +17,7 @@
     {id:'reduced', label:'С'}
   ];
   let catalog, mode = 'student', selected = {student:null, teacher:null}, studentCategory = 'all', teacherLetter = 'all', generation = 0, controller;
+  let renderedKey;
   const colors = new Map(), memory = new Map();
   let deviceData = {};
   try { const saved = JSON.parse(localStorage.getItem(STORAGE) || '{}'); mode = saved.mode === 'teacher' ? 'teacher' : 'student'; selected = {...selected, ...(saved.selected || {})}; studentCategory = saved.studentCategory || 'all'; teacherLetter = saved.teacherLetter || 'all'; } catch {}
@@ -30,8 +34,9 @@
   const persistData = (key, data) => { deviceData[key] = data; try { localStorage.setItem(DATA_STORAGE, JSON.stringify(deviceData)); } catch {} };
   async function get(url, signal) {
     const response = await fetch(url, {signal, cache:'no-store'});
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Не вдалося отримати розклад.');
+    if (!response.headers.get('content-type')?.includes('application/json')) throw new Error(unavailable);
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data) throw new Error(data?.error || unavailable);
     return data;
   }
   function groupCategory(name) {
@@ -191,31 +196,89 @@
   async function load(force = false) {
     if (!catalog) return boot();
     const id = selected[mode];
-    if (!id) { el('selected').textContent = 'Обери групу або викладача'; el('status').textContent = 'Зроби вибір, щоб побачити розклад.'; el('table').innerHTML = '<p class="schedule-empty">Вибір з’явиться у меню зверху.</p>'; return; }
     const current = ++generation;
-    controller?.abort(); controller = new AbortController();
+    controller?.abort();
+    const table = el('table');
+    if (!id) {
+      renderedKey = null;
+      el('selected').textContent = mode === 'student' ? 'Обери групу' : 'Обери викладача';
+      el('status').textContent = 'Зроби вибір, щоб побачити розклад.';
+      el('checked').textContent = '';
+      table.replaceChildren();
+      table.setAttribute('aria-busy', 'false');
+      el('refresh').disabled = false;
+      return;
+    }
+    controller = new AbortController();
+    const key = `${mode}/${id}`;
+    const saved = memory.get(key) || deviceData[key];
     el('selected').textContent = catalog[mode].find(x => x.id === id)?.name || '';
-    el('table').setAttribute('aria-busy', 'true'); el('table').innerHTML = ''; el('status').textContent = 'Завантажуємо заняття…'; el('checked').textContent = ''; el('refresh').disabled = true;
+    table.setAttribute('aria-busy', 'true');
+    el('refresh').disabled = true;
     try {
-      const key = `${mode}/${id}`; const local = deviceData[key]; const saved = memory.get(key) || local;
-      let data;
-      if (!force && saved && Date.now() - Date.parse(saved.checkedAt) < 300000) data = saved;
-      else { data = await get(`/api/schedule?mode=${mode}&id=${id}`, controller.signal); memory.set(key, data); persistData(key, data); }
+      if (renderedKey !== key) {
+        if (saved) {
+          render(saved);
+          markToday();
+          renderedKey = key;
+        } else {
+          table.replaceChildren();
+          renderedKey = null;
+          el('status').textContent = 'Завантажуємо заняття…';
+          el('checked').textContent = '';
+        }
+      }
+      if (!force && saved && Date.now() - Date.parse(saved.checkedAt) < 300000) return;
+      const data = await get(`/api/schedule?mode=${mode}&id=${id}`, controller.signal);
       if (current !== generation) return;
-      memory.set(key, data); render(data); markToday();
+      render(data);
+      markToday();
+      renderedKey = key;
+      memory.set(key, data);
+      persistData(key, data);
     } catch (error) {
       if (current !== generation || error.name === 'AbortError') return;
-      const stale = deviceData[`${mode}/${id}`];
-      if (stale) { render(stale); markToday(); el('status').textContent = 'Показано останнє збережене оновлення. Підключення недоступне.'; }
-      else { el('status').textContent = error.message; el('table').innerHTML = '<p class="schedule-empty">Натисніть «Оновити», щоб спробувати знову, або відкрийте джерело нижче.</p>'; }
-    } finally { if (current === generation) { el('table').setAttribute('aria-busy', 'false'); el('refresh').disabled = false; } }
+      el('status').textContent = renderedKey === key
+        ? 'Не вдалося оновити розклад. Показано останні збережені дані.'
+        : unavailable;
+    } finally {
+      if (current === generation) {
+        table.setAttribute('aria-busy', 'false');
+        el('refresh').disabled = false;
+      }
+    }
   }
   function openPicker() { if (!window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches) return; el('selector').classList.add('is-open'); el('picker-backdrop').hidden = false; document.body.classList.add('schedule-sheet-open'); }
   function closePicker() { el('selector').classList.remove('is-open'); el('picker-backdrop').hidden = true; document.body.classList.remove('schedule-sheet-open'); }
   async function boot() {
-    el('refresh').disabled = true; el('status').textContent = 'Отримуємо групи й викладачів…';
-    try { catalog = await get('/api/schedule'); catalog.teacher.forEach(item => colors.set(item.id, `hsl(${hue(item.id).toFixed(2)} 65% 57%)`)); el('semester').textContent = catalog.semester.title; for (const type of ['student','teacher']) if (selected[type] && !catalog[type].some(item => item.id === selected[type])) selected[type] = null; if (studentCategory === 'all') studentCategory = groupCategory(catalog.student.find(item => item.id === selected.student)?.name || catalog.student[0]?.name); if (!groupItems().length) studentCategory = STUDENT_CATEGORIES.find(category => catalog.student.some(item => groupCategory(item.name) === category.id))?.id || STUDENT_CATEGORIES[0].id; picker(); save(); if (selected[mode]) await load(); else { el('status').textContent = 'Зроби вибір, щоб побачити розклад.'; openPicker(); } }
-    catch (error) { el('semester').textContent = 'Розклад із Всеосвіти'; el('status').textContent = error.message; el('table').setAttribute('aria-busy','false'); el('refresh').disabled = false; }
+    el('recovery').hidden = true;
+    el('semester').textContent = 'Завантажуємо розклад…';
+    try {
+      catalog = await get('/api/schedule');
+      catalog.teacher.forEach(item => colors.set(item.id, `hsl(${hue(item.id).toFixed(2)} 65% 57%)`));
+      for (const type of ['student', 'teacher']) {
+        if (selected[type] && !catalog[type].some(item => item.id === selected[type])) selected[type] = null;
+      }
+      if (studentCategory === 'all') {
+        studentCategory = groupCategory(catalog.student.find(item => item.id === selected.student)?.name || catalog.student[0]?.name);
+      }
+      if (!groupItems().length) {
+        studentCategory = STUDENT_CATEGORIES.find(category => catalog.student.some(item => groupCategory(item.name) === category.id))?.id || STUDENT_CATEGORIES[0].id;
+      }
+      picker();
+      save();
+      const cached = deviceData[`${mode}/${selected[mode]}`];
+      const loading = load();
+      if (!cached) await loading;
+      el('semester').textContent = catalog.semester.title;
+      modes.hidden = false;
+      layout.hidden = false;
+      if (!selected[mode]) openPicker();
+    } catch {
+      catalog = null;
+      el('semester').textContent = unavailable;
+      el('recovery').hidden = false;
+    }
   }
   syncModeButtons();
   root.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
@@ -226,7 +289,7 @@
     if (!catalog) return;
     picker();
     openPicker();
-    if (selected[mode]) load();
+    load();
   }));
   el('picker').addEventListener('click', event => {
     const category = event.target.closest('[data-category-select]');
@@ -238,6 +301,7 @@
     selected[mode] = button.dataset.id; save(); picker(); closePicker(); load();
   });
   el('change').addEventListener('click', openPicker); el('picker-close').addEventListener('click', closePicker); el('picker-backdrop').addEventListener('click', closePicker); el('refresh').addEventListener('click', () => load(true));
+  el('retry').addEventListener('click', boot);
   setInterval(() => { if (!document.hidden && catalog && selected[mode]) load(true); }, 300000);
   setInterval(() => { if (!document.hidden) markToday(); }, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && catalog && selected[mode]) load(); });
