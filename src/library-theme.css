@@ -304,3 +304,9 @@ html body main ul.library-journal-grid.content-list > li {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
+
+@media (min-width: 721px) {
+  .footer-grid:has(> :nth-child(2):last-child) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+  }
+}
